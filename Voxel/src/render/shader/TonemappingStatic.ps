@@ -1,0 +1,36 @@
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex0 : TEXCOORD0;
+};
+
+Texture2D texAlbedo : register( t0 );
+SamplerState samLinear : register( s0 );
+
+static const float A = 0.18;//0.22; //ShoulderStrength
+static const float B = 0.45;//0.30; //LinearStrength
+static const float C = 0.10; //LinearAngle
+static const float D = 0.20; //ToeStrength
+static const float E = 0.01; //ToeNumerator
+static const float F = 0.30; //ToeDenominator
+static const float W = 11.2; //LinearWhitePoint
+
+float3 tonemap(float3 x)
+{
+    return ((x*(A*x + C*B) + D*E)/(x*(A*x+B) + D*F)) - E/F;
+}
+
+float tonemap1()
+{
+    return ((W*(A*W + C*B) + D*E)/(W*(A*W+B) + D*F)) - E/F;
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    float4 c = texAlbedo.Sample(samLinear, input.tex0);
+    c.xyz *= 1.4f;//exposure
+    c.xyz = tonemap(c.xyz);
+    c.xyz *= 1/tonemap1();
+    //c.xyz = pow(c.xyz, 1/2.2);
+    return c;
+}

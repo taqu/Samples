@@ -1,0 +1,53 @@
+﻿本ソフトウェアのライセンスについては、LICENSEを確認してください。
+
+=================================================
+=== Additional License used
+このソフトウェアは、以下のソフトウェアを利用しています。
+これら素晴らしいソフトウェア、及び開発者の皆様に深く感謝致します。
+
+zlib 1.2.5 <http://www.zlib.net/>
+libpng 1.5.0 <http://www.libpng.org/pub/png/libpng.html>
+libjpeg 1.5.0
+Bullet 2.78
+
+以下のコードはgoogle-sparsehashを改変しています。
+lime/lcore/Hash.h
+lime/lcore/HashMap.h
+
+各ソフトウェアのライセンスは以下を確認してください。
+google-sparsehash google-sparsehash/COPYING
+libjpeg           libjpeg/LICENSE
+libpng            libpng/README
+zlib              zlib/README
+Bullet            bullet/LICENSE
+Mersenne Twister  MersenneTwister/LICENSE
+
+=================================================
+=== Copyright
+
+google-sparsehash:
+Copyright (c) 2005, Google Inc. All rights reserved.
+
+libpng:
+libpng version 1.5.0 - January 6, 2011
+
+    Copyright (c) 1998-2011 Glenn Randers-Pehrson
+    Copyright (c) 1996-1997 Andreas Dilger
+    Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+
+libjpeg:
+This software is based in part on the work of the Independent JPEG Group.
+Copyright (c) 1991-2010, Thomas G. Lane, Guido Vollbeding.
+
+Bullet:
+version 2.78
+Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+
+Mersenne Twister:
+Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura, All rights reserved.                    Copyright (C) 2005, Mutsuo Saito, All rights reserved.
+
+=================================================
+免責条項
+・本ソフトウェアの利用によって生じた損害について、
+作者は責任を負わないものとします。
+各自の責任において利用してください。

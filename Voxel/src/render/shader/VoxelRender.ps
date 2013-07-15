@@ -1,0 +1,144 @@
+static const float EPSILON = 1.192092896e-06F; 
+static const float PI = 3.14159265358979323846f;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 eye; //eye
+    float4 worldMin; //voxel area
+    float4 worldMax; //voxel area
+    float4 worldSize; //world size, voxel size. inv voxel size, voxel resolution
+    int4 info; //num levels
+}
+
+struct VSOutput
+{
+    float4 pos : SV_POSITION;
+    float3 dir : TEXCOORD0;
+};
+
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+StructuredBuffer<Node> nodes : register(t0);
+Texture3D<float> tex : register(t1);
+SamplerState samTex : register(s0);
+
+static const float4 yaxis[] =
+{
+    float4(0.0f, 1.0f, 0.0f, PI/4),
+    float4(0.0f, 0.5f, 0.866025f, PI/4),
+    float4(0.823639f, 0.5f, 0.267617f, PI*3/20),
+    float4(0.509037f, 0.5f, -0.700629f, PI*3/20),
+    float4(-0.509037f, 0.5f, -0.700629f, PI*3/20),
+    float4(-0.823639f, 0.5f, 0.267617f, PI*3/20),
+};
+
+static const float4 zaxis[] =
+{
+    float4(0.0f, 0.0f, 1.0f, 0.0f),
+    float4(0.0f, -0.866025f, 0.5f, 0.0f),
+    float4(0.0f, -0.267617f, 0.5f, 0.0f),
+    float4(0.0f,  0.700629f, 0.5f, 0.0f),
+    float4(0.0f,  0.700629f, 0.5f, 0.0f),
+    float4(0.0f, -0.267617f, 0.5f, 0.0f),
+};
+
+static const float4 xaxis[] =
+{
+    float4(0.5f, 0.0f, 0.0f, 0.0f),
+    float4(0.5f, 0.0f, 0.0f, 0.0f),
+    float4(0.5f, -0.823639f, 0.0f, 0.0f),
+    float4(0.5f, -0.509037f, 0.0f, 0.0f),
+    float4(0.5f, 0.509037f, 0.0f, 0.0f),
+    float4(0.5f, 0.823639f, 0.0f, 0.0f),
+};
+
+uint3 calcVoxelPos(float3 pos)
+{
+	return (uint3)(pos-worldMin.xyz)*worldSize.z;
+}
+
+bool testRayAABB(inout float tmin, inout float tmax, float3 dir, float3 pos, float4 bmin, float4 bmax)
+{
+    tmin = 0;
+    tmax = 3.402823466e+38F;
+    for(int i=0; i<3; ++i){
+        if(!any(dir[i])){
+            if(pos[i]<bmin[i] || bmax[i]<pos[i]){
+                return false;
+            }
+            continue;
+        }
+        float invD = 1/dir[i];
+        float t1 = (bmin[i] - pos[i])*invD;
+        float t2 = (bmax[i] - pos[i])*invD;
+        if(t1>t2){
+            if(t2>tmin) tmin = t2;
+            if(t1<tmax) tmax = t1;
+        }else{
+            if(t1>tmin) tmin = t1;
+            if(t2<tmax) tmax = t2;
+        }
+        if(tmin>tmax){
+            return false;
+        }
+        if(tmax<0){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool traverse(float3 origin, float3 dir, out float scale)
+{
+    static const uint termFlag = (0x01U<<30);
+    static const uint dataFlag = (0x01U<<31);
+    static const uint mask = ~(0x03U<<30);
+    float tmin, tmax;
+    if(!testRayAABB(tmin, tmax, dir, origin, worldMin, worldMax)){
+        return false;
+    }
+    scale = 0;
+
+    while(tmin<tmax){
+        uint3 voxelPos = calcVoxelPos(origin + tmin*dir);
+
+        Node node = nodes[0];
+        uint next;
+        int i;
+        float size = worldSize.x;
+        for(i=info.x-1; 0<=i; --i){
+            next = (voxelPos.x >> i) & 0x01U;
+            next |= ((voxelPos.y >> i) & 0x01U)<<1;
+            next |= ((voxelPos.z >> i) & 0x01U)<<2;
+
+            if(0 != (node.next[next] & termFlag)){
+                break;
+            }
+
+            node = nodes[node.next[next] & mask];
+            size *= 0.5;
+        }
+        if(0 == (node.data & dataFlag)){
+            scale = size;
+            return true;
+        }
+        tmin += worldSize.y;
+    }
+    return false;
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    float scale;
+    if(traverse(eye.xyz, input.dir, scale)){
+        return float4(0,scale,0,1);
+    }else{
+        return float4(input.dir,1);
+    }
+}

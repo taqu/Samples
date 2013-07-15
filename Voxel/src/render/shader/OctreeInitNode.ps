@@ -1,0 +1,69 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    uint4 levelInfo; //{(voxel resolution), level, (max level), (node top)}
+}
+
+struct VSOutput
+{
+    float4 pos : SV_Position;
+    uint vertexID : Index;
+};
+
+//StructuredBuffer
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+RWStructuredBuffer<Node> nodes : register(u0);
+RWTexture3D<float> tex : register(u2);
+
+uint3 calcCoord(uint index, uint w)
+{
+    uint3 coord;
+    uint ww = w*w;
+    coord.z = index / ww;
+    uint zww = ww*coord.z;
+    coord.y = (index - zww)/w;
+    coord.x = index - zww - coord.y*w;
+    return coord;
+}
+
+void main(VSOutput input)
+{
+    static const uint termFlag = (0x01U<<30);
+    uint id = input.vertexID + levelInfo.w;
+    Node node = nodes[id];
+
+    [unroll(8)]
+    for(uint i=0; i<8; ++i){
+        node.next[i] = termFlag;
+    }
+
+    if(levelInfo.y == (levelInfo.z - 1)){
+        uint3 coord = calcCoord(input.vertexID, levelInfo.x);
+        node.data = (coord.x<<20) | (coord.y<<10) | (coord.z);
+
+        const float zero = 0;
+        coord *= 3;
+        for(uint j=0; j<3; ++j){
+            tex[coord + uint3(0,0,j)] = zero;
+            tex[coord + uint3(1,0,j)] = zero;
+            tex[coord + uint3(2,0,j)] = zero;
+
+            tex[coord + uint3(0,1,j)] = zero;
+            tex[coord + uint3(1,1,j)] = zero;
+            tex[coord + uint3(2,1,j)] = zero;
+
+            tex[coord + uint3(0,2,j)] = zero;
+            tex[coord + uint3(1,2,j)] = zero;
+            tex[coord + uint3(2,2,j)] = zero;
+        }
+
+    }else{
+        node.data = (0x01U<<31);
+    }
+    nodes[id] = node;
+}

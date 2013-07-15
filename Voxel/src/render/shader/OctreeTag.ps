@@ -1,0 +1,98 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    uint4 levelInfo; //{(voxel resolution), level, (max level), (node top)}
+}
+
+
+struct VSOutput
+{
+    float4 pos : SV_Position;
+    uint vertexID : Index;
+};
+
+uint pos3ToUint(uint3 pos)
+{
+    return ((pos.x&0x1FFU) << 20) | ((pos.y&0x1FFU) << 10) | ((pos.z&0x1FFU));
+}
+
+uint3 uintToPos3(uint x)
+{
+    return uint3((x>>20)&0x1FFU, (x>>10)&0x1FFU, (x)&0x1FFU);
+}
+
+//StructuredBuffer
+struct Voxel
+{
+    uint index;
+    uint diffuse;
+};
+
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+StructuredBuffer<Voxel> voxels : register(t0);
+RWStructuredBuffer<Node> nodes : register(u0);
+
+void main(VSOutput input)
+{
+    static const uint mask = ~(0x03U<<30);
+    static const uint flag = (0x01U<<31);
+    Voxel voxel = voxels[input.vertexID];
+    uint3 voxelPos = uintToPos3(voxel.index);
+
+    int next =0;
+    int checkIndex = 0;
+    int nodeIndex = 0;
+    uint shift;
+    uint3 pos;
+    for(uint i=1; i<=levelInfo.y; ++i){
+        shift = (levelInfo.z - i);
+        pos.x = (voxelPos.x >> shift) & 0x01U;
+        pos.y = (voxelPos.y >> shift) & 0x01U;
+        pos.z = (voxelPos.z >> shift) & 0x01U;
+        next = pos.x | (pos.y << 1) | (pos.z << 2);
+
+        nodeIndex = checkIndex;
+        checkIndex = nodes[checkIndex].next[next] & mask;
+    }
+
+    //flagged
+    switch(next)
+    {
+    case 0:
+        nodes[nodeIndex].next[0] |= flag;
+        break;
+
+    case 1:
+        nodes[nodeIndex].next[1] |= flag;
+        break;
+
+    case 2:
+        nodes[nodeIndex].next[2] |= flag;
+        break;
+
+    case 3:
+        nodes[nodeIndex].next[3] |= flag;
+        break;
+
+    case 4:
+        nodes[nodeIndex].next[4] |= flag;
+        break;
+
+    case 5:
+        nodes[nodeIndex].next[5] |= flag;
+        break;
+
+    case 6:
+        nodes[nodeIndex].next[6] |= flag;
+        break;
+
+    case 7:
+        nodes[nodeIndex].next[7] |= flag;
+        break;
+    }
+}

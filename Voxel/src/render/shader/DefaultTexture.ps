@@ -1,0 +1,72 @@
+static const float PI = 3.14159265f;
+static const float INV_PI = 0.31830988618379067153f;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 cameraPos;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+    float4 specular;
+    float4 transparent;
+}
+
+Texture2D texShadow : register(t0);
+Texture2D texAlbedo : register(t1);
+
+SamplerState samShadow : register(s0);
+SamplerState samTex : register(s1);
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float2 uv : TEXCOORD1;
+    float3 texS : TEXCOORD2;
+    float3 worldPos : TEXCOORD3;
+};
+
+void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
+{
+    float F1 = 1 - F0;
+    rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
+    rd = 1 - rs;
+}
+  
+float4 main(VSOutput input) : SV_Target
+{
+    float3 L = dlDir.xyz;
+    float3 N = normalize(input.normal);
+    float3 E = normalize(cameraPos.xyz - input.worldPos); //視線ベクトル
+    float3 H = normalize(L+E); //ハーフベクトル
+
+    //Irradiance
+    float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
+    float shadow = step(input.texS.z, shadowDepth);
+
+    float cosEH = saturate(dot(E,H));
+    float cosNL = saturate(dot(N,L));
+    float cosNH = saturate(dot(N,H));
+
+    float3 irradiance = dlColor.xyz * cosNL * shadow;
+
+    float4 albedo = texAlbedo.Sample(samTex, input.uv) * diffuse;
+
+    //BRDF
+    float rd, rs;
+    calcFresnel(rd, rs, transparent.w, cosEH);
+
+    float3 kd = albedo.xyz * rd * INV_PI;
+    float3 ks = specular.xyz * rs * pow(cosNH, specular.w);
+
+    ks *= specular.w*0.039662 + 0.090587;
+
+    float4 color;
+    color.xyz = (kd + ks)*irradiance;
+    color.w = albedo.w;
+    return color;
+}

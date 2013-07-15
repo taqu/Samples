@@ -1,0 +1,80 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    uint4 info; //{(node top), (node end), 0, 0}
+}
+
+struct VSOutput
+{
+    float4 pos : SV_Position;
+    uint vertexID : Index;
+};
+
+//StructuredBuffer
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+RWStructuredBuffer<Node> nodes : register(u0);
+RWTexture3D<float> tex : register(u1);
+
+uint pos3ToUint(uint3 pos)
+{
+    return ((pos.x&0x1FFU) << 20) | ((pos.y&0x1FFU) << 10) | ((pos.z&0x1FFU));
+}
+
+uint3 uintToPos3(uint x)
+{
+    return uint3((x>>20)&0x1FFU, (x>>10)&0x1FFU, (x)&0x1FFU);
+}
+
+uint3 unpackCoord(uint x)
+{
+    uint3 coord = uintToPos3(x);
+    coord *= 3;
+    return coord;
+}
+
+static const uint3 offset[8] =
+{
+    uint3(0,0,0),
+    uint3(1,0,0),
+    uint3(0,1,0),
+    uint3(1,1,0),
+
+    uint3(0,0,1),
+    uint3(1,0,1),
+    uint3(0,1,1),
+    uint3(1,1,1),
+};
+
+void main(VSOutput input)
+{
+    static const uint termFlag = (0x01U<<30);
+    static const uint typeFlag = (0x01U<<31);
+    static const uint mask = ~(0x03U<<30);
+    Node node = nodes[input.vertexID + info.x];
+
+
+    uint value = 0;
+    for(int i=0; i<8; ++i){
+        if(0 != (termFlag & node.next[i])){
+            continue;
+        }
+
+        Node child = nodes[node.next[i] & mask];
+        if(0 != (typeFlag & child.data)){
+            value += (child.data & mask);
+        }else{
+            if(0 != (child.next[i] & mask)){
+                value += 1;
+            }
+            //uint3 coord = unpackCoord(node.data) + offset[i];
+            //float r = tex[coord];
+            //value += (uint)(r*1024);
+        }
+    }
+    nodes[input.vertexID + info.x].data = (value/8) | typeFlag;
+}

@@ -1,0 +1,97 @@
+//#define MAXNUMVOXELS (256*256*256)
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 diffuse;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    uint4 voxelSize; //(1, voxel resolution, (voxel resolution)^2, (voxel resolution)^3)
+}
+
+struct GSOutput
+{
+    float4 position : SV_Position;
+    float4 upos : Position;
+    float4 clip : Clip;
+    float2 uv : TEXCOORD;
+    int axis : Axis;
+};
+
+float4 RGBAToFloat4(uint c)
+{
+    precise float4 ret;
+    ret.r = (float)(c & 0x000000FF) /255;
+    ret.g = (float)((c>>8) & 0x000000FF) /255;
+    ret.b = (float)((c>>16) & 0x000000FF) /255;
+    ret.a = (float)((c>>24) & 0x000000FF) /255;
+    return ret;
+}
+
+uint float4ToRGBA(precise float4 c)
+{
+    c = saturate(c);
+    c *= 255;
+    c += 0.5;
+    c = floor(c);
+
+    uint ret = ((uint)c.r)
+        | ((uint)c.g << 8)
+        | ((uint)c.b << 16)
+        | ((uint)c.a << 24);
+    return ret;
+}
+
+uint pos3ToUint(uint3 pos)
+{
+    return ((pos.x&0x1FFU) << 20)
+        | ((pos.y&0x1FFU) << 10)
+        | ((pos.z&0x1FFU));
+}
+
+//StructuredBuffer
+struct Voxel
+{
+    uint index;
+    uint diffuse;
+};
+
+RWStructuredBuffer<Voxel> bufferVoxel : register(u0);
+RWByteAddressBuffer counter : register(u1);
+
+void main(GSOutput input)
+{
+    if((input.upos.x > input.clip.x)
+        || (input.upos.y > input.clip.y)
+        || (input.upos.x < input.clip.z)
+        || (input.upos.y < input.clip.w))
+    {
+        discard;
+    }
+
+    float3 pos;
+    if(0 == input.axis){
+        //pos = input.upos.xyz * float3(0.5, -0.5, 1.0) + float3(0.5, 0.5, 0.0);
+        pos = input.upos.xyz * float3(0.5, 0.5, -1.0) + float3(0.5, 0.5, 1.0);
+    }else if(1 == input.axis){
+        //pos = input.upos.xzy * float3(0.5, -1.0, -0.5) + float3(0.5, 1.0, 0.5);
+        pos = input.upos.xzy * float3(0.5, 1.0, 0.5) + float3(0.5, 0.0, 0.5);
+    }else{
+        //pos = input.upos.zyx * float3(1.0, -0.5, -0.5) + float3(0.0, 0.5, 0.5);
+        pos = input.upos.zyx * float3(1.0, 0.5, 0.5) + float3(0.0, 0.5, 0.5);
+    }
+
+    float4 color = float4(diffuse.rgb, 1);
+
+    uint3 dim = (uint3)(pos*(float)voxelSize.y);
+
+    Voxel voxel;
+    voxel.index = pos3ToUint(dim);
+    voxel.diffuse = float4ToRGBA(color);
+
+
+    uint count;
+    counter.InterlockedAdd(0, 1, count);
+    bufferVoxel[count] = voxel;
+}

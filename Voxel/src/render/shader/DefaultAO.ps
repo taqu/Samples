@@ -1,0 +1,250 @@
+static const float PI = 3.14159265f;
+static const float INV_PI = 0.31830988618379067153f;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 cameraPos;
+
+    float4 eye; //eye
+    float4 worldMin; //voxel area
+    float4 worldMax; //voxel area
+    float4 worldSize; //world size, voxel size. inv voxel size, voxel resolution
+    int4 info; //num levels
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+    float4 specular;
+    float4 transparent;
+}
+
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float2 uv : TEXCOORD1;
+    float3 texS : TEXCOORD2;
+    float3 worldPos : TEXCOORD3;
+};
+
+
+//Texture2D texAlbedo;
+Texture2D texShadow : register(t0);
+
+SamplerState samShadow : register(s0);
+
+StructuredBuffer<Node> nodes : register(t1);
+Texture3D<float> tex : register(t2);
+SamplerState sam3DTex : register(s1);
+
+//#include "SampleAO.inc"
+
+static const float4 yaxis[] =
+{
+    float4(0.0f, 1.0f, 0.0f, PI/4),
+    float4(0.0f, 0.5f, 0.866025f, PI/4),
+    float4(0.823639f, 0.5f, 0.267617f, PI*3/20),
+    float4(0.509037f, 0.5f, -0.700629f, PI*3/20),
+    float4(-0.509037f, 0.5f, -0.700629f, PI*3/20),
+    float4(-0.823639f, 0.5f, 0.267617f, PI*3/20),
+};
+
+static const float4 zaxis[] =
+{
+    float4(0.0f, 0.0f, 1.0f, 0.0f),
+    float4(0.0f, -0.866025f, 0.5f, 0.0f),
+    float4(0.0f, -0.267617f, 0.5f, 0.0f),
+    float4(0.0f,  0.700629f, 0.5f, 0.0f),
+    float4(0.0f,  0.700629f, 0.5f, 0.0f),
+    float4(0.0f, -0.267617f, 0.5f, 0.0f),
+};
+
+static const float4 xaxis[] =
+{
+    float4(0.5f, 0.0f, 0.0f, 0.0f),
+    float4(0.5f, 0.0f, 0.0f, 0.0f),
+    float4(0.5f, -0.823639f, 0.0f, 0.0f),
+    float4(0.5f, -0.509037f, 0.0f, 0.0f),
+    float4(0.5f, 0.509037f, 0.0f, 0.0f),
+    float4(0.5f, 0.823639f, 0.0f, 0.0f),
+};
+
+static const uint3 offset[] =
+{
+    uint3(0,0,0),
+    uint3(1,0,0),
+    uint3(0,1,0),
+    uint3(1,1,0),
+    uint3(0,0,1),
+    uint3(1,0,1),
+    uint3(0,1,1),
+    uint3(1,1,1),
+};
+
+static const uint termFlag = (0x01U<<30);
+static const uint dataFlag = (0x01U<<31);
+static const uint mask = ~(0x03U<<30);
+
+uint3 uintToPos3(uint x)
+{
+    return uint3((x>>20)&0x1FFU, (x>>10)&0x1FFU, (x)&0x1FFU);
+}
+
+uint3 unpackCoord(uint x)
+{
+    uint3 coord = uintToPos3(x);
+    coord *= 3;
+    return coord;
+}
+
+uint3 calcVoxelPos(float3 pos)
+{
+	return (uint3)(pos-worldMin.xyz)*worldSize.z;
+}
+
+bool testRayAABB(inout float tmin, inout float tmax, float3 dir, float3 pos, float4 bmin, float4 bmax)
+{
+    tmin = 0;
+    tmax = 3.402823466e+38F;
+    for(int i=0; i<3; ++i){
+        if(!any(dir[i])){
+            if(pos[i]<bmin[i] || bmax[i]<pos[i]){
+                return false;
+            }
+            continue;
+        }
+        float invD = 1/dir[i];
+        float t1 = (bmin[i] - pos[i])*invD;
+        float t2 = (bmax[i] - pos[i])*invD;
+        if(t1>t2){
+            if(t2>tmin) tmin = t2;
+            if(t1<tmax) tmax = t1;
+        }else{
+            if(t1>tmin) tmin = t1;
+            if(t2<tmax) tmax = t2;
+        }
+        if(tmin>tmax){
+            return false;
+        }
+        if(tmax<0){
+            return false;
+        }
+    }
+    return true;
+}
+
+Node traverse(float3 pos, int level, inout uint3 voxelPos, out float radius)
+{
+    voxelPos = calcVoxelPos(pos);
+    Node node = nodes[0];
+    float s = worldSize.x;
+    uint next;
+    for(int i=info.x-1; level<=i; --i){
+        next = (voxelPos.x >> i) & 0x01U;
+        next |= ((voxelPos.y >> i) & 0x01U)<<1;
+        next |= ((voxelPos.z >> i) & 0x01U)<<2;
+        if(0 != (node.next[next] & termFlag)){
+            break;
+        }
+        node = nodes[node.next[next] & mask];
+        s *= 0.5;
+    }
+    radius = s;
+    return node;
+}
+
+float sampleVisibility(float3 origin, float3 dir)
+{
+    float tmin, tmax;
+    if(!testRayAABB(tmin, tmax, dir, origin, worldMin, worldMax)){
+        return 0;
+    }
+
+    tmin += eye.w;//offset
+    float3 pos = origin + tmin*dir;
+
+    float visibility = 0.0f;
+    float radius;
+    uint3 voxelPos;
+    for(int level=0; level<info.x; ++level){
+        Node node = traverse(pos, level, voxelPos, radius);
+        if(0 == (node.data & dataFlag)){
+            int shift = (info.x-level-1);
+            uint next = (voxelPos.x >> shift) & 0x01U;
+            next |= ((voxelPos.y >> shift) & 0x01U)<<1;
+            next |= ((voxelPos.z >> shift) & 0x01U)<<2;
+            if(0 != (node.next[next] & mask)){
+                visibility += 1;
+                break;
+            }
+        }else{
+            visibility += (node.data & mask)/1024;
+        }
+        tmin += radius;
+        pos = origin + tmin*dir;
+        if(tmax<=tmin){
+            break;
+        }
+    }
+    return visibility;
+}
+
+void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
+{
+    float F1 = 1 - F0;
+    rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
+    rd = 1 - rs;
+}
+  
+float4 main(VSOutput input) : SV_Target
+{
+    float3 L = dlDir.xyz;
+    float3 N = normalize(input.normal);
+    float3 E = normalize(cameraPos.xyz - input.worldPos); //視線ベクトル
+    float3 H = normalize(L+E); //ハーフベクトル
+
+    //Irradiance
+    float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
+    float shadow = 1;//step(input.texS.z, shadowDepth);
+
+    float cosEH = saturate(dot(E,H));
+    float cosNL = saturate(dot(N,L));
+    float cosNH = saturate(dot(N,H));
+
+    float3 irradiance = dlColor.xyz * cosNL * shadow;
+
+    //BRDF
+    float rd, rs;
+    calcFresnel(rd, rs, transparent.w, cosEH);
+
+    float3 kd = diffuse.xyz * rd * INV_PI;
+    float3 ks = specular.xyz * rs * pow(cosNH, specular.w);
+
+    ks *= specular.w*0.039662 + 0.090587;
+
+    static const int Count=6;
+    float visibility = 0;
+    for(int i=0; i<Count; ++i){
+        float3 dir;
+        dir.x = dot(N, xaxis[i].xyz);
+        dir.y = dot(N, yaxis[i].xyz);
+        dir.z = dot(N, zaxis[i].xyz);
+        visibility += sampleVisibility(input.worldPos, dir) * yaxis[i].w;
+    }
+    visibility = saturate(1-visibility/Count);
+
+    float4 color;
+    color.xyz = (kd + ks)*irradiance * visibility;
+    color.w = diffuse.w;
+    return color;
+}

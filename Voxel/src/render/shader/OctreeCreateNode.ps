@@ -1,0 +1,39 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    uint4 levelInfo; //{(voxel resolution), level, (max level), (node top)}
+}
+
+struct VSOutput
+{
+    float4 pos : SV_Position;
+    uint vertexID : Index;
+};
+
+//StructuredBuffer
+struct Node
+{
+    uint next[8];
+    uint pos;
+    uint data;
+};
+
+RWStructuredBuffer<Node> nodes : register(u0);
+RWByteAddressBuffer counter : register(u1);
+
+void main(VSOutput input)
+{
+    Node node = nodes[input.vertexID + levelInfo.w];
+
+    static const uint flag = (0x01U<<31);
+    static const uint mask = ~(0x01U<<30);
+    uint count;
+    [unroll(8)]
+    for(int i=0; i<8; ++i){
+        if((node.next[i] & flag) != 0){
+            counter.InterlockedAdd(0, 1, count);
+            node.next[i] |= count;
+            node.next[i] &= mask;
+        }
+    }
+    nodes[input.vertexID + levelInfo.w] = node;
+}

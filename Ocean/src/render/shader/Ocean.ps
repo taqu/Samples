@@ -1,0 +1,128 @@
+static const float PI = 3.14159265f;
+static const float INV_PI = 0.31830988618379067153f;
+static const float BLEND_SMOOTH_START = 0;
+static const float BLEND_SMOOTH_END = 7000;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 cameraPos;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+    float4 specular;
+    float4 transparent;
+    float4 noiseUV; //(uv base, uv offset)
+    float4 noiseAmplitude; //(amplitude, noise size)
+    float4 noiseOctave;
+    float4 bendParam;
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float3 worldPos : TEXCOORD1;
+    float2 tex0 : TEXCOORD2;
+};
+
+Texture2D texNoise : register(t0);
+SamplerState samTex : register(s0);
+
+TextureCube texReflect : register(t1);
+SamplerState sampReflect : register(s1);
+
+#if 0
+Texture2D texDisplace : register(t0);
+SamplerState samTex : register(s0);
+
+void calcNormalFolding(out float3 normal, float2 uv)
+{
+    uint w,h;
+    texDisplace.GetDimensions(w, h);
+
+    float2 texel = float2(1/(float)w, 1/(float)h);
+
+    float3 left = texDisplace.Sample(samTex, float2(uv.x-texel.x, uv.y)).xyz;
+    float3 right = texDisplace.Sample(samTex, float2(uv.x+texel.x, uv.y)).xyz;
+
+    float3 back = texDisplace.Sample(samTex, float2(uv.x, uv.y-texel.y)).xyz;
+    float3 front = texDisplace.Sample(samTex, float2(uv.x, uv.y+texel.y)).xyz;
+
+    normal = float3(-(right.z - left.z), info.z, -(front.z - back.z));
+    //normal = float3(-(right.z - left.z), -(front.z - back.z), info.z);
+    //float scale = info.x*info.y;
+    //float2 dx = (right.xy - left.xy) * scale;
+    //float2 dy = (front.xy - back.xy) * scale;
+
+    //Jacobian
+    //float J = (dx.x+1)*(dy.y+1) - dx.y*dy.x;
+    //float fold = max(1-J,0);
+}
+#endif
+
+void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
+{
+    float F1 = 1 - F0;
+    rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
+    rd = 1 - rs;
+}
+  
+float4 main(VSOutput input) : SV_Target
+{
+    float3 L = dlDir.xyz;
+    //float3 N = normalize(input.normal);
+    float3 eyeVec = cameraPos.xyz - input.worldPos;
+    float3 E = normalize(eyeVec); //視線ベクトル
+    float3 H = normalize(L+E); //ハーフベクトル
+
+    //Noise
+    //float blendFactor = smoothstep(BLEND_SMOOTH_START, BLEND_SMOOTH_END, length(eyeVec.xz));
+    //blendFactor = ( blendFactor*blendFactor );
+
+    float2 noiseTex0 = input.tex0 * noiseAmplitude.w + noiseUV.xy;
+    float2 noiseTex1 = noiseTex0 * noiseOctave.x + noiseUV.zw;
+    float2 noiseTex2 = noiseTex0 * noiseOctave.y + noiseUV.zw;
+    float2 noiseTex3 = noiseTex0 * noiseOctave.z + noiseUV.zw;
+
+    float3 amplitude = noiseAmplitude.xyz;
+    float2 noise0 = texNoise.Sample(samTex, noiseTex1).rg * amplitude.x;
+    float2 noise1 = texNoise.Sample(samTex, noiseTex2).rg * amplitude.y;
+    float2 noise2 = texNoise.Sample(samTex, noiseTex3).rg * amplitude.z;
+
+    float2 noise = noise0 + noise1 + noise2;
+    float ny = sqrt(max(0, 1-dot(noise, noise)));
+
+    float3 N = normalize(input.normal + float3(noise.x, ny, noise.y));
+    float3 reflected = reflect(-E, N);
+
+    //Irradiance
+    //float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
+    float shadow = 1;//step(input.texS.z, shadowDepth);
+
+    float cosEH = saturate(dot(E,H));
+    float cosNL = saturate(dot(N,L));
+    float cosNH = saturate(dot(N,H));
+
+    float3 irradiance = dlColor.xyz * cosNL * shadow;
+
+    //BRDF
+    float rd, rs;
+    calcFresnel(rd, rs, transparent.w, cosEH);
+
+    float3 reflectedColor = texReflect.Sample(sampReflect, reflected).xyz;
+    reflectedColor = reflectedColor*reflectedColor;
+
+    float3 kd = diffuse.xyz * rd * INV_PI;
+    float3 ks = reflectedColor.xyz * rs * (0.05 + pow(cosNH, specular.w));
+
+    ks *= specular.w*0.039662 + 0.090587;
+
+    float4 color;
+    color.xyz = (kd + ks)*irradiance;
+    color.w = diffuse.w;
+    return color;
+}

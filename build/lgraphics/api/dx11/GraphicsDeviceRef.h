@@ -14,6 +14,7 @@ struct IDXGISwapChain;
 namespace lgraphics
 {
     struct InitParam;
+    class BlendStateRef;
 
     //Bufferの場合はバイト単位、テクスチャの場合はテクセル単位
     struct Box
@@ -52,38 +53,19 @@ namespace lgraphics
             CmpFunc cmpFunc_;
         };
 
-        DepthStencilStateRef()
-            :state_(NULL)
-        {}
-
+        DepthStencilStateRef();
         DepthStencilStateRef(const DepthStencilStateRef& rhs);
-
-        ~DepthStencilStateRef()
-        {
-            void destroy();
-        }
+        ~DepthStencilStateRef();
 
         void destroy();
 
-        bool valid() const{ return (NULL != state_);}
-
-        DepthStencilStateRef& operator=(const DepthStencilStateRef& rhs)
-        {
-            DepthStencilStateRef tmp(rhs);
-            tmp.swap(*this);
-            return *this;
-        }
-
-        void swap(DepthStencilStateRef& rhs)
-        {
-            lcore::swap(state_, rhs.state_);
-        }
+        bool valid() const;
+        DepthStencilStateRef& operator=(const DepthStencilStateRef& rhs);
+        void swap(DepthStencilStateRef& rhs);
     private:
         friend class GraphicsDeviceRef;
 
-        explicit DepthStencilStateRef(ID3D11DepthStencilState* state)
-            :state_(state)
-        {}
+        explicit DepthStencilStateRef(ID3D11DepthStencilState* state);
 
         ID3D11DepthStencilState* state_;
     };
@@ -185,7 +167,7 @@ namespace lgraphics
 
         inline void setRasterizerState(RasterizerState state);
 
-        inline void setBlendState(ID3D11BlendState* state);
+        void setBlendState(BlendStateRef& state);
         inline void setBlendState(BlendState state);
         inline void setDepthStencilState(DepthStencilState state);
 
@@ -261,7 +243,7 @@ namespace lgraphics
             const DepthStencilStateRef::StencilOPDesc& frontFace,
             const DepthStencilStateRef::StencilOPDesc& backFace);
 
-        void setDepthStencilState(DepthStencilStateRef& state);
+        void setDepthStencilState(DepthStencilStateRef& state, u32 stencilRef);
 
     private:
         static const u32 MaxShaderResources = 32;
@@ -371,14 +353,9 @@ namespace lgraphics
         context_->RSSetState(rasterizerStates_[state]);
     }
 
-    inline void GraphicsDeviceRef::setBlendState(ID3D11BlendState* state)
-    {
-        context_->OMSetBlendState(state, blendFactors_, 0xFFFFFFFFU);
-    }
-
     inline void GraphicsDeviceRef::setBlendState(BlendState state)
     {
-        setBlendState(blendStates_[state]);
+        context_->OMSetBlendState(blendStates_[state], blendFactors_, 0xFFFFFFFFU);
     }
 
     inline void GraphicsDeviceRef::setDepthStencilState(DepthStencilState state)

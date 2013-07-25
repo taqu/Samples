@@ -90,6 +90,7 @@ namespace lmath
         inline void mulVector(const Matrix44& m, const Vector4& v);
 
         void rotate(const Quaternion& rotation);
+        void rotate(const Quaternion& rotation, const Vector4& v);
 
         inline void swap(Vector4& rhs);
 

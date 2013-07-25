@@ -313,12 +313,12 @@ HASH_TYPE_TRAITS_PRIMITIVE_POINTER_CREATOR(double)
 
             pointer allocate(size_type size, const void*) const
             {
-                return pointer( LIME_OPERATOR_NEW(size * sizeof(value_type)) );
+                return pointer( LIME_MALLOC(size * sizeof(value_type)) );
             }
 
             void deallocate(pointer ptr, size_type = 0) const
             {
-                LIME_OPERATOR_DELETE(ptr);
+                LIME_FREE(ptr);
             }
 
             void construct(pointer ptr) const
@@ -403,12 +403,12 @@ HASH_TYPE_TRAITS_PRIMITIVE_POINTER_CREATOR(double)
 
             pointer allocate(size_type size, const void*) const
             {
-                return pointer( ::operator new(size * sizeof(value_type)) );
+                return pointer( LIME_MALLOC(size * sizeof(value_type)) );
             }
 
             void deallocate(pointer ptr, size_type = 0) const
             {
-                LIME_OPERATOR_DELETE(ptr);
+                LIME_FREE(ptr);
             }
 
             void construct(pointer ptr) const

@@ -29,7 +29,7 @@ namespace lanim
     static const u8 LANIM_MAX_SKINNING_MATRICES = (64-1);
 #endif
 
-    static const u32 LANIM_MAX_PALLET_MATRICES = 256;
+    static const u32 LANIM_MAX_PALLET_MATRICES = 128;
 
     static const u32 LANIM_MAX_NAME_SIZE = 24;
 
@@ -54,6 +54,8 @@ namespace lanim
         JointType_Hide,        //非表示
         JointType_Twist,       //捻り
         JointType_FreeRot,     //回転運動。捻り影響下。先端からの捻りの影響を受ける
+
+        JointType_End, //ジョイント連結の終端
         JointType_Num,
     };
 

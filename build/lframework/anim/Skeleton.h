@@ -69,11 +69,6 @@ namespace lanim
 
         /// ハッシュテーブル再計算
         void recalcHash();
-
-        //bool createFromMemory(const s8* data, u32 bytes);
-        //u32 calcSizeToSave() const;
-        //void saveToMemory(s8* data) const;
-
     private:
         friend inline void intrusive_ptr_addref(Skeleton* ptr);
         friend inline void intrusive_ptr_release(Skeleton* ptr);

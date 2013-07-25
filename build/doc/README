@@ -19,8 +19,6 @@ google-sparsehash google-sparsehash/COPYING
 libjpeg           libjpeg/LICENSE
 libpng            libpng/README
 zlib              zlib/README
-Bullet            bullet/LICENSE
-Mersenne Twister  MersenneTwister/LICENSE
 
 =================================================
 === Copyright
@@ -38,13 +36,6 @@ libpng version 1.5.0 - January 6, 2011
 libjpeg:
 This software is based in part on the work of the Independent JPEG Group.
 Copyright (c) 1991-2010, Thomas G. Lane, Guido Vollbeding.
-
-Bullet:
-version 2.78
-Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
-
-Mersenne Twister:
-Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura, All rights reserved.                    Copyright (C) 2005, Mutsuo Saito, All rights reserved.
 
 =================================================
 免責条項

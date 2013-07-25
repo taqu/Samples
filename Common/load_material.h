@@ -20,7 +20,7 @@ namespace load
 
         lmath::Vector4 diffuse_; //rgba
         lmath::Vector4 specular_; //rgb shininess
-        lmath::Vector4 transparent_; //rgb refractive index
+        lmath::Vector4 shadow_; //shadow rate, 0, 0 refractive index
 
         u32 flags_;
 

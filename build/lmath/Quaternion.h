@@ -78,6 +78,8 @@ namespace lmath
         void getMatrix(lmath::Matrix34& mat) const;
         void getMatrix(lmath::Matrix44& mat) const;
 
+        void getEulerAngles(f32& x, f32& y, f32& z);
+
         void exp(f32 exponent);
 
         void mul(const Quaternion& q0, const Quaternion& q1);

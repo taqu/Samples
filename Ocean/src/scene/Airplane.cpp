@@ -274,7 +274,7 @@ namespace
     {
         material_.diffuse_.set(1.0f, 1.0f, 1.0f, 1.0f);
         material_.specular_.set(1.0f, 1.0f, 1.0f, 8.0f);
-        material_.transparent_.set(1.0f, 1.0f, 1.0f, 1.6f);
+        material_.shadow_.set(1.0f, 1.0f, 1.0f, 1.6f);
         material_.flags_ = render::Material::Flag_CastShadow | render::Material::Flag_RecieveShadow;
 
         lgraphics::InputLayoutRef inputLayout;

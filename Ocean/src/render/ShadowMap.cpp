@@ -3,7 +3,7 @@
 @author t-sakai
 @date 2012/08/27 create
 */
-#include "../stdafx.h"
+#include "stdafx.h"
 
 #include "ShadowMap.h"
 

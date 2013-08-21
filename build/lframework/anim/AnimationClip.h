@@ -39,6 +39,9 @@ namespace lanim
 
         /// 名前セット
         inline void setNameMemory(const char* name, u32 size);
+
+        static bool serialize(lcore::ostream& os, AnimationClip::pointer& anim);
+        static bool deserialize(AnimationClip::pointer& anim, lcore::istream& is);
     private:
         AnimationClip(const AnimationClip&);
         AnimationClip& operator=(const AnimationClip&);

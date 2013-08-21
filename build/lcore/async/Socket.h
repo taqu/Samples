@@ -131,9 +131,8 @@ namespace lcore
     static const u64 InAddrAny = INADDR_ANY;
 
     class SocketBase;
-    class SocketClient;
-    class SocketServer;
     class FDSet;
+    class NetworkBuffer;
 
 #ifndef _WIN32
     typedef s32 SOCKET;
@@ -273,7 +272,7 @@ namespace lcore
         @param protocol ... プロトコル
         @param flag ... フラグ
         */
-        bool get(
+        s32 get(
             const Char* node,
             const Char* service,
             Family family,
@@ -336,6 +335,7 @@ namespace lcore
         bool valid() const{ return socket_ != INVALID_SOCKET;}
 
         s32 setOption(SocketOption name, const Char* val, s32 length);
+        s32 getOption(SocketOption name, Char* val, s32* length);
 
         template<class T>
         s32 setOption(SocketOption name, const T* val)
@@ -377,6 +377,7 @@ namespace lcore
 
     protected:
         friend class FDSet;
+        friend class NetworkBuffer;
 
         SocketBase();
 
@@ -426,7 +427,7 @@ namespace lcore
         @param addr ... 出力。接続先情報
         @param addrlen ... 接続先情報サイズ
         */
-        bool accept(SocketClient& socket, SOCKADDR* addr, s32* addrlen);
+        bool accept(SocketBase& socket, SOCKADDR* addr, s32* addrlen);
 
 
         /// スワップ
@@ -484,16 +485,16 @@ namespace lcore
 
     //----------------------------------------------------
     //---
-    //--- SocketClient
+    //--- Socket
     //---
     //----------------------------------------------------
     /**
-    @brief クライアントソケット
+    @brief ソケット
     */
-    class SocketClient : public SocketBase
+    class Socket : public SocketBase
     {
     public:
-        SocketClient()
+        Socket()
         {}
 
         /**
@@ -502,11 +503,11 @@ namespace lcore
         @param protocol ... プロトコル
         @param socket ... ソケットハンドル
         */
-        SocketClient(Family family, SocketType type, Protocol protocol, SOCKET socket)
+        Socket(Family family, SocketType type, Protocol protocol, SOCKET socket)
             :SocketBase(family, type, protocol, socket)
         {}
 
-        virtual ~SocketClient()
+        virtual ~Socket()
         {}
 
         /**
@@ -526,40 +527,6 @@ namespace lcore
         {
             return SocketBase::connect(info);
         }
-
-        /// スワップ
-        inline void swap(SocketClient& rhs)
-        {
-            SocketBase::swap(rhs);
-        }
-    };
-
-    //----------------------------------------------------
-    //---
-    //--- SocketServer
-    //---
-    //----------------------------------------------------
-    /**
-    @brief サーバソケット
-    */
-    class SocketServer : public SocketBase
-    {
-    public:
-        SocketServer()
-        {}
-
-        /**
-        @param family ... プロトコルファミリ
-        @param type ... 通信方式
-        @param protocol ... プロトコル
-        @param socket ... ソケットハンドル
-        */
-        SocketServer(Family family, SocketType type, Protocol protocol, SOCKET socket)
-            :SocketBase(family, type, protocol, socket)
-        {}
-
-        virtual ~SocketServer()
-        {}
 
         /**
         @brief ソケットとアドレス情報を結びつける
@@ -596,13 +563,13 @@ namespace lcore
         @param addr ... 出力。接続先情報
         @param addrlen ... 接続先情報サイズ
         */
-        inline bool accept(SocketClient& socket, SOCKADDR* addr, s32* addrlen)
+        inline bool accept(SocketBase& socket, SOCKADDR* addr, s32* addrlen)
         {
             return SocketBase::accept(socket, addr, addrlen);
         }
 
         /// スワップ
-        inline void swap(SocketServer& rhs)
+        inline void swap(Socket& rhs)
         {
             SocketBase::swap(rhs);
         }

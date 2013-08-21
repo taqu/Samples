@@ -219,7 +219,7 @@ namespace
     class Pack
     {
     public:
-        Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile);
+        Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile);
 
         void save(Node& root, lcore::u8* buffer);
     private:
@@ -231,11 +231,12 @@ namespace
         FileEntryVector& entries_;
         lcore::ofstream enumFile_;
         lcore::ofstream listFile_;
+        lcore::ofstream listFloatFile_;
 
         lcore::u8* buffer_;
     };
 
-    Pack::Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile)
+    Pack::Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile)
         :padding_(padding)
         ,size_(size)
         ,entries_(entries)
@@ -246,6 +247,10 @@ namespace
 
         if(NULL != listFile){
             listFile_.open(listFile, lcore::ios::binary);
+        }
+
+        if(NULL != listFloatFile){
+            listFloatFile_.open(listFloatFile, lcore::ios::binary);
         }
     }
 
@@ -288,7 +293,22 @@ namespace
         }
 
         if(listFile_.is_open()){
-            listFile_.print("{%d, %d, %d, %d},\n", rect.left_, rect.top_, rect.right_, rect.bottom_);
+            listFile_.print("{%d, %d, %d, %d},\n", rect.left_ + padding_, rect.top_ + padding_, rect.right_ - padding_, rect.bottom_ - padding_);
+        }
+
+        if(listFloatFile_.is_open()){
+            lcore::f64 left = rect.left_ + padding_;
+            lcore::f64 top = rect.top_ + padding_;
+            lcore::f64 right = rect.right_ - padding_;
+            lcore::f64 bottom = rect.bottom_ - padding_;
+
+            left /= size_;
+            top /= size_;
+            right /= size_;
+            bottom /= size_;
+
+            listFloatFile_.print("{static_cast<lcore::f32>(%f), static_cast<lcore::f32>(%f), static_cast<lcore::f32>(%f), static_cast<lcore::f32>(%f)},\n", left, top, right, bottom);
+
         }
 
         lcore::u32 w = entry.paddedWidth_ - 2*padding_;
@@ -346,6 +366,7 @@ int main(int argc, char** argv)
         std::cerr << "options:" << std::endl;
         std::cerr << "\t-enum <output name list file>\t(-enum enum.txt)" << std::endl;
         std::cerr << "\t-list <output rectangle list file>\t(-list list.txt)" << std::endl;
+        std::cerr << "\t-flist <output rectangle list float uv file>\t(-flist flist.txt)" << std::endl;
         std::cerr << "\t-size <output image size>\t(-size 1024)" << std::endl;
         std::cerr << "\t-pad <padding width>\t(-pad 1)" << std::endl;
 
@@ -357,6 +378,7 @@ int main(int argc, char** argv)
     int outIndex = -1;
     int enumIndex = -1;
     int listIndex = -1;
+    int listFloatIndex = -1;
     int padding = 1;
     int size = 1024;
     for(int i=1; i<argc; ++i){
@@ -372,6 +394,13 @@ int main(int argc, char** argv)
                 listIndex = j;
                 ++i;
             }
+        }else if(strcmp(argv[i], "-flist") == 0){
+            int j = i+1;
+            if(j<argc){
+                listFloatIndex = j;
+                ++i;
+            }
+
         }else if(strcmp(argv[i], "-size") == 0){
             int j = i+1;
             if(j<argc){
@@ -504,7 +533,9 @@ int main(int argc, char** argv)
     
     lcore::Char* enumFile = (0<=enumIndex)? argv[enumIndex] : NULL;
     lcore::Char* listFile = (0<=listIndex)? argv[listIndex] : NULL;
-    Pack pack(padding, size, entries, enumFile, listFile);
+    lcore::Char* listFloatFile = (0<=listFloatIndex)? argv[listFloatIndex] : NULL;
+
+    Pack pack(padding, size, entries, enumFile, listFile, listFloatFile);
 
     lcore::u8* buffer = new lcore::u8[size*size*4];
     lcore::memset(buffer, 0, size*size*4);

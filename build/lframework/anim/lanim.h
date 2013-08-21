@@ -8,6 +8,13 @@
 */
 #include <lcore/lcore.h>
 #include <lcore/String.h>
+#include <lgraphics/lgraphicscore.h>
+
+namespace lcore
+{
+    class ostream;
+    class istream;
+}
 
 namespace lanim
 {
@@ -26,10 +33,10 @@ namespace lanim
 #if LIME_USE_DUAL_QUATERNION_FOR_SKINNING
     static const u8 LANIM_MAX_SKINNING_MATRICES = (100-1);
 #else
-    static const u8 LANIM_MAX_SKINNING_MATRICES = (64-1);
+    static const u8 LANIM_MAX_SKINNING_MATRICES = lgraphics::LIME_MAX_SKINNING_MATRICES;
 #endif
 
-    static const u32 LANIM_MAX_PALLET_MATRICES = 128;
+    static const u32 LANIM_MAX_PALLET_MATRICES = LANIM_MAX_SKINNING_MATRICES;
 
     static const u32 LANIM_MAX_NAME_SIZE = 24;
 
@@ -64,6 +71,9 @@ namespace lanim
         JointFlag_IKLimitHeading = (0x01U << 0), //曲げる軸を制限する
         JointFlag_Num = 1,
     };
+
+    void write(lcore::ostream& os, const Name& name);
+    void read(Name& name, lcore::istream& is);
 }
 
 #endif //INC_LANIM_H__

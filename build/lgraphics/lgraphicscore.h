@@ -42,12 +42,6 @@ namespace lgraphics
 
     static const u32 LIME_MAX_VERTEX_STREAMS = 2; //最大頂点ストリーム数
 
-    static const u32 LIME_MAX_PALLET_MATRICES = 256;
-
-    static const u32 LIME_MAX_NAME_SIZE = (24 - 1);
-
-    static const u32 LIME_MAX_ANIM_NODE = 512;
-
 #if defined(LIME_GLES1) || defined(LIME_GLES2)
 #define LIME_GL (1)
 #endif
@@ -100,7 +94,7 @@ namespace lgraphics
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (80);
+static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (64);
 
 #elif defined(LIME_DX11)
 //----------------------------------------------------------
@@ -110,7 +104,7 @@ static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (80);
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (80);
+static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (256-1);
 static const u32 MaxRenderTargets = 8;
 
 #elif defined(LIME_GLES1)

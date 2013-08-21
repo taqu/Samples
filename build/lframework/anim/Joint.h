@@ -42,6 +42,7 @@ namespace lanim
         u8 getFlag() const{ return flag_;}
         void setFlag(u8 flag){ flag_ = flag;}
 
+        inline Joint& operator=(const Joint& rhs);
     private:
         u8 parentIndex_;
         u8 subjectTo_;
@@ -49,5 +50,15 @@ namespace lanim
         u8 flag_;
         lmath::Vector3 position_; /// オブジェクトローカル位置
     };
+
+    inline Joint& Joint::operator=(const Joint& rhs)
+    {
+        parentIndex_ = rhs.parentIndex_;
+        subjectTo_ = rhs.subjectTo_;
+        type_ = rhs.type_;
+        flag_ = rhs.flag_;
+        position_ = rhs.position_;
+        return *this;
+    }
 }
 #endif //INC_LANIM_JOINT_H__

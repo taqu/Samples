@@ -7,7 +7,7 @@
 
 #include <lframework/scene/scene.h>
 
-#include "Material.h"
+#include "render/Material.h"
 
 namespace render
 {

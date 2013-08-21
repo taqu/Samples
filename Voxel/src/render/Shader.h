@@ -7,7 +7,7 @@
 */
 #include <lgraphics/api/ConstantBufferRef.h>
 
-#include "render.h"
+#include "render/render.h"
 #include "ShaderBase.h"
 #include "ShaderType.h"
 
@@ -488,7 +488,7 @@ namespace render
         {
             lmath::Vector4 diffuse_;
             lmath::Vector4 specular_;
-            lmath::Vector4 transparent_;
+            lmath::Vector4 shadow_;
         };
 
         DefaultAOPS(const lgraphics::PixelShaderRef& ref)

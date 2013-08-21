@@ -84,18 +84,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\Input.cpp" />
+    <ClCompile Include="..\Common\render\AnimObject.cpp" />
+    <ClCompile Include="..\Common\render\Geometry.cpp" />
+    <ClCompile Include="..\Common\render\Material.cpp" />
+    <ClCompile Include="..\Common\render\Mesh.cpp" />
+    <ClCompile Include="..\Common\render\Node.cpp" />
+    <ClCompile Include="..\Common\render\Object.cpp" />
+    <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\load\ModelLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render\DebugDraw.cpp" />
-    <ClCompile Include="src\render\Geometry.cpp" />
     <ClCompile Include="src\render\GPUOctree.cpp" />
     <ClCompile Include="src\render\InputLayoutFactory.cpp" />
-    <ClCompile Include="src\render\Material.cpp" />
-    <ClCompile Include="src\render\Mesh.cpp" />
-    <ClCompile Include="src\render\Node.cpp" />
-    <ClCompile Include="src\render\Object.cpp" />
     <ClCompile Include="src\render\Rectangle.cpp" />
     <ClCompile Include="src\render\Renderer.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
@@ -104,22 +106,30 @@
     <ClCompile Include="src\render\ShadowMap.cpp" />
     <ClCompile Include="src\scene\DebugCamera.cpp" />
     <ClCompile Include="src\System.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\Input.h" />
+    <ClInclude Include="..\Common\load\load.h" />
+    <ClInclude Include="..\Common\load\load_geometry.h" />
+    <ClInclude Include="..\Common\load\load_material.h" />
+    <ClInclude Include="..\Common\load\load_mesh.h" />
+    <ClInclude Include="..\Common\load\load_node.h" />
+    <ClInclude Include="..\Common\load\load_texture.h" />
+    <ClInclude Include="..\Common\render\AnimObject.h" />
+    <ClInclude Include="..\Common\render\Geometry.h" />
+    <ClInclude Include="..\Common\render\Material.h" />
+    <ClInclude Include="..\Common\render\Mesh.h" />
+    <ClInclude Include="..\Common\render\Node.h" />
+    <ClInclude Include="..\Common\render\Object.h" />
+    <ClInclude Include="..\Common\render\render.h" />
+    <ClInclude Include="..\Common\stdafx.h" />
+    <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\load\ModelLoader.h" />
     <ClInclude Include="src\render\DebugDraw.h" />
-    <ClInclude Include="src\render\Geometry.h" />
     <ClInclude Include="src\render\GPUOctree.h" />
     <ClInclude Include="src\render\InputLayoutFactory.h" />
-    <ClInclude Include="src\render\Material.h" />
-    <ClInclude Include="src\render\Mesh.h" />
-    <ClInclude Include="src\render\Node.h" />
-    <ClInclude Include="src\render\Object.h" />
     <ClInclude Include="src\render\Rectangle.h" />
-    <ClInclude Include="src\render\render.h" />
     <ClInclude Include="src\render\Renderer.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\ShaderBase.h" />
@@ -128,7 +138,6 @@
     <ClInclude Include="src\render\ShadowMap.h" />
     <ClInclude Include="src\scene\DebugCamera.h" />
     <ClInclude Include="src\System.h" />
-    <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Widget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

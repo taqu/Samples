@@ -11,16 +11,17 @@
 #include <lgraphics/api/IndexBufferRef.h>
 #include <lgraphics/io11/IODDS.h>
 
-#include "../System.h"
-
-#include "load_geometry.h"
-#include "load_material.h"
-#include "load_mesh.h"
-#include "load_node.h"
-#include "load_texture.h"
+#include "load/load_geometry.h"
+#include "load/load_material.h"
+#include "load/load_mesh.h"
+#include "load/load_node.h"
+#include "load/load_texture.h"
 
 #include "render/Object.h"
+#include "render/AnimObject.h"
 #include <lcore/liostream.h>
+
+#include "System.h"
 
 namespace load
 {
@@ -61,6 +62,55 @@ namespace load
         if(!ret){
             return false;
         }
+
+        return loadInternal(obj);
+    }
+
+    //---------------------------------------------
+    // オブジェクトロード
+    bool ModelLoader::load(render::AnimObject& obj, u32 numSkinningMatrices)
+    {
+        u32 numGeometries = header_.elems_[Elem_Geometry].number_;
+        u32 numMeshes = header_.elems_[Elem_Mesh].number_;
+        u32 numMaterials = header_.elems_[Elem_Material].number_;
+        u32 numNodes = header_.elems_[Elem_Node].number_;
+        u32 numTextures = header_.elems_[Elem_Texture].number_;
+
+        bool ret = obj.create(
+            numGeometries,
+            numMeshes,
+            numMaterials,
+            numNodes,
+            numTextures,
+            numSkinningMatrices);
+
+        if(!ret){
+            return false;
+        }
+
+        ret = loadInternal(obj);
+
+        //ノードに行列セット
+        if(ret){
+            for(u32 i=0; i<obj.getNumNodes(); ++i){
+                obj.getNode(i).numSkinningMatrices_ = numSkinningMatrices;
+                obj.getNode(i).skinningMatrices_ = obj.getSkinningMatrices();
+            }
+        }
+
+        return ret;
+    }
+
+    //---------------------------------------------
+    // オブジェクトロード
+    bool ModelLoader::loadInternal(render::Object& obj)
+    {
+        u32 numGeometries = header_.elems_[Elem_Geometry].number_;
+        u32 numMeshes = header_.elems_[Elem_Mesh].number_;
+        u32 numMaterials = header_.elems_[Elem_Material].number_;
+        u32 numNodes = header_.elems_[Elem_Node].number_;
+        u32 numTextures = header_.elems_[Elem_Texture].number_;
+
 
         {//ジオメトリロード
             for(u32 i=0; i<numGeometries; ++i){
@@ -139,14 +189,14 @@ namespace load
 
         {
             //lcore::ofstream file("log.txt", lcore::ios::binary);
-            for(u32 i=0; i<obj.getNumNodes(); ++i){
-                render::Node& node = obj.getNode(i);
-                node.calcLocalMatrix();
+            //for(u32 i=0; i<obj.getNumNodes(); ++i){
+            //    render::Node& node = obj.getNode(i);
+            //    node.calcLocalMatrix();
                 //file.print("node:%d, parent:%d\n", node.index_, node.parentIndex_);
                 //file.print("scale: %f, %f, %f\n", node.scale_.x_, node.scale_.y_, node.scale_.z_);
                 //file.print("rotate: %f, %f, %f\n", node.rotation_.x_, node.rotation_.y_, node.rotation_.z_);
                 //file.print("translate: %f, %f, %f\n", node.translation_.x_, node.translation_.y_, node.translation_.z_);
-            }
+            //}
             //file.close();
 
 
@@ -269,7 +319,7 @@ namespace load
         material.flags_ = tmp.flags_;
         material.diffuse_ = tmp.diffuse_;
         material.specular_ = tmp.specular_;
-        material.transparent_ = tmp.transparent_; //編集するために屈折をフレネル反射率に変換しない
+        material.shadow_ = tmp.shadow_; //編集するために屈折をフレネル反射率に変換しない
         material.textureIDs_[0] = tmp.texColor_;
         material.textureIDs_[1] = tmp.texNormal_;
 
@@ -294,12 +344,11 @@ namespace load
         node.rotation_ = tmp.rotation_;
         node.scale_ = tmp.scale_;
         node.rotationOrder_ = tmp.rotationOrder_;
-        node.reserved_ = tmp.reserved_;
+        node.numSkinningMatrices_ = tmp.reserved_;
         node.meshStartIndex_ = tmp.meshStartIndex_;
         node.numMeshes_ = tmp.numMeshes_;
 
         node.world_.identity();
-        node.local_.identity();
 
         if(node.meshStartIndex_ == load::InvalidNode){
             node.meshes_ = NULL;
@@ -390,7 +439,7 @@ namespace load
             loadMaterials[i].flags_ = material.flags_;
             loadMaterials[i].diffuse_ = material.diffuse_;
             loadMaterials[i].specular_ = material.specular_;
-            loadMaterials[i].transparent_ = material.transparent_;
+            loadMaterials[i].shadow_ = material.shadow_;
             loadMaterials[i].texColor_ = 0;
             loadMaterials[i].texNormal_ = 0;
 
@@ -426,7 +475,7 @@ namespace load
             loadNodes[i].scale_.set(node.scale_.x_, node.scale_.y_, node.scale_.z_);
 
             loadNodes[i].rotationOrder_ = node.rotationOrder_;
-            loadNodes[i].reserved_ = node.reserved_;
+            loadNodes[i].reserved_ = node.numSkinningMatrices_;
             loadNodes[i].meshStartIndex_ = node.meshStartIndex_;
             loadNodes[i].numMeshes_ = node.numMeshes_;
 

@@ -6,7 +6,7 @@
 @date 2012/07/30 create
 */
 #include <lgraphics/api/InputLayoutRef.h>
-#include "render.h"
+#include "render/render.h"
 #include "ShaderType.h"
 
 namespace render

@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2011/10/29 create
 */
-#include "load.h"
+#include "load/load.h"
 #include <lcore/liostream.h>
 
 namespace lgraphics
@@ -17,6 +17,7 @@ namespace lgraphics
 namespace render
 {
     class Object;
+    class AnimObject;
     class Geometry;
     class Mesh;
     class Material;
@@ -50,6 +51,12 @@ namespace load
         */
         bool load(render::Object& obj);
 
+        /**
+        @brief オブジェクトロード
+        @return 成否
+        @param 出力。オブジェクト
+        */
+        bool load(render::AnimObject& obj, u32 numSkinningMatrices);
 
         static bool save(render::Object& obj, const Char* filepath);
     private:
@@ -62,6 +69,13 @@ namespace load
         @param 出力。ヘッダ
         */
         bool load(Header& header);
+
+        /**
+        @brief オブジェクトロード
+        @return 成否
+        @param 出力。オブジェクト
+        */
+        bool loadInternal(render::Object& obj);
 
         /**
         @brief ジオメトリロード

@@ -10,7 +10,7 @@
 #include <lframework/scene/Scene.h>
 #include <lframework/scene/Camera.h>
 
-#include "../Input.h"
+#include "Input.h"
 
 namespace fractal
 {

@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2011/12/31 create
 */
-#include "render.h"
+#include "render/render.h"
 namespace lmath
 {
     class Vector3;

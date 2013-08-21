@@ -4,16 +4,10 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\System.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\load\ModelLoader.cpp">
@@ -25,19 +19,7 @@
     <ClCompile Include="src\render\DebugDraw.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\Geometry.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\InputLayoutFactory.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Material.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Mesh.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Node.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\ShaderManager.cpp">
@@ -52,23 +34,11 @@
     <ClCompile Include="src\render\Rectangle.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\Object.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\ShaderType.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\ShadowMap.cpp">
       <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\font\FontManager.cpp">
-      <Filter>src\font</Filter>
-    </ClCompile>
-    <ClCompile Include="src\font\FontPack.cpp">
-      <Filter>src\font</Filter>
-    </ClCompile>
-    <ClCompile Include="src\font\FontShader.cpp">
-      <Filter>src\font</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\Ocean.cpp">
       <Filter>src\scene</Filter>
@@ -88,18 +58,45 @@
     <ClCompile Include="src\scene\CameraThirdPerson.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\font\FontManager.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontPack.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontShader.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\AnimObject.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Geometry.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Material.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Mesh.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Node.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Object.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Input.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\System.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Timer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\load\ModelLoader.h">
@@ -111,19 +108,7 @@
     <ClInclude Include="src\render\DebugDraw.h">
       <Filter>src\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\Geometry.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\InputLayoutFactory.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Material.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Mesh.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Node.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\ShaderManager.h">
@@ -144,26 +129,11 @@
     <ClInclude Include="src\render\Rectangle.h">
       <Filter>src\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\Object.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\ShaderType.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\ShadowMap.h">
       <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\font\FontPack.h">
-      <Filter>src\font</Filter>
-    </ClInclude>
-    <ClInclude Include="src\font\FontManager.h">
-      <Filter>src\font</Filter>
-    </ClInclude>
-    <ClInclude Include="src\font\FontShader.h">
-      <Filter>src\font</Filter>
-    </ClInclude>
-    <ClInclude Include="src\font\FontType.h">
-      <Filter>src\font</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\FFT.h">
       <Filter>src\scene</Filter>
@@ -188,6 +158,66 @@
     </ClInclude>
     <ClInclude Include="src\scene\CameraThirdPerson.h">
       <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontManager.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontPack.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontShader.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontType.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_material.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_geometry.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_mesh.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_node.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_texture.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Geometry.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\AnimObject.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Material.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Mesh.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Node.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Object.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\render.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Input.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Timer.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

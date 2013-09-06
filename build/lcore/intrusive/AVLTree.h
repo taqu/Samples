@@ -153,7 +153,7 @@ namespace lcore
 
         void eraseNode(node_type* node);
 
-        node_type* popMaxNode(node_type* node, node_type** maxNode);
+        node_type* popMaxNode(node_type* left, node_type* right);
 
         /// 右回転
         node_type* rotateRight(node_type* node);
@@ -178,16 +178,14 @@ namespace lcore
     //---------------------------------------------------------------
     template<class ValueType, class Predicate>
     typename AVLTree<ValueType, Predicate>::node_type*
-        AVLTree<ValueType, Predicate>::popMaxNode(node_type* node, node_type** maxNode)
+        AVLTree<ValueType, Predicate>::popMaxNode(node_type* left, node_type* right)
     {
-        LASSERT(node != NULL);
-        if(NULL == node->right_){
-            *maxNode = node;
-            return node->left_;
+        if(NULL == left){
+             return right;
         }
-        node = popMaxNode(node->right_, maxNode);
 
-        return node;
+        left->right_ = popMaxNode(left->right_, right);
+        return balance(left);
     }
 
 
@@ -252,7 +250,6 @@ namespace lcore
         }else{
             node->right_ = insert(node->right_, value);
         }
-
         node = balance(node); //左右部分木バランスどり
         return node;
     }
@@ -310,27 +307,21 @@ namespace lcore
         if( ret==0 ){
             // 削除ノード
             node_type *oldNode = node;
-            //左の木から最大値のノードポップ
-            if(oldNode->left_ != 0){
-                oldNode->left_ = popMaxNode(oldNode->left_, &node);
-                node->left_ = oldNode->left_;
-                node->right_ = oldNode->right_;
-            }else{
-                node = oldNode->right_;
-            }
-            LIME_DELETE(oldNode);
 
-        }else if( ret<0 ){
-            node->left_ = erase(node->left_, value);
+            //左の木から最大値のノードポップ
+            node = popMaxNode(node->left_, node->right_);
+            LIME_DELETE(oldNode);
+            return node;
 
         }else{
-            node->right_ = erase(node->right_, value);
-        }
+            if( ret<0 ){
+                node->left_ = erase(node->left_, value);
 
-        if(NULL != node){
-            node = balance(node); //左右部分木バランスどり
+            }else{
+                node->right_ = erase(node->right_, value);
+            }
+            return balance(node); //左右部分木バランスどり
         }
-        return node;
     }
 
     //---------------------------------------------------------------

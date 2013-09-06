@@ -50,7 +50,7 @@ namespace render
     void Node::clearTransform()
     {
         translation_.zero();
-        rotation_.zero();
+        rotation_.identity();
         scale_.one();
     }
 
@@ -71,50 +71,59 @@ namespace render
     }
 
     //--------------------------------------------------
-    void Node::calcLocalMatrix(lmath::Matrix44& local)
+    void Node::calcRotation(const lmath::Vector3& angle)
     {
-        local.identity();
-        local.setScale(scale_.x_, scale_.y_, scale_.z_);
-        f32 x = -rotation_.x_;
-        f32 y = -rotation_.y_;
-        f32 z = -rotation_.z_;
+        lmath::Quaternion rotX, rotY, rotZ;
+        rotX.setRotateX(angle.x_);
+        rotY.setRotateX(angle.y_);
+        rotZ.setRotateX(angle.z_);
+
+        rotation_.identity();
 
         switch(rotationOrder_)
         {
         case load::RotationOrder_EulerXYZ:
-            local.rotateX(x);
-            local.rotateY(y);
-            local.rotateZ(z);
+            rotation_ *= rotX;
+            rotation_ *= rotY;
+            rotation_ *= rotZ;
             break;
         case load::RotationOrder_EulerXZY:
-            local.rotateX(x);
-            local.rotateZ(z);
-            local.rotateY(y);
+            rotation_ *= rotX;
+            rotation_ *= rotZ;
+            rotation_ *= rotY;
             break;
         case load::RotationOrder_EulerYZX:
-            local.rotateY(y);
-            local.rotateZ(z);
-            local.rotateX(x);
+            rotation_ *= rotY;
+            rotation_ *= rotZ;
+            rotation_ *= rotX;
             break;
         case load::RotationOrder_EulerYXZ:
-            local.rotateY(y);
-            local.rotateX(x);
-            local.rotateZ(z);
+            rotation_ *= rotY;
+            rotation_ *= rotX;
+            rotation_ *= rotZ;
             break;
         case load::RotationOrder_EulerZXY:
-            local.rotateZ(z);
-            local.rotateX(x);
-            local.rotateY(y);
+            rotation_ *= rotZ;
+            rotation_ *= rotX;
+            rotation_ *= rotY;
             break;
         case load::RotationOrder_EulerZYX:
-            local.rotateZ(z);
-            local.rotateY(y);
-            local.rotateX(x);
+            rotation_ *= rotZ;
+            rotation_ *= rotY;
+            rotation_ *= rotX;
             break;
         case load::RotationOrder_SphericXYZ:
             LASSERT(false);
             break;
         };
+    }
+
+    //--------------------------------------------------
+    void Node::calcLocalMatrix(lmath::Matrix44& local)
+    {
+        local.identity();
+        //local.setScale(scale_.x_, scale_.y_, scale_.z_);
+        rotation_.getMatrix(local);
 
         local.translate(translation_.x_, translation_.y_, translation_.z_);
     }

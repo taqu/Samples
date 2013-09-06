@@ -1,4 +1,4 @@
-#ifndef INC_FONTMANAGER_H__
+﻿#ifndef INC_FONTMANAGER_H__
 #define INC_FONTMANAGER_H__
 /**
 @file FontManager.h
@@ -14,6 +14,8 @@ namespace lcore
 
 namespace font
 {
+    class FontPack;
+
     class FontManager
     {
     public:
@@ -45,23 +47,31 @@ namespace font
 
         /**
         */
-        void print(u32 fontID, u32 c, u32 r, const char* str);
+        FontPack& getFontPack(u32 index);
 
         /**
         */
-        void print(u32 fontID, u32 c, u32 r, f32 scale, const char* str);
+        void print(u32 fontID, u32 x, u32 y, const char* str);
 
         /**
         */
-        void format(u32 fontID, u32 c, u32 r, const char* str, ...);
+        void print(u32 fontID, f32 x, f32 y, f32 scale, const char* str);
 
         /**
         */
-        void format(u32 fontID, u32 c, u32 r, f32 scale, const char* str, ...);
+        void format(u32 fontID, u32 x, u32 y, const char* str, ...);
+
+        /**
+        */
+        void format(u32 fontID, f32 x, f32 y, f32 scale, const char* str, ...);
 
         /**
         */
         void draw();
+
+        /**
+        */
+        void draw(u32 fontID);
     private:
         class Impl;
 

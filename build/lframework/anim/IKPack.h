@@ -60,7 +60,7 @@ namespace lanim
         void release()
         {
             if(--refCount_ == 0){
-                LIME_DELETE_NONULL this;
+                LIME_DELETE_NONULL(this);
             }
         }
 

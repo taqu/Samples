@@ -86,6 +86,9 @@ namespace fractal
             s32 getAxisDuration(MouseAxis axis) const;
             bool isClick(MouseButton button) const;
             bool isOn(MouseButton button) const;
+
+            s32 getX() const;
+            s32 getY() const;
         private:
             const linput::Mouse* mouse_;
         };

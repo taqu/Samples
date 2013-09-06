@@ -11,6 +11,12 @@ namespace lcore
 {
     template<class ValueType> class RedBlackTree;
 
+    enum RBColor
+    {
+        RBColor_Black = 0,
+        RBColor_Red = 1,
+    };
+
     //---------------------------------------------------------------
     //---
     //--- AVLNodeBase
@@ -36,6 +42,18 @@ namespace lcore
         /// デストラクタ
         ~RedBlackTreeNodeBase()
         {}
+
+        bool isRed() const{ return color_ == RBColor_Red;}
+        bool isBloack() const{ return color_ == RBColor_Black;}
+
+        void setRed(){ color_ = RBColor_Red;}
+        void setBlack(){ color_ = RBColor_Black;}
+
+        this_type* getParent(){ return parent_;}
+        void setParent(this_type* parent){ parent_ = parent;}
+
+        s32 getColor() const{ return color_;}
+        void setColor(s32 color){ color_ = color;}
 
         /// 親ノード
         this_type* parent_;
@@ -71,12 +89,6 @@ namespace lcore
         typedef ValueType value_type;
         typedef RedBlackTree<ValueType> this_type;
         typedef RedBlackTreeNodeBase<ValueType> node_type;
-
-        enum Color
-        {
-            Black = 0,
-            Red = 1,
-        }
 
         RedBlackTree()
             :root_(NULL)
@@ -119,10 +131,10 @@ namespace lcore
         void eraseNode(node_type* node);
 
         /// 右回転
-        void rotateRight(node_type* node);
+        node_type* rotateRight(node_type* node);
 
         /// 左回転
-        void rotateLeft(node_type* node);
+        node_type* rotateLeft(node_type* node);
 
         inline node_type* getGrandParent(node_type* node)
         {
@@ -161,7 +173,8 @@ namespace lcore
     //---------------------------------------------------------------
     // 右回転
     template<class ValueType>
-    void RedBlackTree<ValueType>::rotateRight(node_type* node)
+    typename RedBlackTree<ValueType>::node_type*
+        RedBlackTree<ValueType>::rotateRight(node_type* node)
     {
         LASSERT(NULL != node);
 
@@ -169,14 +182,19 @@ namespace lcore
         LASSERT(NULL != left); //右回転する場合必ず存在
 
         node->left_ = left->right_;
+        
         left->right_ = node;
+        left->setColor(node->getColor());
+        node->setRed();
+        return left;
     }
 
 
     //---------------------------------------------------------------
     // 左回転
     template<class ValueType>
-    void RedBlackTree<ValueType>::rotateLeft(node_type* node)
+    typename RedBlackTree<ValueType>::node_type*
+        RedBlackTree<ValueType>::rotateLeft(node_type* node)
     {
         LASSERT(NULL != node);
 
@@ -184,7 +202,11 @@ namespace lcore
         LASSERT(NULL != right); //左回転する場合必ず存在
 
         node->right_ = right->left_;
+
         right->left_ = node;
+        right->setColor(node->getColor());
+        node->setRed();
+        return right;
     }
 
 

@@ -1,4 +1,4 @@
-#ifndef INC_FONTTYPE_H__
+﻿#ifndef INC_FONTTYPE_H__
 #define INC_FONTTYPE_H__
 /**
 @file FontType.h

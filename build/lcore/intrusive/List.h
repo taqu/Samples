@@ -103,6 +103,16 @@ namespace intrusive
         {
             return &value_;
         }
+
+        const reference_type get() const
+        {
+            return value_;
+        }
+
+        reference_type get()
+        {
+            return value_;
+        }
     private:
         T value_;
     };
@@ -144,6 +154,16 @@ namespace intrusive
         {
             return value_;
         }
+
+        const pointer_type get() const
+        {
+            return value_;
+        }
+
+        pointer_type get()
+        {
+            return value_;
+        }
     private:
         T* value_;
     };
@@ -160,6 +180,7 @@ namespace intrusive
     public:
         typedef T value_type;
         typedef T* pointer_type;
+        typedef const T* const_pointer_type;
 
         typedef List<T> this_type;
         typedef typename T::base_type node_type;
@@ -171,6 +192,10 @@ namespace intrusive
         inline pointer_type begin();
         inline pointer_type rbegin();
         inline pointer_type end();
+
+        inline const_pointer_type begin() const;
+        inline const_pointer_type rbegin() const;
+        inline const_pointer_type end() const;
 
         void push_front(pointer_type node);
         void push_back(pointer_type node);
@@ -216,6 +241,24 @@ namespace intrusive
     inline typename List<T>::pointer_type List<T>::end()
     {
         return static_cast<pointer_type>(&top_);
+    }
+
+    template<class T>
+    inline typename List<T>::const_pointer_type List<T>::begin() const
+    {
+        return top_.getNext();
+    }
+
+    template<class T>
+    inline typename List<T>::const_pointer_type List<T>::rbegin() const
+    {
+        return top_.getPrev();
+    }
+
+    template<class T>
+    inline typename List<T>::const_pointer_type List<T>::end() const
+    {
+        return static_cast<const_pointer_type>(&top_);
     }
 
     template<class T>

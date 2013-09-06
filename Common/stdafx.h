@@ -9,6 +9,11 @@
 #include <lmath/lmath.h>
 #include <lgraphics/lgraphics.h>
 
+namespace lgraphics
+{
+    class Texture2DRef;
+}
+
 namespace fractal
 {
     using lcore::s8;
@@ -23,5 +28,7 @@ namespace fractal
     using lcore::f64;
 
     using lcore::Char;
+
+    bool loadDDS(lgraphics::Texture2DRef& texture, const Char* filepath);
 }
 #endif //INC_STDAFX_H__

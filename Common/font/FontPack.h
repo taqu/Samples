@@ -1,10 +1,12 @@
-#ifndef INC_FONTPACK_H__
+﻿#ifndef INC_FONTPACK_H__
 #define INC_FONTPACK_H__
 /**
 @file FontPack.h
 @author t-sakai
 @date 2011/09/24 create
 */
+#include <lcore/HashMap.h>
+
 #include <lgraphics/api/TextureRef.h>
 #include "FontType.h"
 
@@ -20,8 +22,7 @@ namespace font
     {
         s32 textHeight_;
         s32 spaceWidth_;
-        u32 startCode_;
-        u32 endCode_;
+        u32 numCodes_;
         s32 resolutionX_;
         s32 resolutionY_;
         s32 distanceField_;
@@ -32,8 +33,7 @@ namespace font
     {
         s32 textHeight_;
         s32 spaceWidth_;
-        u32 startCode_;
-        u32 endCode_;
+        u32 numCodes_;
         f32 codeRatioX_;
         f32 codeRatioY_;
         bool distanceField_;
@@ -42,6 +42,7 @@ namespace font
     /// 文字ひとつの情報
     struct GlyphInfo
     {
+        u32 code_;
         s16 x_;
         s16 y_;
         s16 width_;
@@ -52,6 +53,8 @@ namespace font
         s8 offsetX_;
         s8 offsetY_;
     };
+
+    s32 SJISToU16(u16& code, const Char* s);
 
     /// ビットマップフォント
     class FontPack
@@ -74,11 +77,13 @@ namespace font
 
         /**
         */
-        inline const GlyphInfo& get(lcore::u32 index) const;
+        const GlyphInfo* get(lcore::u16 code) const;
 
         /**
         */
         inline lgraphics::Texture2DRef& getTexture();
+
+        s32 getTextHeight() const{ return header_.textHeight_;}
 
         /**
         */
@@ -89,9 +94,13 @@ namespace font
         FontPack(const FontPack&);
         FontPack& operator=(const FontPack&);
 
+        typedef lcore::HashMap<u16, GlyphInfo*> CodeToGlyphInfo;
+
         PackHeader header_; /// ファイルヘッダ
         lcore::u32 numGlyphs_; /// 文字数
         GlyphInfo* glyphs_; /// 文字情報
+        CodeToGlyphInfo* codeToGlyphInfo_;
+
         lgraphics::Texture2DRef texture_; /// テクスチャ
     };
 
@@ -103,12 +112,6 @@ namespace font
     inline lcore::u32 FontPack::getNumGlyphs() const
     {
         return numGlyphs_;
-    }
-
-    inline const GlyphInfo& FontPack::get(lcore::u32 index) const
-    {
-        LASSERT(header_.startCode_<=index && index<=header_.endCode_);
-        return glyphs_[index-header_.startCode_];
     }
 
     inline lgraphics::Texture2DRef& FontPack::getTexture()

@@ -1,4 +1,4 @@
-/**
+﻿/**
 @file FontManager.cpp
 @author t-sakai
 @date 2011/09/24
@@ -78,7 +78,7 @@ namespace font
     class FontManager::Impl
     {
     public:
-        static const u32 DefaultIncrement = 1;
+        static const u32 DefaultIncrement = 2;
 
         Impl();
         ~Impl();
@@ -91,10 +91,11 @@ namespace font
         bool load(lcore::istream& is);
         void expand();
 
-        void print(u32 fontID, u32 c, u32 r, const char* str);
-        void print(u32 fontID, u32 c, u32 r, f32 scale, const char* str);
+        void print(u32 fontID, u32 x, u32 y, const char* str);
+        void print(u32 fontID, f32 x, f32 y, f32 scale, const char* str);
 
         void draw();
+        void draw(u32 fontID);
 
         ConstantBuffer constants_;
 
@@ -187,7 +188,7 @@ namespace font
         fonts_ = tmp;
     }
 
-    void FontManager::Impl::print(u32 fontID, u32 c, u32 r, const char* str)
+    void FontManager::Impl::print(u32 fontID, u32 x, u32 y, const char* str)
     {
         LASSERT(0<=fontID && fontID<numFonts_);
         LASSERT(str != NULL);
@@ -195,23 +196,28 @@ namespace font
         FontRenderer& font = fonts_[fontID];
         const PackHeader& header = font.fontPack_.getHeader();
 
-        u32 x = c * (header.textHeight_  >> 1);
-        u32 y = r * header.textHeight_;
+        u32 sx = x;
         while(*str != '\0'){
             if(font.numChars_>= MaxCharsInFont){
                 break;
             }
 
             if(*str == '\n'){
-                x = c * (header.textHeight_  >> 1);
+                x = sx;
                 y += header.textHeight_;
+                ++str;
+                continue;
+            }
 
-            }else if(*str < 33 || 126<*str){
-                //x += (header.textHeight_  >> 1);
+            u16 code;
+            s32 bytes = SJISToU16(code, str);
+
+            const GlyphInfo* glyph = font.fontPack_.get(code);
+
+            if(NULL == glyph){
                 x += header.spaceWidth_;
 
             }else{
-                const GlyphInfo& glyph = font.fontPack_.get(*str);
                 u32 index = font.numChars_ * 6;
                 Vertex& v0 = font.vertices_[ index+0 ];
                 Vertex& v1 = font.vertices_[ index+1 ];
@@ -220,20 +226,20 @@ namespace font
                 Vertex& v4 = font.vertices_[ index+4 ];
                 Vertex& v5 = font.vertices_[ index+5 ];
 
-                v0.position_.x_ = static_cast<f32>(x + glyph.offsetX_);
-                v0.position_.y_ = static_cast<f32>(y + glyph.offsetY_);
-                v0.uv_[0] = static_cast<s16>(glyph.x_ * header.codeRatioX_);
-                v0.uv_[1] = static_cast<s16>(glyph.y_ * header.codeRatioY_);
+                v0.position_.x_ = static_cast<f32>(x + glyph->offsetX_);
+                v0.position_.y_ = static_cast<f32>(y + glyph->offsetY_);
+                v0.uv_[0] = static_cast<s16>(glyph->x_ * header.codeRatioX_);
+                v0.uv_[1] = static_cast<s16>(glyph->y_ * header.codeRatioY_);
 
-                v1.position_.x_ = v0.position_.x_ + glyph.fitWidth_;
+                v1.position_.x_ = v0.position_.x_ + glyph->fitWidth_;
                 v1.position_.y_ = v0.position_.y_;
-                v1.uv_[0] = v0.uv_[0] + glyph.fitWCoded_;
+                v1.uv_[0] = v0.uv_[0] + glyph->fitWCoded_;
                 v1.uv_[1] = v0.uv_[1];
 
                 v2.position_.x_ = v0.position_.x_;
-                v2.position_.y_ = v0.position_.y_ + glyph.fitHeight_;
+                v2.position_.y_ = v0.position_.y_ + glyph->fitHeight_;
                 v2.uv_[0] = v0.uv_[0];
-                v2.uv_[1] = v0.uv_[1] + glyph.fitHCoded_;
+                v2.uv_[1] = v0.uv_[1] + glyph->fitHCoded_;
 
                 v3.position_ = v2.position_;
                 v3.uv_[0] = v2.uv_[0];
@@ -249,16 +255,15 @@ namespace font
                 v5.uv_[1] = v2.uv_[1];
 
 
-                x += glyph.width_;
+                x += glyph->width_;
 
                 font.numChars_ += 1;
             }
-
-            ++str;
+            str += bytes;
         }//while
     }
 
-    void FontManager::Impl::print(u32 fontID, u32 c, u32 r, f32 scale, const char* str)
+    void FontManager::Impl::print(u32 fontID, f32 tx, f32 ty, f32 scale, const char* str)
     {
         LASSERT(0<=fontID && fontID<numFonts_);
         LASSERT(str != NULL);
@@ -273,22 +278,29 @@ namespace font
         f32 scaleTextH = scale*header.textHeight_;
         f32 halfTextH = scale*header.spaceWidth_;//0.5f * scaleTextH;
 
-        f32 x = c * halfTextH;
-        f32 y = r * scaleTextH;
+        f32 x = tx;
+        f32 y = ty;
         while(*str != '\0'){
             if(font.numChars_>= MaxCharsInFont){
                 break;
             }
 
             if(*str == '\n'){
-                x = c * halfTextH;
+                x = tx;
                 y += scaleTextH;
+                ++str;
+                continue;
+            }
 
-            }else if(*str < 33 || 126<*str){
-                x += halfTextH;
+            u16 code;
+            s32 bytes = SJISToU16(code, str);
+
+            const GlyphInfo* glyph = font.fontPack_.get(code);
+
+            if(NULL == glyph){
+                x += header.spaceWidth_ * scale;
 
             }else{
-                const GlyphInfo& glyph = font.fontPack_.get(*str);
                 u32 index = font.numChars_ * 6;
                 Vertex& v0 = font.vertices_[ index+0 ];
                 Vertex& v1 = font.vertices_[ index+1 ];
@@ -297,26 +309,26 @@ namespace font
                 Vertex& v4 = font.vertices_[ index+4 ];
                 Vertex& v5 = font.vertices_[ index+5 ];
 
-                scaleFitW = scale * glyph.fitWidth_;
-                scaleFitH = scale * glyph.fitHeight_;
+                scaleFitW = scale * glyph->fitWidth_;
+                scaleFitH = scale * glyph->fitHeight_;
 
-                scaleOffsetX = scale * glyph.offsetX_;
-                scaleOffsetY = scale * glyph.offsetY_;
+                scaleOffsetX = scale * glyph->offsetX_;
+                scaleOffsetY = scale * glyph->offsetY_;
 
                 v0.position_.x_ = x + scaleOffsetX;
                 v0.position_.y_ = y + scaleOffsetY;
-                v0.uv_[0] = static_cast<s16>(glyph.x_ * header.codeRatioX_);
-                v0.uv_[1] = static_cast<s16>(glyph.y_ * header.codeRatioY_);
+                v0.uv_[0] = static_cast<s16>(glyph->x_ * header.codeRatioX_);
+                v0.uv_[1] = static_cast<s16>(glyph->y_ * header.codeRatioY_);
 
                 v1.position_.x_ = v0.position_.x_ + scaleFitW;
                 v1.position_.y_ = v0.position_.y_;
-                v1.uv_[0] = v0.uv_[0] + glyph.fitWCoded_;
+                v1.uv_[0] = v0.uv_[0] + glyph->fitWCoded_;
                 v1.uv_[1] = v0.uv_[1];
 
                 v2.position_.x_ = v0.position_.x_;
                 v2.position_.y_ = v0.position_.y_ + scaleFitH;
                 v2.uv_[0] = v0.uv_[0];
-                v2.uv_[1] = v0.uv_[1] + glyph.fitHCoded_;
+                v2.uv_[1] = v0.uv_[1] + glyph->fitHCoded_;
 
                 v3.position_ = v2.position_;
                 v3.uv_[0] = v2.uv_[0];
@@ -332,12 +344,11 @@ namespace font
                 v5.uv_[1] = v2.uv_[1];
 
 
-                x += scale * glyph.width_;
+                x += scale * glyph->width_;
 
                 font.numChars_ += 1;
             }
-
-            ++str;
+            str += bytes;
         }//while
     }
 
@@ -377,6 +388,36 @@ namespace font
         }
     }
 
+    void FontManager::Impl::draw(u32 fontID)
+    {
+        lgraphics::GraphicsDeviceRef& device = lgraphics::Graphics::getDevice();
+
+        device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
+        layout_.attach();
+        device.setBlendState(blend_);
+
+        vs_.attach();
+        vs_.setParameters(constants_);
+
+        FontRenderer& font = fonts_[fontID];
+
+        if(font.numChars_>0){
+            font.update();
+
+            if(font.fontPack_.distanceField()){
+                dfPS_.attach();
+            }else{
+                ps_.attach();
+            }
+            device.setPSResources(0, 1, font.fontPack_.getTexture().getView());
+            device.setPSSamplers(0, 1, font.fontPack_.getTexture().getSampler());
+            font.buffer_.attach(0, sizeof(Vertex), 0);
+            device.setPrimitiveTopology(lgraphics::Primitive_TriangleList);
+
+            device.draw(font.numChars_*6, 0);
+            font.numChars_ = 0;
+        }
+    }
 
     //---------------------------------------
     //---
@@ -418,17 +459,24 @@ namespace font
     {
         return impl_->getNumFonts();
     }
-    void FontManager::print(u32 fontID, u32 c, u32 r, const char* str)
+
+    FontPack& FontManager::getFontPack(u32 index)
     {
-        impl_->print(fontID, c, r, str);
+        LASSERT(0<=index && index<impl_->numFonts_);
+        return impl_->fonts_[index].fontPack_;
     }
 
-    void FontManager::print(u32 fontID, u32 c, u32 r, f32 scale, const char* str)
+    void FontManager::print(u32 fontID, u32 x, u32 y, const char* str)
     {
-        impl_->print(fontID, c, r, scale, str);
+        impl_->print(fontID, x, y, str);
     }
 
-    void FontManager::format(u32 fontID, u32 c, u32 r, const char* str, ...)
+    void FontManager::print(u32 fontID, f32 x, f32 y, f32 scale, const char* str)
+    {
+        impl_->print(fontID, x, y, scale, str);
+    }
+
+    void FontManager::format(u32 fontID, u32 x, u32 y, const char* str, ...)
     {
         LASSERT(str != NULL);
 
@@ -444,10 +492,10 @@ namespace font
         }
         buffer[MaxBuffer] = '\0';
 
-        impl_->print(fontID, c, r, buffer);
+        impl_->print(fontID, x, y, buffer);
     }
 
-    void FontManager::format(u32 fontID, u32 c, u32 r, f32 scale, const char* str, ...)
+    void FontManager::format(u32 fontID, f32 x, f32 y, f32 scale, const char* str, ...)
     {
         LASSERT(str != NULL);
 
@@ -463,11 +511,16 @@ namespace font
         }
         buffer[MaxBuffer] = '\0';
 
-        impl_->print(fontID, c, r, scale, buffer);
+        impl_->print(fontID, x, y, scale, buffer);
     }
 
     void FontManager::draw()
     {
         impl_->draw();
+    }
+
+    void FontManager::draw(u32 fontID)
+    {
+        impl_->draw(fontID);
     }
 }

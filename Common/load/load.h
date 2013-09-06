@@ -28,6 +28,8 @@ namespace load
     static const u8 InvalidNode = 0xFFU;
     static const u32 MaxNameLength = 31;
     static const u32 MaxNameSize = MaxNameLength + 1;
+    static const u32 MaxPathLength = 127;
+    static const u32 MaxPathSize = MaxPathLength + 1;
 
     static const u32 LOAD_TRUE = 1;
     static const u32 LOAD_FALSE = 0;

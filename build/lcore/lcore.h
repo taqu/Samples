@@ -87,7 +87,7 @@ inline void operator delete[](void* ptr)
 
 #define LIME_PLACEMENT_NEW(ptr) new(ptr)
 #define LIME_DELETE(p) { delete p; (p)=NULL;}
-#define LIME_DELETE_NONULL delete
+#define LIME_DELETE_NONULL(p) delete p
 //#define LIME_OPERATOR_NEW ::operator new
 //#define LIME_OPERATOR_DELETE ::operator delete
 

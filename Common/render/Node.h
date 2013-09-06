@@ -8,6 +8,7 @@
 #include "render.h"
 #include <lmath/Vector4.h>
 #include <lmath/Matrix44.h>
+#include <lmath/Quaternion.h>
 
 namespace render
 {
@@ -45,6 +46,7 @@ namespace render
         /// ÉXÉèÉbÉv
         void swap(Node& rhs);
 
+        void calcRotation(const lmath::Vector3& angle);
         void calcLocalMatrix(lmath::Matrix44& local);
 
         u8 index_;
@@ -53,7 +55,7 @@ namespace render
         u8 numChildren_;
 
         lmath::Vector4 translation_;
-        lmath::Vector4 rotation_;
+        lmath::Quaternion rotation_;
         lmath::Vector4 scale_;
     };
 }

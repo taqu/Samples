@@ -111,6 +111,16 @@ namespace fractal
         return mouse_->isOn(MouseMap[button]);
     }
 
+    s32 Input::Mouse::getX() const
+    {
+        return mouse_->getX();
+    }
+
+    s32 Input::Mouse::getY() const
+    {
+        return mouse_->getY();
+    }
+
     // ジョイスティック
     //--------------------------------------------------
     Input::Joystick Input::getJoystick()

@@ -1,4 +1,4 @@
-#ifndef INC_FONTSHADER_H__
+﻿#ifndef INC_FONTSHADER_H__
 #define INC_FONTSHADER_H__
 /**
 @file FontShader.h

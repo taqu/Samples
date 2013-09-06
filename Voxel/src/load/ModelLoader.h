@@ -26,11 +26,16 @@ namespace render
 
 namespace load
 {
+    class Texture;
+
     class ModelLoader
     {
     public:
         ModelLoader()
-        {}
+            :directoryPathLength_(0)
+        {
+            directoryPath_[0] = '\0';
+        }
 
         ~ModelLoader()
         {}
@@ -58,7 +63,8 @@ namespace load
         */
         bool load(render::AnimObject& obj, u32 numSkinningMatrices);
 
-        static bool save(render::Object& obj, const Char* filepath);
+        void getTextureNameTable(u32 numTextures, load::Texture* textures);
+        static bool save(render::Object& obj, load::Texture* textures, const Char* filepath);
     private:
         ModelLoader(const ModelLoader&);
         ModelLoader& operator=(const ModelLoader&);
@@ -110,7 +116,7 @@ namespace load
         @return 成否
         @param 出力。テクスチャ
         */
-        bool load(lgraphics::Texture2DRef& texture);
+        bool load(lgraphics::Texture2DRef& texture, const load::Texture& loadTexture);
 
         /**
         @brief 頂点レイアウト作成
@@ -122,6 +128,8 @@ namespace load
         lcore::ifstream is_; /// ファイルストリーム
 
         Header header_; /// ヘッダ
+        u32 directoryPathLength_;
+        Char directoryPath_[MaxPathSize+MaxNameLength];
     };
 }
 #endif //INC_RENDER_MODELLOADER_H__

@@ -13,6 +13,7 @@ namespace load
     {
     public:
         u32 type_;
+        Char name_[MaxNameSize];
     };
 }
 #endif //INC_LOAD_TEXTURE_H__

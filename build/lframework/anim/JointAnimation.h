@@ -15,15 +15,15 @@ namespace lanim
     {
     public:
         inline JointAnimation();
-        inline JointAnimation(u32 numPoses);
+        inline JointAnimation(s32 numPoses);
         inline ~JointAnimation();
 
         inline void initialize();
 
         /// ポーズ数取得
-        inline u32 getNumPoses() const;
+        inline s32 getNumPoses() const;
 
-        inline void setNumPoses(u32 numPoses);
+        inline void setNumPoses(s32 numPoses);
 
         /// 名前取得
         inline const Name& getName() const;
@@ -33,16 +33,19 @@ namespace lanim
         inline void setName(const Char* name, u32 length);
 
         /// ジョイントポーズ取得
-        inline const JointPoseWithFrame& getPose(u32 index) const;
-        inline JointPoseWithFrame& getPose(u32 index);
+        inline const JointPoseWithFrame& getPose(s32 index) const;
+        inline JointPoseWithFrame& getPose(s32 index);
 
         /// ジョイントポーズ設定
-        inline void setPose(u32 index, JointPoseWithFrame& pose);
+        inline void setPose(s32 index, JointPoseWithFrame& pose);
 
-        u32 binarySearchIndex(u32 frame) const;
+        s32 binarySearchIndex(u32 frame) const;
 
         /// 次のフレームのインデックスを探索。順方向のみ
-        inline u32 getNextIndex(u32 frame);
+        inline s32 getNextIndex(u32 frame, s32 index) const;
+
+        /// 次のフレームのインデックスを探索。逆方向のみ
+        inline s32 getPrevIndex(u32 frame, s32 index) const;
 
         inline const JointPoseWithFrame& binarySearch(u32 frame) const
         {
@@ -50,22 +53,22 @@ namespace lanim
         }
     private:
         Name name_;
-        u32 numPoses_;
-        u32 currentIndex_;
+        s32 numPoses_;
+        //u32 currentIndex_;
         JointPoseWithFrame *poses_;
     };
 
     inline JointAnimation::JointAnimation()
         :numPoses_(0)
-        ,currentIndex_(0)
+        //,currentIndex_(0)
         ,poses_(NULL)
     {
     }
 
 
-    inline JointAnimation::JointAnimation(u32 numPoses)
+    inline JointAnimation::JointAnimation(s32 numPoses)
         :numPoses_(numPoses)
-        ,currentIndex_(0)
+        //,currentIndex_(0)
         ,poses_(NULL)
     {
         LASSERT(numPoses_>=0);
@@ -79,16 +82,16 @@ namespace lanim
 
     inline void JointAnimation::initialize()
     {
-        currentIndex_ = 0;
+        //currentIndex_ = 0;
     }
 
     // ポーズ数取得
-    inline u32 JointAnimation::getNumPoses() const
+    inline s32 JointAnimation::getNumPoses() const
     {
         return numPoses_;
     }
 
-    inline void JointAnimation::setNumPoses(u32 numPoses)
+    inline void JointAnimation::setNumPoses(s32 numPoses)
     {
         LASSERT(numPoses>=0);
         numPoses_ = numPoses;
@@ -114,38 +117,48 @@ namespace lanim
     }
 
     // ジョイントポーズ取得
-    inline const JointPoseWithFrame& JointAnimation::getPose(u32 index) const
+    inline const JointPoseWithFrame& JointAnimation::getPose(s32 index) const
     {
         LASSERT(0<=index && index<numPoses_);
         return poses_[index];
     }
 
     // ジョイントポーズ取得
-    inline JointPoseWithFrame& JointAnimation::getPose(u32 index)
+    inline JointPoseWithFrame& JointAnimation::getPose(s32 index)
     {
         LASSERT(0<=index && index<numPoses_);
         return poses_[index];
     }
 
     // ジョイントポーズ設定
-    inline void JointAnimation::setPose(u32 index, JointPoseWithFrame& pose)
+    inline void JointAnimation::setPose(s32 index, JointPoseWithFrame& pose)
     {
         LASSERT(0<=index && index<numPoses_);
         poses_[index] = pose;
     }
 
     // 次のフレームのインデックスを探索。順方向のみ
-    inline u32 JointAnimation::getNextIndex(u32 frame)
+    inline s32 JointAnimation::getNextIndex(u32 frame, s32 index) const
     {
-        for(u32 i=currentIndex_; i<numPoses_; ++i){
-            if(frame==poses_[i].frameNo_){
-                break;
-            }else if(frame<poses_[i].frameNo_){
-                currentIndex_ = (i == 0)? 0 : i-1;
+        for(s32 i=index+1; i<numPoses_; ++i){
+            if(frame<=poses_[i].frameNo_){
+                index = i;
                 break;
             }
         }
-        return currentIndex_;
+        return index;
+    }
+
+    // 次のフレームのインデックスを探索。逆方向のみ
+    inline s32 JointAnimation::getPrevIndex(u32 frame, s32 index) const
+    {
+        for(s32 i=index-1; 0<=i; --i){
+            if(poses_[i].frameNo_<=frame){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 }
 #endif //INC_JOINTANIMATION_H__

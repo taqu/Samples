@@ -47,6 +47,14 @@ namespace lmath
         void setRotateX(f32 radian);
         void setRotateY(f32 radian);
         void setRotateZ(f32 radian);
+
+        void setRotateXYZ(f32 radx, f32 rady, f32 radz);
+        void setRotateXZY(f32 radx, f32 rady, f32 radz);
+        void setRotateYZX(f32 radx, f32 rady, f32 radz);
+        void setRotateYXZ(f32 radx, f32 rady, f32 radz);
+        void setRotateZXY(f32 radx, f32 rady, f32 radz);
+        void setRotateZYX(f32 radx, f32 rady, f32 radz);
+
         inline void setRotateAxis(const lmath::Vector3& axis, f32 radian);
         void setRotateAxis(f32 x, f32 y, f32 z, f32 radian);
 

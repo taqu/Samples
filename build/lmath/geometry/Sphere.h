@@ -56,6 +56,11 @@ namespace lmath
             s_.z_ = z;
         }
 
+        void setRadius(f32 radius)
+        {
+            s_.w_ = radius;
+        }
+
         /**
         @brief 点に外接する球を計算
         */

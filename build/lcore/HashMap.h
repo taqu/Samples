@@ -94,7 +94,7 @@ namespace lcore
                 createBuckets(bucketCount_);
             }
 
-            HashTable(size_type n, key_param_type emptyKey)
+            HashTable(size_type n, const_key_param_type emptyKey)
                 :empty_(emptyKey),
                 size_(0),
                 bucketCount_(next_prime(n))
@@ -345,11 +345,11 @@ namespace lcore
         typedef Key key_type;
         typedef Value value_type;
 
-        explicit HashMap(const key_type& emptyKey)
-            :table_(size, emptyKey)
+        explicit HashMap(size_type size)
+            :table_(size)
         {}
 
-        HashMap(size_type size, key_type& emptyKey)
+        HashMap(size_type size, const key_type& emptyKey)
             :table_(size, emptyKey)
         {
         }

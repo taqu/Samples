@@ -1,4 +1,4 @@
-/**
+﻿/**
 @file FontShader.cpp
 @author t-sakai
 @date 2011/09/24
@@ -76,9 +76,9 @@ namespace font
 
         // ピクセルシェーダソース
         const char FontDistanceFieldPSSource[] =
-            "static const float SmoothCenter = 0.32f;\n"
-            "static const float OutlineCenter = 0.50f;\n"
-            "static const float OutLineColor = 0.0f;\n"
+            "static const float SmoothCenter = 0.10f;\n"
+            "static const float OutlineCenter = 0.24f;\n"
+            "static const float OutLineColor = 0.1f;\n"
             "static const float GlyphColor = 1.0f;\n"
             "Texture2D texAlbedo : register(t0);\n"
             "SamplerState samLinear : register(s0);\n"
@@ -90,9 +90,9 @@ namespace font
             "float4 main(VSOut input) : SV_Target\n"
             "{\n"
             "float4 color = texAlbedo.Sample(samLinear, input.tex0);\n"
-            "float smoothWidth = fwidth(color.a);\n"
-            "float r = smoothstep(OutlineCenter-smoothWidth, OutlineCenter+smoothWidth, color.a);\n"
-            "color.a = smoothstep(SmoothCenter-smoothWidth, SmoothCenter+smoothWidth, color.a);\n"
+            "float smoothWidth = fwidth(color.r);\n"
+            "float r = smoothstep(OutlineCenter-smoothWidth, OutlineCenter+smoothWidth, color.r);\n"
+            "color.a = smoothstep(SmoothCenter-smoothWidth, SmoothCenter+smoothWidth, color.r);\n"
             "color.rgb = lerp(OutLineColor, GlyphColor, r);\n"
             "return color;\n"
             "}\n";

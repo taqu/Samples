@@ -10,6 +10,8 @@
 #include <lgraphics/api/VertexBufferRef.h>
 #include <lgraphics/api/IndexBufferRef.h>
 #include <lgraphics/io11/IODDS.h>
+#include <lgraphics/io11/IOPNG.h>
+#include <lgraphics/io11/IOBMP.h>
 
 #include "load/load_geometry.h"
 #include "load/load_material.h"
@@ -21,7 +23,7 @@
 #include "render/AnimObject.h"
 #include <lcore/liostream.h>
 
-#include "System.h"
+#include "../System.h"
 
 namespace load
 {
@@ -31,7 +33,11 @@ namespace load
     {
         LASSERT(filepath != NULL);
         if(is_.open(filepath, lcore::ios::binary)){
-
+            s32 len = lcore::strlen(filepath);
+            if(MaxPathLength<len){
+                len = MaxPathLength;
+            }
+            directoryPathLength_ = lcore::extractDirectoryPath(directoryPath_, filepath, len);
             return load(header_);
         }
         return false;
@@ -146,33 +152,32 @@ namespace load
         }
 
         {//テクスチャロード
-            lgraphics::Texture2DRef textures[ load::TexType_Num ];
-            u32 count = 0;
-            for(u32 i=0; i<load::TexType_Num; ++i){
-                if(false == load(textures[i])){
-                    return false;
-                }
-                if(false == textures[i].valid()){
+            load::Texture loadTexture;
+            lgraphics::Texture2DRef texture;
+            for(u32 i=0; i<numTextures; ++i){
+                lcore::io::read(is_, &loadTexture, sizeof(load::Texture));
+
+                if(false == load(texture, loadTexture)){
                     continue;
                 }
 
-                if(count<numTextures){
-                    obj.getTexture(count) = textures[i];
-                    ++count;
-                }
+                obj.getTexture(i) = texture;
+
             }
 
+            //マテリアルに参照セット
             for(u32 i=0; i<numMaterials; ++i){
                 render::Material& material = obj.getMaterial(i);
 
-                count = 0;
                 for(u32 j=0; j<render::Material::Tex_Num; ++j){
 
-                    if(textures[j].valid()){
-                        material.textures_[j] = &(obj.getTexture(count));
-                        ++count;
-                    }else{
-                        material.textures_[j] = NULL;
+                    if(0<=material.textureIDs_[j] && material.textureIDs_[j]<numTextures){
+                        s16 id = material.textureIDs_[j];
+                        if(obj.getTexture(id).valid()){
+                            material.textures_[j] = &(obj.getTexture(id));
+                        }else{
+                            material.textures_[j] = NULL;
+                        }
                     }
                 }
             }
@@ -186,31 +191,6 @@ namespace load
             }
             obj.setSphere(sphere);
         }
-
-        {
-            //lcore::ofstream file("log.txt", lcore::ios::binary);
-            //for(u32 i=0; i<obj.getNumNodes(); ++i){
-            //    render::Node& node = obj.getNode(i);
-            //    node.calcLocalMatrix();
-                //file.print("node:%d, parent:%d\n", node.index_, node.parentIndex_);
-                //file.print("scale: %f, %f, %f\n", node.scale_.x_, node.scale_.y_, node.scale_.z_);
-                //file.print("rotate: %f, %f, %f\n", node.rotation_.x_, node.rotation_.y_, node.rotation_.z_);
-                //file.print("translate: %f, %f, %f\n", node.translation_.x_, node.translation_.y_, node.translation_.z_);
-            //}
-            //file.close();
-
-
-            //lmath::Matrix44 parentMat;
-            //for(;i<obj.getNumNodes(); ++i){
-            //    render::Node& node = obj.getNode(i);
-            //    render::Node& parent = obj.getNode( node.parentIndex_ );
-
-            //    parentMat = parent.matrix_;
-            //    parentMat.invert();
-            //    node.matrix_.mul(parentMat, node.matrix_);
-            //}
-        }
-
         return true;
     }
 
@@ -341,13 +321,14 @@ namespace load
         node.childStartIndex_ = tmp.childStartIndex_;
         node.numChildren_ = tmp.numChildren_;
         node.translation_ = tmp.translation_;
-        node.rotation_ = tmp.rotation_;
+        //node.rotation_ = tmp.rotation_;
         node.scale_ = tmp.scale_;
         node.rotationOrder_ = tmp.rotationOrder_;
         node.numSkinningMatrices_ = tmp.reserved_;
         node.meshStartIndex_ = tmp.meshStartIndex_;
         node.numMeshes_ = tmp.numMeshes_;
 
+        node.calcRotation(tmp.rotation_);
         node.world_.identity();
 
         if(node.meshStartIndex_ == load::InvalidNode){
@@ -361,23 +342,106 @@ namespace load
 
     //---------------------------------------------
     // テクスチャロード
-    bool ModelLoader::load(lgraphics::Texture2DRef& texture)
+    bool ModelLoader::load(lgraphics::Texture2DRef& texture, const load::Texture& loadTexture)
     {
-        load::Texture tex;
-        lcore::io::read(is_, tex);
-        if(tex.type_ == load::TexType_Num){
-            return true;
+        const Char* ext = lcore::rFindChr(loadTexture.name_, '.', MaxNameLength);
+        if(NULL == ext){
+            return false;
         }
 
-        //TODO:
-        //fractal::BufferAllocator& allocator = fractal::System::getAllocator();
+        s32 type = 0;
+        if(0==lcore::strncmp(ext, ".dds", 4)){
+            type = 0;
+        }else if(0==lcore::strncmp(ext, ".png", 4)){
+            type = 1;
+        }else if(0==lcore::strncmp(ext, ".bmp", 4)){
+            type = 2;
+        }
 
-        ////インデックスバッファ作成
-        //u32 size = sizeof(u16) * tmp.numIndices_;
-        //u8* data = allocator.allocate(size);
+        lcore::strncpy(directoryPath_+directoryPathLength_, MaxNameSize, loadTexture.name_, MaxNameLength);
 
-        //return lgraphics::io::IODDS::read(is_, texture);
-        return true;
+        lcore::ifstream texfile(directoryPath_, lcore::ios::binary);
+        if(!texfile.is_open()){
+            return false;
+        }
+
+        u32 width = 0;
+        u32 height = 0;
+        u32 rowBytes = 0;
+        lgraphics::DataFormat format;
+
+        switch(type)
+        {
+        case 0:
+            {
+                u32 size = texfile.getSize(0);
+                const s8* buffer = LIME_NEW s8[size];
+                texfile.read((Char*)buffer, size);
+                bool ret = lgraphics::io::IODDS::read(texture, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
+                LIME_DELETE_ARRAY(buffer);
+                return ret;
+            }
+            break;
+
+        case 1:
+            if(false == lgraphics::io::IOPNG::read(texfile, NULL, width, height, rowBytes, format)){
+                return false;
+            }
+            break;
+
+        case 2:
+            if(false == lgraphics::io::IOBMP::read(texfile, NULL, width, height, format)){
+                return false;
+            }
+            rowBytes = 4*width;
+            break;
+        };
+
+        u32 size = rowBytes * height;
+        u8* buffer = LIME_NEW u8[size];
+        bool ret = false;
+        switch(type)
+        {
+        case 1:
+            ret = lgraphics::io::IOPNG::read(texfile, buffer, width, height, rowBytes, format);
+            break;
+
+        case 2:
+            ret = lgraphics::io::IOBMP::read(texfile, buffer, width, height, format);
+            break;
+        };
+
+        if(ret){
+            lgraphics::SubResourceData initData;
+            initData.mem_ = buffer;
+            initData.pitch_ = rowBytes;
+            initData.slicePitch_ = 0;
+
+            lgraphics::ResourceViewDesc viewDesc;
+            viewDesc.format_ = format;
+            viewDesc.tex2D_.mostDetailedMip_ = 0;
+            viewDesc.tex2D_.mipLevels_ = 1;
+
+            texture = lgraphics::Texture::create2D(
+                width,
+                height,
+                1,
+                1,
+                format,
+                lgraphics::Usage_Immutable,
+                lgraphics::BindFlag_ShaderResource,
+                lgraphics::CPUAccessFlag_None,
+                lgraphics::ResourceMisc_None,
+                lgraphics::TexFilter_MinMagLinearMipPoint,
+                lgraphics::TexAddress_Clamp,
+                0.0f,
+                &initData,
+                &viewDesc);
+            ret = texture.valid();
+        }
+
+        LIME_DELETE_ARRAY(buffer);
+        return ret;
     }
 
     //---------------------------------------------
@@ -404,7 +468,24 @@ namespace load
     }
 
     //
-    bool ModelLoader::save(render::Object& obj, const Char* filepath)
+    void ModelLoader::getTextureNameTable(u32 numTextures, load::Texture* textures)
+    {
+        if(!is_.is_open()){
+            return;
+        }
+        is_.seekg(0, lcore::ios::beg);
+        load(header_);
+
+        is_.seekg(header_.elems_[Elem_Texture].offset_, lcore::ios::beg);
+        LASSERT(numTextures == header_.elems_[Elem_Texture].number_);
+
+        for(u32 i=0; i<numTextures; ++i){
+            lcore::io::read(is_, &textures[i], sizeof(load::Texture));
+        }
+    }
+
+    //
+    bool ModelLoader::save(render::Object& obj, load::Texture* textures, const Char* filepath)
     {
         lcore::ofstream os(filepath, lcore::ios::binary);
         if(!os.is_open()){
@@ -482,7 +563,7 @@ namespace load
             offset += sizeof(load::Node);
         }
 
-        loadHeader.elems_[load::Elem_Texture].number_ = 0;
+        loadHeader.elems_[load::Elem_Texture].number_ = obj.getNumTextures();
         loadHeader.elems_[load::Elem_Texture].offset_ = offset;
 
 
@@ -498,6 +579,7 @@ namespace load
         lcore::io::write(os, loadMaterials, sizeof(load::Material)*obj.getNumMaterials());
         lcore::io::write(os, loadMeshes, sizeof(load::Mesh)*obj.getNumMeshes());
         lcore::io::write(os, loadNodes, sizeof(load::Node)*obj.getNumNodes());
+        lcore::io::write(os, textures, sizeof(load::Texture)*obj.getNumTextures());
 
         os.close();
 

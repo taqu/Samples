@@ -219,7 +219,7 @@ namespace
     class Pack
     {
     public:
-        Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile);
+        Pack(int padding, int size, bool offset, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile);
 
         void save(Node& root, lcore::u8* buffer);
     private:
@@ -228,6 +228,7 @@ namespace
 
         int padding_;
         int size_;
+        float offset_;
         FileEntryVector& entries_;
         lcore::ofstream enumFile_;
         lcore::ofstream listFile_;
@@ -236,11 +237,16 @@ namespace
         lcore::u8* buffer_;
     };
 
-    Pack::Pack(int padding, int size, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile)
+    Pack::Pack(int padding, int size, bool offset, FileEntryVector& entries, const lcore::Char* enumFile, const lcore::Char* listFile, const lcore::Char* listFloatFile)
         :padding_(padding)
         ,size_(size)
+        ,offset_(0.0f)
         ,entries_(entries)
     {
+        if(offset){
+            offset_ = 0.5f;
+        }
+
         if(NULL != enumFile){
             enumFile_.open(enumFile, lcore::ios::binary);
         }
@@ -302,6 +308,11 @@ namespace
             lcore::f64 right = rect.right_ - padding_;
             lcore::f64 bottom = rect.bottom_ - padding_;
 
+            left += offset_;
+            top += offset_;
+            right += offset_;
+            bottom += offset_;
+
             left /= size_;
             top /= size_;
             right /= size_;
@@ -341,7 +352,7 @@ namespace
             int bottom = top + rect.height();
 
             for(lcore::s32 i=top+padding_; i<(bottom-padding_); ++i){
-                for(lcore::s32 j=rect.left_+padding_; j<(rect.right_-padding_); ++j){
+                for(lcore::s32 j=rect.left_+padding_; j<=(rect.right_-padding_); ++j){
                     int dst = (i*size_ + j)*4;
 
 
@@ -369,6 +380,7 @@ int main(int argc, char** argv)
         std::cerr << "\t-flist <output rectangle list float uv file>\t(-flist flist.txt)" << std::endl;
         std::cerr << "\t-size <output image size>\t(-size 1024)" << std::endl;
         std::cerr << "\t-pad <padding width>\t(-pad 1)" << std::endl;
+        std::cerr << "\t-offset <offset float>" << std::endl;
 
         return 0;
     }
@@ -381,6 +393,7 @@ int main(int argc, char** argv)
     int listFloatIndex = -1;
     int padding = 1;
     int size = 1024;
+    bool offset = false;
     for(int i=1; i<argc; ++i){
         if(strcmp(argv[i], "-enum") == 0){
             int j = i+1;
@@ -414,6 +427,10 @@ int main(int argc, char** argv)
                 padding = ::atoi(argv[j]);
                 ++i;
             }
+
+        }else if(strcmp(argv[i], "-offset") == 0){
+            offset = true;
+
         }else if(inIndex<0){
             inIndex = i;
         }else{
@@ -535,7 +552,7 @@ int main(int argc, char** argv)
     lcore::Char* listFile = (0<=listIndex)? argv[listIndex] : NULL;
     lcore::Char* listFloatFile = (0<=listFloatIndex)? argv[listFloatIndex] : NULL;
 
-    Pack pack(padding, size, entries, enumFile, listFile, listFloatFile);
+    Pack pack(padding, size, offset, entries, enumFile, listFile, listFloatFile);
 
     lcore::u8* buffer = new lcore::u8[size*size*4];
     lcore::memset(buffer, 0, size*size*4);

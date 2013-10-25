@@ -162,6 +162,9 @@ namespace lgraphics
         inline void drawIndexed(u32 numIndices, u32 start, u32 baseVertex);
 
         inline void drawInstanced(u32 numVertices, u32 numInstances, u32 startVertex, u32 startInstance);
+        inline void drawIndexedInstanced(u32 numIndices, u32 numInstances, u32 startIndex, u32 baseVertex, u32 startInstance);
+
+        inline void drawAuto();
 
         void setViewport(s32 x, s32 y, u32 width, u32 height);
 
@@ -210,6 +213,8 @@ namespace lgraphics
             u32 numUAVs,
             ID3D11UnorderedAccessView* const* uavs,
             const u32* UAVInitCounts);
+
+        inline void setStreamOutTargets(u32 num, ID3D11Buffer* const* buffers, const u32* offsets);
 
         inline void updateSubresource(
             ID3D11Resource* dstResource,
@@ -348,6 +353,16 @@ namespace lgraphics
         context_->DrawInstanced(numVertices, numInstances, startVertex, startInstance);
     }
 
+    inline void GraphicsDeviceRef::drawIndexedInstanced(u32 numIndices, u32 numInstances, u32 startIndex, u32 baseVertex, u32 startInstance)
+    {
+        context_->DrawIndexedInstanced(numIndices, numInstances, startIndex, baseVertex, startInstance);
+    }
+
+    inline void GraphicsDeviceRef::drawAuto()
+    {
+        context_->DrawAuto();
+    }
+
     inline void GraphicsDeviceRef::setRasterizerState(RasterizerState state)
     {
         context_->RSSetState(rasterizerStates_[state]);
@@ -469,6 +484,11 @@ namespace lgraphics
         const u32* UAVInitCounts)
     {
         context_->OMSetRenderTargetsAndUnorderedAccessViews(numViews, views, depthStencilView, UAVStart, numUAVs, uavs, UAVInitCounts);
+    }
+
+    inline void GraphicsDeviceRef::setStreamOutTargets(u32 num, ID3D11Buffer* const* buffers, const u32* offsets)
+    {
+        context_->SOSetTargets(num, buffers, offsets);
     }
 
     inline void GraphicsDeviceRef::updateSubresource(

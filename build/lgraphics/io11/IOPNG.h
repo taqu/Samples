@@ -18,10 +18,16 @@ namespace io
     class IOPNG
     {
     public:
+        enum SwapRGB
+        {
+            Swap_RGB,
+            Swap_BGR,
+        };
+
         /**
         @brief bufferにロード。bufferがNULLの場合、width、height、format、rowBytesを設定して返る
         */
-        static bool read(lcore::istream& is, u8* buffer, u32& width, u32& height, u32& rowBytes, DataFormat& format);
+        static bool read(lcore::istream& is, u8* buffer, u32& width, u32& height, u32& rowBytes, DataFormat& format, SwapRGB swap);
     };
 }
 }

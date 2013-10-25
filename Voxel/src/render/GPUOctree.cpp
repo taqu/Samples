@@ -115,6 +115,7 @@ namespace render
 
         {
             lgraphics::ResourceViewDesc desc;
+            desc.dimension_ = lgraphics::ViewSRVDimension_Buffer;
             desc.format_ = lgraphics::Data_Unknown;
             desc.buffer_.firstElement_ = 0;
             desc.buffer_.numElements_ = num;
@@ -212,6 +213,7 @@ namespace render
 
         {
             lgraphics::ResourceViewDesc desc;
+            desc.dimension_ = lgraphics::ViewSRVDimension_Buffer;
             desc.format_ = lgraphics::Data_Unknown;
             desc.buffer_.firstElement_ = 0;
             desc.buffer_.numElements_ = num;
@@ -241,6 +243,7 @@ namespace render
 
         //{
         //    lgraphics::ResourceViewDesc desc;
+        //    desc.dimension_ = lgraphics::ViewSRVDimension_Buffer;
         //    desc.format_ = lgraphics::Data_Unknown;
         //    desc.buffer_.firstElement_ = 0;
         //    desc.buffer_.numElements_ = num;
@@ -390,6 +393,7 @@ namespace render
 
         {
             lgraphics::ResourceViewDesc desc;
+            desc.dimension_ = lgraphics::ViewSRVDimension_Texture3D;
             desc.format_ = lgraphics::Data_R32_Float;
             desc.tex3D_.mostDetailedMip_ = 0;
             desc.tex3D_.mipLevels_ = 1;
@@ -409,6 +413,8 @@ namespace render
                 lgraphics::ResourceMisc_None,
                 lgraphics::TexFilter_MinMagLinearMipPoint,
                 lgraphics::TexAddress_Clamp,
+                lgraphics::Cmp_Never,
+                0.0f,
                 NULL,
                 &desc);
 
@@ -441,6 +447,8 @@ namespace render
                 lgraphics::ResourceMisc_None,
                 lgraphics::TexFilter_MinMagLinearMipPoint,
                 lgraphics::TexAddress_Clamp,
+                lgraphics::Cmp_Never,
+                0.0f,
                 NULL,
                 NULL);
 
@@ -494,8 +502,10 @@ namespace render
     };
 
     GPUOctree::GPUOctree()
-        :voxelizeVS_(NULL)
-        ,voxelizeGS_(NULL)
+        :voxelizePNVS_(NULL)
+        ,voxelizePNUVS_(NULL)
+        ,voxelizePNGS_(NULL)
+        ,voxelizePNUGS_(NULL)
         ,voxelizePS_(NULL)
         ,voxelizeTexturePS_(NULL)
 
@@ -552,19 +562,27 @@ namespace render
             render::Shader_Voxelize,
             vs,
             ps);
-        shaderManager.get(
-            render::Shader_VoxelizeGS,
-            gs);
-
-        voxelizeVS_ = reinterpret_cast<VoxelizeVS*>(vs);
+        voxelizePNVS_ = reinterpret_cast<VoxelizePNVS*>(vs);
         voxelizePS_ = reinterpret_cast<VoxelizePS*>(ps);
-        voxelizeGS_ = reinterpret_cast<VoxelizeGS*>(gs);
 
         shaderManager.get(
             render::Shader_VoxelizeTexture,
             vs,
             ps);
+        voxelizePNUVS_ = reinterpret_cast<VoxelizePNUVS*>(vs);
         voxelizeTexturePS_ = reinterpret_cast<VoxelizePS*>(ps);
+
+        shaderManager.get(
+            render::Shader_VoxelizePNGS,
+            gs);
+
+        voxelizePNGS_ = reinterpret_cast<VoxelizePNGS*>(gs);
+
+        shaderManager.get(
+            render::Shader_VoxelizePNUGS,
+            gs);
+
+        voxelizePNUGS_ = reinterpret_cast<VoxelizePNUGS*>(gs);
 
         //定数バッファ初期化
         voxelizePS_->update(voxelSizeConstant);
@@ -661,11 +679,11 @@ namespace render
 
         device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
 
-        voxelizeVS_->attach();
-        voxelizeGS_->attach();
+        //voxelizePNVS_->attach();
+        //voxelizePNGS_->attach();
         //voxelizePS_->attach();
 
-        voxelizeGS_->set(worldConstant_);
+        voxelizePNGS_->set(worldConstant_);
         voxelizePS_->setConstant1(); //定数バッファセット
     }
 
@@ -817,7 +835,7 @@ namespace render
         constants.worldMax_.set(halfVoxelWorld, halfVoxelWorld, halfVoxelWorld, 0.0f);
         constants.worldMax_ += worldConstant_.worldCenter_;
         constants.info_[0] = numLevels_;
-        constants.eye_.w_ = worldConstant_.worldSize_.z_*1.5f;
+        constants.eye_.w_ = worldConstant_.worldSize_.z_*2.0f;
 
         constants.worldSize_.x_ = worldConstant_.worldSize_.x_;
         constants.worldSize_.y_ = worldConstant_.worldSize_.z_;

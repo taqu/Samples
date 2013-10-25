@@ -132,7 +132,6 @@
     <ClInclude Include="src\render\Rectangle.h" />
     <ClInclude Include="src\render\Renderer.h" />
     <ClInclude Include="src\render\Shader.h" />
-    <ClInclude Include="src\render\ShaderBase.h" />
     <ClInclude Include="src\render\ShaderManager.h" />
     <ClInclude Include="src\render\ShaderType.h" />
     <ClInclude Include="src\render\ShadowMap.h" />

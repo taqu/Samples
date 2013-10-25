@@ -55,6 +55,7 @@ namespace
         for(s32 i=0; i<2; ++i){
             lgraphics::ResourceViewDesc desc;
             desc.format_ = lgraphics::Data_R16G16B16A16_Float;
+            desc.dimension_ = lgraphics::ViewSRVDimension_Texture2D;
             desc.tex2D_.mipLevels_ = 1;
             desc.tex2D_.mostDetailedMip_ = 0;
 
@@ -70,6 +71,7 @@ namespace
                 lgraphics::ResourceMisc_None,
                 lgraphics::TexFilter_MinMagLinearMipPoint,
                 lgraphics::TexAddress_Clamp,
+                lgraphics::Cmp_Never,
                 0.0f,
                 NULL,
                 &desc);

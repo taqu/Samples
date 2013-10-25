@@ -134,6 +134,7 @@
     <ClInclude Include="..\Common\render\Node.h" />
     <ClInclude Include="..\Common\render\Object.h" />
     <ClInclude Include="..\Common\render\render.h" />
+    <ClInclude Include="..\Common\render\ShaderBase.h" />
     <ClInclude Include="..\Common\stdafx.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="src\Application.h" />

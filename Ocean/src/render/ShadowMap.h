@@ -6,7 +6,7 @@
 @date 2012/08/27 create
 */
 #include <lgraphics/api/TextureRef.h>
-#include "render.h"
+#include "render/render.h"
 
 namespace render
 {

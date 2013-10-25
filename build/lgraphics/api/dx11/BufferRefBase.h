@@ -72,7 +72,7 @@ namespace lgraphics
         static ID3D11Buffer* create(
             u32 size,
             Usage usage,
-            BindFlag bindFlags,
+            u32 bindFlags,
             CPUAccessFlag accessFlags,
             ResourceMisc miscFlags,
             u32 structureByteStride =0,

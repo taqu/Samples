@@ -12,7 +12,7 @@ cbuffer ConstantBuffer1 : register(b1)
 {
     float4 diffuse;
     float4 specular;
-    float4 transparent;
+    float4 shadow;
 }
 
 //Texture2D texAlbedo;
@@ -24,9 +24,8 @@ struct VSOutput
 {
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
-    float2 uv : TEXCOORD1;
-    float3 texS : TEXCOORD2;
-    float3 worldPos : TEXCOORD3;
+    float3 texS : TEXCOORD1;
+    float3 worldPos : TEXCOORD2;
 };
 
 void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
@@ -45,17 +44,17 @@ float4 main(VSOutput input) : SV_Target
 
     //Irradiance
     float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
-    float shadow = step(input.texS.z, shadowDepth);
+    float3 shadowInfluence = (shadowDepth<input.texS.z)? shadow.xyz : 1;
 
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));
 
-    float3 irradiance = dlColor.xyz * cosNL * shadow;
+    float3 irradiance = dlColor.xyz * shadowInfluence * cosNL;
 
     //BRDF
     float rd, rs;
-    calcFresnel(rd, rs, transparent.w, cosEH);
+    calcFresnel(rd, rs, shadow.w, cosEH);
 
     float3 kd = diffuse.xyz * rd * INV_PI;
     float3 ks = specular.xyz * rs * pow(cosNH, specular.w);

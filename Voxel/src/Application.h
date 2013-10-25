@@ -35,6 +35,9 @@ namespace fractal
 
         render::Object* object_;
         render::Object* plane_;
+        render::Object* box_;
+        render::Object* sphere_;
+
         lmath::Vector4 lightDirection_;
     };
 

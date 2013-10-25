@@ -18,7 +18,7 @@ cbuffer ConstantBuffer1 : register(b1)
 {
     float4 diffuse;
     float4 specular;
-    float4 transparent;
+    float4 shadow;
 }
 
 struct VSOutput
@@ -48,48 +48,29 @@ Texture3D<float> tex : register(t2);
 SamplerState sam3DTex : register(s1);
 
 //#include "SampleAO.inc"
+#define WEIGHT (2.0)
 
-static const float4 yaxis[] =
+static const float4 Coeff[] =
 {
-    float4(0.0f, 1.0f, 0.0f, PI/4),
-    float4(0.0f, 0.5f, 0.866025f, PI/4),
-    float4(0.823639f, 0.5f, 0.267617f, PI*3/20),
-    float4(0.509037f, 0.5f, -0.700629f, PI*3/20),
-    float4(-0.509037f, 0.5f, -0.700629f, PI*3/20),
-    float4(-0.823639f, 0.5f, 0.267617f, PI*3/20),
+    float4(1.000000, 0.000000, 0.000000, 0.019894 * WEIGHT),
+    float4(0.984808, 0.173648, 0.000000, 0.019592 * WEIGHT),
+    float4(0.984808, -0.086824, 0.150384, 0.019592 * WEIGHT),
+    float4(0.984808, -0.086824, -0.150384, 0.019592 * WEIGHT),
+    float4(0.939693, 0.241845, 0.241845, 0.018695 * WEIGHT),
+    float4(0.939693, -0.241845, 0.241845, 0.018695 * WEIGHT),
+    float4(0.939693, -0.280167, -0.196175, 0.018695 * WEIGHT),
+    float4(0.939693, 0.241845, -0.241845, 0.018695 * WEIGHT),
 };
 
-static const float4 zaxis[] =
+void getHemiSphereRandom(out float3 v, int i, float3 N)
 {
-    float4(0.0f, 0.0f, 1.0f, 0.0f),
-    float4(0.0f, -0.866025f, 0.5f, 0.0f),
-    float4(0.0f, -0.267617f, 0.5f, 0.0f),
-    float4(0.0f,  0.700629f, 0.5f, 0.0f),
-    float4(0.0f,  0.700629f, 0.5f, 0.0f),
-    float4(0.0f, -0.267617f, 0.5f, 0.0f),
-};
+    float3 up = (N.y>0.9)? float3(1, 0, 0) : float3(0, 1, 0);
 
-static const float4 xaxis[] =
-{
-    float4(0.5f, 0.0f, 0.0f, 0.0f),
-    float4(0.5f, 0.0f, 0.0f, 0.0f),
-    float4(0.5f, -0.823639f, 0.0f, 0.0f),
-    float4(0.5f, -0.509037f, 0.0f, 0.0f),
-    float4(0.5f, 0.509037f, 0.0f, 0.0f),
-    float4(0.5f, 0.823639f, 0.0f, 0.0f),
-};
+    float3 right = cross(up, N);
+    up = cross(N, right);
 
-static const uint3 offset[] =
-{
-    uint3(0,0,0),
-    uint3(1,0,0),
-    uint3(0,1,0),
-    uint3(1,1,0),
-    uint3(0,0,1),
-    uint3(1,0,1),
-    uint3(0,1,1),
-    uint3(1,1,1),
-};
+    v = N * Coeff[i].x + up * Coeff[i].y + right * Coeff[i].z;
+}
 
 static const uint termFlag = (0x01U<<30);
 static const uint dataFlag = (0x01U<<31);
@@ -143,6 +124,7 @@ bool testRayAABB(inout float tmin, inout float tmax, float3 dir, float3 pos, flo
     return true;
 }
 
+#if 0
 Node traverse(float3 pos, int level, inout uint3 voxelPos, out float radius)
 {
     voxelPos = calcVoxelPos(pos);
@@ -162,6 +144,7 @@ Node traverse(float3 pos, int level, inout uint3 voxelPos, out float radius)
     radius = s;
     return node;
 }
+#endif
 
 float sampleVisibility(float3 origin, float3 dir)
 {
@@ -169,32 +152,47 @@ float sampleVisibility(float3 origin, float3 dir)
     if(!testRayAABB(tmin, tmax, dir, origin, worldMin, worldMax)){
         return 0;
     }
+    if(0<tmin){
+        return 0;
+    }
 
-    tmin += eye.w;//offset
+    tmin = eye.w;
     float3 pos = origin + tmin*dir;
 
     float visibility = 0.0f;
     float radius;
     uint3 voxelPos;
-    for(int level=0; level<info.x; ++level){
-        Node node = traverse(pos, level, voxelPos, radius);
-        if(0 == (node.data & dataFlag)){
-            int shift = (info.x-level-1);
-            uint next = (voxelPos.x >> shift) & 0x01U;
-            next |= ((voxelPos.y >> shift) & 0x01U)<<1;
-            next |= ((voxelPos.z >> shift) & 0x01U)<<2;
-            if(0 != (node.next[next] & mask)){
-                visibility += 1;
+
+    int level = 0;
+    float step = worldSize.y*2.0;
+    tmin = step*2.0;
+    while(tmin<tmax){
+        voxelPos = calcVoxelPos(origin + tmin*dir);
+
+        Node node = nodes[0];
+        uint next;
+        int i;
+        float size = worldSize.x;
+        for(i=info.x-1; level<=i; --i){
+            next = (voxelPos.x >> i) & 0x01U;
+            next |= ((voxelPos.y >> i) & 0x01U)<<1;
+            next |= ((voxelPos.z >> i) & 0x01U)<<2;
+
+            if(0 != (node.next[next] & termFlag)){
+                visibility = pow(0.125, i);
                 break;
             }
-        }else{
-            visibility += (node.data & mask)/1024;
+
+            node = nodes[node.next[next] & mask];
+            size *= 0.5;
         }
-        tmin += radius;
-        pos = origin + tmin*dir;
-        if(tmax<=tmin){
+        if(0 == (node.data & dataFlag)){
+            
             break;
         }
+        tmin += step;
+        step *= 2.0;
+        level += 1;
     }
     return visibility;
 }
@@ -216,34 +214,38 @@ float4 main(VSOutput input) : SV_Target
 
     //Irradiance
     float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
-    float shadow = 1;//step(input.texS.z, shadowDepth);
+    float shadowInfluence = 1;//step(input.texS.z, shadowDepth);
 
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));
 
-    float3 irradiance = dlColor.xyz * cosNL * shadow;
+    float3 irradiance = dlColor.xyz * shadowInfluence * cosNL;
 
     float4 albedo = texAlbedo.Sample(samTex, input.uv) * diffuse;
 
     //BRDF
     float rd, rs;
-    calcFresnel(rd, rs, transparent.w, cosEH);
+    calcFresnel(rd, rs, shadow.w, cosEH);
 
     float3 kd = albedo.xyz * rd * INV_PI;
     float3 ks = specular.xyz * rs * pow(cosNH, specular.w);
 
     ks *= specular.w*0.039662 + 0.090587;
 
-    static const int Count=6;
+    static const int Count=8;
     float visibility = 0;
+
+#if 1
     for(int i=0; i<Count; ++i){
         float3 dir;
-        dir.x = dot(N, xaxis[i].xyz);
-        dir.y = dot(N, yaxis[i].xyz);
-        dir.z = dot(N, zaxis[i].xyz);
-        visibility += sampleVisibility(input.worldPos, dir) * yaxis[i].w;
+        getHemiSphereRandom(dir, i, N);
+        visibility += sampleVisibility(input.worldPos, dir) * Coeff[i].w;
     }
+#else
+    visibility = sampleVisibility(input.worldPos, N);
+#endif
+
     visibility = saturate(1-visibility/Count);
 
     float4 color;

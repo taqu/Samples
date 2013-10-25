@@ -7,8 +7,8 @@
 */
 #include <lgraphics/api/ConstantBufferRef.h>
 
-#include "render.h"
-#include "ShaderBase.h"
+#include "render/render.h"
+#include "render/ShaderBase.h"
 #include "ShaderType.h"
 
 namespace lgraphics

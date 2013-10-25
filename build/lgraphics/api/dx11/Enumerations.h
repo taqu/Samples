@@ -108,6 +108,21 @@ namespace lgraphics
     };
 
     //--------------------------------------------------------
+    enum ViewSRVDimension
+    {
+        ViewSRVDimension_Buffer = D3D11_SRV_DIMENSION_BUFFER,
+        ViewSRVDimension_Texture1D = D3D11_SRV_DIMENSION_TEXTURE1D,
+        ViewSRVDimension_Texture1DArray = D3D11_SRV_DIMENSION_TEXTURE1DARRAY,
+        ViewSRVDimension_Texture2D = D3D11_SRV_DIMENSION_TEXTURE2D,
+        ViewSRVDimension_Texture2DArray = D3D11_SRV_DIMENSION_TEXTURE2DARRAY,
+        //ViewSRVDimension_Texture2DMS = D3D11_SRV_DIMENSION_TEXTURE2DMS,
+        //ViewSRVDimension_Texture2DMSArray = D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY,
+        ViewSRVDimension_Texture3D = D3D11_SRV_DIMENSION_TEXTURE3D,
+        ViewSRVDimension_Cube = D3D11_SRV_DIMENSION_TEXTURECUBE,
+        ViewSRVDimension_CubeArray = D3D11_SRV_DIMENSION_TEXTURECUBEARRAY,
+    };
+
+    //--------------------------------------------------------
     enum ViewRTVDimension
     {
         //ViewRTVDimension_Buffer = D3D11_RTV_DIMENSION_BUFFER,

@@ -44,7 +44,8 @@ namespace render
 
     enum ShaderGS
     {
-        Shader_VoxelizeGS,
+        Shader_VoxelizePNGS,
+        Shader_VoxelizePNUGS,
         ShaderGS_Num,
     };
 

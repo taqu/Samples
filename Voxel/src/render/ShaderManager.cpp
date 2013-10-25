@@ -55,11 +55,12 @@ namespace render
         //
         compiler.compileShader(vs, ps, Shader_Default);
         LASSERT(vs.valid() && ps.valid());
-        entries_[Shader_Default].vs_ = LIME_NEW DefaultVS(vs);
+        entries_[Shader_Default].vs_ = LIME_NEW DefaultPNVS(vs);
         entries_[Shader_Default].ps_ = LIME_NEW DefaultPS(ps);
 
-        compiler.compileShaderPS(ps, Shader_DefaultTexture);
-        LASSERT(ps.valid());
+        compiler.compileShader(vs, ps, Shader_DefaultTexture);
+        LASSERT(vs.valid() && ps.valid());
+        entries_[Shader_DefaultTexture].vs_ = LIME_NEW DefaultPNUVS(vs);
         entries_[Shader_DefaultTexture].ps_ = LIME_NEW DefaultPS(ps);
 
 
@@ -89,15 +90,19 @@ namespace render
         //
         compiler.compileShader(vs, ps, Shader_Voxelize);
         LASSERT(vs.valid() && ps.valid());
-        entries_[Shader_Voxelize].vs_ = LIME_NEW VoxelizeVS(vs);
+        entries_[Shader_Voxelize].vs_ = LIME_NEW VoxelizePNVS(vs);
         entries_[Shader_Voxelize].ps_ = LIME_NEW VoxelizePS(ps);
 
-        compiler.compileShaderPS(ps, Shader_VoxelizeTexture);
-        LASSERT(ps.valid());
+        compiler.compileShader(vs, ps, Shader_VoxelizeTexture);
+        LASSERT(vs.valid() && ps.valid());
+        entries_[Shader_VoxelizeTexture].vs_ = LIME_NEW VoxelizePNUVS(vs);
         entries_[Shader_VoxelizeTexture].ps_ = LIME_NEW VoxelizePS(ps);
 
-        compiler.compileShaderGS(gs, Shader_VoxelizeGS);
-        geometryShaders_[Shader_VoxelizeGS] = LIME_NEW VoxelizeGS(gs);
+        compiler.compileShaderGS(gs, Shader_VoxelizePNGS);
+        geometryShaders_[Shader_VoxelizePNGS] = LIME_NEW VoxelizePNGS(gs);
+
+        compiler.compileShaderGS(gs, Shader_VoxelizePNUGS);
+        geometryShaders_[Shader_VoxelizePNUGS] = LIME_NEW VoxelizePNUGS(gs);
 
         //
         compiler.compileShader(vs, ps, Shader_VoxelRender);

@@ -50,6 +50,8 @@ namespace
     Application::Application()
         :object_(NULL)
         ,plane_(NULL)
+        ,box_(NULL)
+        ,sphere_(NULL)
     {
     }
 
@@ -135,6 +137,34 @@ namespace
                 LIME_DELETE(obj);
             }
         }
+
+        {
+            load::ModelLoader loader;
+            if(loader.open("../data/model/box.lm")){
+
+                render::Object* obj = LIME_NEW render::Object();
+                if(loader.load(*obj)){
+                    lcore::swap(box_, obj);
+
+                    box_->setPosition(lmath::Vector4(10.0f, 2.5f, 0.0f, 0.0f));
+                }
+                LIME_DELETE(obj);
+            }
+        }
+
+        {
+            load::ModelLoader loader;
+            if(loader.open("../data/model/sphere.lm")){
+
+                render::Object* obj = LIME_NEW render::Object();
+                if(loader.load(*obj)){
+                    lcore::swap(sphere_, obj);
+
+                    sphere_->setPosition(lmath::Vector4(-10.0f, 2.5f, 0.0f, 0.0f));
+                }
+                LIME_DELETE(obj);
+            }
+        }
     }
 
     void Application::update()
@@ -167,12 +197,22 @@ namespace
         }
 
         if(NULL != plane_){
-            //system.getRenderer().add(plane_);
+            system.getRenderer().add(plane_);
+        }
+
+        if(NULL != box_){
+            system.getRenderer().add(box_);
+        }
+
+        if(NULL != sphere_){
+            system.getRenderer().add(sphere_);
         }
     }
 
     void Application::terminate()
     {
+        LIME_DELETE(sphere_);
+        LIME_DELETE(box_);
         LIME_DELETE(plane_);
         LIME_DELETE(object_);
         System::terminate();

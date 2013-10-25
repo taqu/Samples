@@ -485,7 +485,8 @@ namespace font
 
         static const u32 MaxBuffer = 63;
         Char buffer[MaxBuffer+1];
-        int count=vsnprintf(buffer, MaxBuffer, str, ap);
+        int count=vsnprintf_s(buffer, MaxBuffer, MaxBuffer, str, ap);
+
         va_end(ap);
         if(count<0){
             return;
@@ -504,7 +505,7 @@ namespace font
 
         static const u32 MaxBuffer = 63;
         Char buffer[MaxBuffer+1];
-        int count=vsnprintf(buffer, MaxBuffer, str, ap);
+        int count=vsnprintf_s(buffer, MaxBuffer, MaxBuffer, str, ap);
         va_end(ap);
         if(count<0){
             return;

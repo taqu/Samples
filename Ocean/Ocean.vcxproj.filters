@@ -219,6 +219,9 @@
     <ClInclude Include="..\Common\Timer.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\render\ShaderBase.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

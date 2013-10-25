@@ -74,6 +74,7 @@ namespace render
     {
         lgraphics::ResourceViewDesc desc;
         desc.format_ = lgraphics::Data_R32_Float;
+        desc.dimension_ = lgraphics::ViewSRVDimension_Texture2D;
         desc.tex2D_.mostDetailedMip_ = 0;
         desc.tex2D_.mipLevels_ = 1;
 
@@ -89,6 +90,7 @@ namespace render
             lgraphics::ResourceMisc_None,
             lgraphics::TexFilter_MinMagLinearMipPoint,
             lgraphics::TexAddress_Border,
+            lgraphics::Cmp_Never,
             255.0f,
             NULL,
             &desc);

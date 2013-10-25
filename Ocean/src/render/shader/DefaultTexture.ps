@@ -12,7 +12,7 @@ cbuffer ConstantBuffer1 : register(b1)
 {
     float4 diffuse;
     float4 specular;
-    float4 transparent;
+    float4 shadow;
 }
 
 Texture2D texShadow : register(t0);
@@ -54,19 +54,19 @@ PSOutput main(VSOutput input)
 
     //Irradiance
     float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
-    float shadow = min(1, step(input.texS.z, shadowDepth) + 0.6);
+    float3 shadowInfluence = (shadowDepth<input.texS.z)? shadow.xyz : 1;
 
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));
 
-    float3 irradiance = dlColor.xyz * cosNL * shadow;
+    float3 irradiance = dlColor.xyz * shadowInfluence * cosNL;
 
     float4 albedo = texAlbedo.Sample(samTex, input.uv) * diffuse;
 
     //BRDF
     float rd, rs;
-    calcFresnel(rd, rs, transparent.w, cosEH);
+    calcFresnel(rd, rs, shadow.w, cosEH);
 
     float3 kd = albedo.xyz * rd * INV_PI;
     float3 ks = specular.xyz * rs * pow(cosNH, specular.w);

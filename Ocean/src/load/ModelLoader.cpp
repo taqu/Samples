@@ -384,7 +384,7 @@ namespace load
             break;
 
         case 1:
-            if(false == lgraphics::io::IOPNG::read(texfile, NULL, width, height, rowBytes, format)){
+            if(false == lgraphics::io::IOPNG::read(texfile, NULL, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_BGR)){
                 return false;
             }
             break;
@@ -403,7 +403,7 @@ namespace load
         switch(type)
         {
         case 1:
-            ret = lgraphics::io::IOPNG::read(texfile, buffer, width, height, rowBytes, format);
+            ret = lgraphics::io::IOPNG::read(texfile, buffer, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_BGR);
             break;
 
         case 2:
@@ -419,6 +419,7 @@ namespace load
 
             lgraphics::ResourceViewDesc viewDesc;
             viewDesc.format_ = format;
+            viewDesc.dimension_ = lgraphics::ViewSRVDimension_Texture2D;
             viewDesc.tex2D_.mostDetailedMip_ = 0;
             viewDesc.tex2D_.mipLevels_ = 1;
 
@@ -434,6 +435,7 @@ namespace load
                 lgraphics::ResourceMisc_None,
                 lgraphics::TexFilter_MinMagLinearMipPoint,
                 lgraphics::TexAddress_Clamp,
+                lgraphics::Cmp_Never,
                 0.0f,
                 &initData,
                 &viewDesc);

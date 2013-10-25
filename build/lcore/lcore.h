@@ -13,13 +13,11 @@
 #if defined(_WIN32)
 
 #if defined(_DEBUG)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 #include <malloc.h>
 #include <new>
 
-//#define LIME_NEW new(_NORMAL_BLOCK,__FILE__,__LINE__)
-#define LIME_NEW new
+#define LIME_NEW new(__FILE__,__LINE__)
+//#define LIME_NEW new
 #define LIME_RAW_NEW new
 
 #else //_DEBUG
@@ -56,6 +54,7 @@
 
 #include "LangSpec.h"
 
+
 // メモリ確保・開放
 //-------------------
 void* lcore_malloc(std::size_t size);
@@ -64,6 +63,10 @@ void* lcore_malloc(std::size_t size, std::size_t alignment);
 void lcore_free(void* ptr);
 void lcore_free(void* ptr, std::size_t alignment);
 
+void* lcore_malloc(std::size_t size, const char* file, int line);
+void* lcore_malloc(std::size_t size, std::size_t alignment, const char* file, int line);
+
+//-------------------
 inline void* operator new(std::size_t size)
 {
     return lcore_malloc(size);
@@ -84,6 +87,50 @@ inline void operator delete[](void* ptr)
     lcore_free(ptr);
 }
 
+//-------------------
+inline void* operator new(std::size_t size, const char* file, int line)
+{
+    return lcore_malloc(size, file, line);
+}
+
+inline void operator delete(void* ptr, const char* /*file*/, int /*line*/)
+{
+    lcore_free(ptr);
+}
+
+inline void* operator new[](std::size_t size, const char* file, int line)
+{
+    return lcore_malloc(size, file, line);
+}
+
+inline void operator delete[](void* ptr, const char* /*file*/, int /*line*/)
+{
+    lcore_free(ptr);
+}
+
+
+/// 16バイトアライメント変数指定
+#define LIME_ALIGN16 _declspec(align(16))
+
+#if defined(_DEBUG)
+
+#define LIME_PLACEMENT_NEW(ptr) new(ptr)
+#define LIME_DELETE(p) { delete p; (p)=NULL;}
+#define LIME_DELETE_NONULL(p) delete p
+//#define LIME_OPERATOR_NEW ::operator new
+//#define LIME_OPERATOR_DELETE ::operator delete
+
+#define LIME_DELETE_ARRAY(p) {delete[] (p); (p) = NULL;}
+
+#define LIME_MALLOC(size) (lcore_malloc(size, __FILE__, __LINE__))
+#define LIME_FREE(mem) {lcore_free(mem); mem = NULL;}
+
+/// アライメント指定malloc
+#define LIME_ALIGNED_MALLOC(size, align) (lcore_malloc(size, align, __FILE__, __LINE__))
+/// アライメント指定free
+#define LIME_ALIGNED_FREE(mem, align) (lcore_free(mem, align))
+
+#else //defined(_DEBUG)
 
 #define LIME_PLACEMENT_NEW(ptr) new(ptr)
 #define LIME_DELETE(p) { delete p; (p)=NULL;}
@@ -96,18 +143,17 @@ inline void operator delete[](void* ptr)
 #define LIME_MALLOC(size) (lcore_malloc(size))
 #define LIME_FREE(mem) {lcore_free(mem); mem = NULL;}
 
-/// 16バイトアライメント変数指定
-#define LIME_ALIGN16 _declspec(align(16))
-
 /// アライメント指定malloc
 #define LIME_ALIGNED_MALLOC(size, align) (lcore_malloc(size, align))
-
 /// アライメント指定free
 #define LIME_ALIGNED_FREE(mem, align) (lcore_free(mem, align))
+#endif
+
 
 // 例外
 //-------------------
 #define LIME_THROW0 throw()
+
 
 // Assertion
 //-------------------
@@ -245,7 +291,7 @@ namespace lcore
     }
 
     template<class T>
-    inline T lerp(const T& v0, const T& v1, const T& ratio)
+    inline T lerp(const T& v0, const T& v1, f32 ratio)
     {
         return v0 + ratio*(v1 - v0);
         //return (1.0f-ratio)*v0 + ratio*v1;
@@ -307,6 +353,11 @@ namespace lcore
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
+    inline u32 getABGR(u8 a, u8 r, u8 g, u8 b)
+    {
+        return (a << 24) | r | (g << 8) | (b << 16);
+    }
+
     inline u32 getRGBA(u8 a, u8 r, u8 g, u8 b)
     {
         return (r << 24) | (g << 16) | (b << 8) | a;
@@ -332,6 +383,28 @@ namespace lcore
     {
         return static_cast<u8>((argb) & 0xFFU);
     }
+
+
+    inline u8 getAFromABGR(u32 abgr)
+    {
+        return static_cast<u8>((abgr>>24) & 0xFFU);
+    }
+
+    inline u8 getRFromABGR(u32 abgr)
+    {
+        return static_cast<u8>((abgr) & 0xFFU);
+    }
+
+    inline u8 getGFromABGR(u32 abgr)
+    {
+        return static_cast<u8>((abgr>>8) & 0xFFU);
+    }
+
+    inline u8 getBFromABGR(u32 abgr)
+    {
+        return static_cast<u8>((abgr>>16) & 0xFFU);
+    }
+
 
     inline u8 getRFromRGBA(u32 rgba)
     {
@@ -451,6 +524,7 @@ namespace lcore
         bool create(u32 capacity, Locked locked=Locked_Disable);
         void destroy();
 
+        bool valid() const;
         void* allocate(u32 size);
         void deallocate(void* mem);
     private:

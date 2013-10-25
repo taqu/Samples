@@ -185,8 +185,10 @@ namespace render
         void begin(lgraphics::GraphicsDeviceRef& device, const lscene::Scene& scene);
         void end(lgraphics::GraphicsDeviceRef& device);
 
-        VoxelizeVS* getVoxelizeVS() { return voxelizeVS_;}
-        VoxelizeGS* getVoxelizeGS() { return voxelizeGS_;}
+        VoxelizePNVS* getVoxelizePNVS() { return voxelizePNVS_;}
+        VoxelizePNUVS* getVoxelizePNUVS() { return voxelizePNUVS_;}
+        VoxelizePNGS* getVoxelizePNGS() { return voxelizePNGS_;}
+        VoxelizePNUGS* getVoxelizePNUGS() { return voxelizePNUGS_;}
         VoxelizePS* getVoxelizePS() { return voxelizePS_;}
         VoxelizePS* getVoxelizeTexturePS() { return voxelizeTexturePS_;}
 
@@ -207,8 +209,10 @@ namespace render
             u32 num_;
         };
 
-        VoxelizeVS* voxelizeVS_;
-        VoxelizeGS* voxelizeGS_;
+        VoxelizePNVS* voxelizePNVS_;
+        VoxelizePNUVS* voxelizePNUVS_;
+        VoxelizePNGS* voxelizePNGS_;
+        VoxelizePNUGS* voxelizePNUGS_;
         VoxelizePS* voxelizePS_;
         VoxelizePS* voxelizeTexturePS_;
 
@@ -233,7 +237,7 @@ namespace render
 
         AtomicCounter atomicCounter_;
 
-        render::VoxelizeGS::Constant worldConstant_;
+        render::VoxelizePNGS::Constant worldConstant_;
         GPUOctreeVoxelPool voxelPool_;
         GPUOctreeNodePool nodePool_;
 

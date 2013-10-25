@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2011/10/16 create
 */
-#include "render.h"
+#include "render/render.h"
 
 namespace lgraphics
 {

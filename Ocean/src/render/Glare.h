@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2013/07/11 create
 */
-#include "render.h"
+#include "render/render.h"
 #include <lmath/lmath.h>
 #include <lgraphics/api/ConstantBufferRef.h>
 #include <lgraphics/api/TextureRef.h>

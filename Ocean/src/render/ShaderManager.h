@@ -6,7 +6,7 @@
 @date 2011/10/17 create
 */
 #include "ShaderType.h"
-#include "render.h"
+#include "render/render.h"
 
 namespace render
 {

@@ -48,8 +48,8 @@ namespace render
         inline lmath::Vector4& position();
         inline lmath::Quaternion& rotation();
 
-        inline void setPosition(lmath::Vector4& position);
-        inline void setRotation(lmath::Quaternion& rotation);
+        inline void setPosition(const lmath::Vector4& position);
+        inline void setRotation(const lmath::Quaternion& rotation);
 
         /// ‹«ŠE‹…ƒZƒbƒg
         inline void setSphere(const lmath::Sphere& s);
@@ -156,13 +156,13 @@ namespace render
     }
 
     //--------------------------------------------------
-    inline void Object::setPosition(lmath::Vector4& position)
+    inline void Object::setPosition(const lmath::Vector4& position)
     {
         position_ = position;
     }
 
     //--------------------------------------------------
-    inline void Object::setRotation(lmath::Quaternion& rotation)
+    inline void Object::setRotation(const lmath::Quaternion& rotation)
     {
         rotation_ = rotation;
     }

@@ -1,4 +1,4 @@
-#ifndef INC_LCORE_AES_H__
+ï»¿#ifndef INC_LCORE_AES_H__
 #define INC_LCORE_AES_H__
 /**
 @file AES.h
@@ -28,17 +28,17 @@ namespace lcore
 
         /**
         @param context
-        @param cipher ... dataLengthˆÈã‚ÌƒTƒCƒY
+        @param cipher ... dataLengthä»¥ä¸Šã®ã‚µã‚¤ã‚º
         @param data ... 
-        @param dataLength ... data‚ÌƒoƒCƒgƒTƒCƒYB16‚Ì”{”
+        @param dataLength ... dataã®ãƒã‚¤ãƒˆã‚µã‚¤ã‚ºã€‚16ã®å€æ•°
         */
         static s32 encrypt(AESContext& context, u8* cipher, const u8* data, s32 dataLength);
 
         /**
         @param context
-        @param data ... cipherLengthˆÈã‚ÌƒTƒCƒY
+        @param data ... cipherLengthä»¥ä¸Šã®ã‚µã‚¤ã‚º
         @param cipher ... 
-        @param cipherLength ... cipher‚ÌƒoƒCƒgƒTƒCƒYB16‚Ì”{”
+        @param cipherLength ... cipherã®ãƒã‚¤ãƒˆã‚µã‚¤ã‚ºã€‚16ã®å€æ•°
         */
         static s32 decrypt(AESContext& context, u8* data, const u8* cipher, s32 cipherLength);
 

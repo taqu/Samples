@@ -16,7 +16,7 @@ namespace render
     //--- Default
     //---
     //----------------------------------------------
-    void DefaultVS::initialize()
+    void DefaultPNVS::initialize()
     {
         constant_ = lgraphics::ConstantBuffer::create(
             sizeof(Constant),
@@ -81,7 +81,7 @@ namespace render
     //--- Voxelize
     //---
     //----------------------------------------------
-    void VoxelizeVS::initialize()
+    void VoxelizePNVS::initialize()
     {
         constant0_ = lgraphics::ConstantBuffer::create(
             sizeof(lmath::Matrix44),
@@ -90,7 +90,7 @@ namespace render
             lgraphics::ResourceMisc_None);
     }
 
-    void VoxelizeGS::initialize()
+    void VoxelizePNGS::initialize()
     {
         constant0_ = lgraphics::ConstantBuffer::create(
             sizeof(Constant),

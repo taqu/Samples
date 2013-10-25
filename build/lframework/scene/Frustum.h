@@ -32,7 +32,7 @@ namespace lscene
         /**
         @brief ビュー空間の視錐台計算
         */
-        void calc(const Camera& camera, f32 zfar);
+        void calc(const Camera& camera, f32 znear, f32 zfar);
 
         /**
         @brief ビュー空間の球が視錐台内にあるか

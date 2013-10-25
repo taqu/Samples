@@ -8,7 +8,7 @@
 #include <lgraphics/api/ConstantBufferRef.h>
 
 #include "render/render.h"
-#include "ShaderBase.h"
+#include "render/ShaderBase.h"
 #include "ShaderType.h"
 
 namespace lgraphics
@@ -24,7 +24,7 @@ namespace render
     //--- Default
     //---
     //----------------------------------------------
-    class DefaultVS : public ShaderVSBase
+    class DefaultPNVS : public ShaderVSBase
     {
     public:
         struct Constant
@@ -34,7 +34,7 @@ namespace render
             lmath::Matrix44 mlwvp_;
         };
 
-        DefaultVS(const lgraphics::VertexShaderRef& ref)
+        DefaultPNVS(const lgraphics::VertexShaderRef& ref)
             :ShaderVSBase(ref)
         {}
 
@@ -88,6 +88,22 @@ namespace render
     private:
         lgraphics::ConstantBufferRef constant0_;
         lgraphics::ConstantBufferRef constant1_;
+    };
+
+    class DefaultPNUVS : public ShaderVSBase
+    {
+    public:
+        DefaultPNUVS(const lgraphics::VertexShaderRef& ref)
+            :ShaderVSBase(ref)
+        {}
+    };
+
+    class DefaultTexturePS : public ShaderPSBase
+    {
+    public:
+        DefaultTexturePS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
     };
 
     //----------------------------------------------
@@ -196,15 +212,10 @@ namespace render
     //--- Voxelize
     //---
     //----------------------------------------------
-    class VoxelizeVS : public ShaderVSBase
+    class VoxelizePNVS : public ShaderVSBase
     {
     public:
-        //struct Constant
-        //{
-        //    lmath::Matrix44 mw_;
-        //};
-
-        VoxelizeVS(const lgraphics::VertexShaderRef& ref)
+        VoxelizePNVS(const lgraphics::VertexShaderRef& ref)
             :ShaderVSBase(ref)
         {}
 
@@ -219,7 +230,15 @@ namespace render
         lgraphics::ConstantBufferRef constant0_;
     };
 
-    class VoxelizeGS : public ShaderGSBase
+    class VoxelizePNUVS : public ShaderVSBase
+    {
+    public:
+        VoxelizePNUVS(const lgraphics::VertexShaderRef& ref)
+            :ShaderVSBase(ref)
+        {}
+    };
+
+    class VoxelizePNGS : public ShaderGSBase
     {
     public:
         struct Constant
@@ -228,7 +247,7 @@ namespace render
             lmath::Vector4 worldSize_; //world size, half world size, voxel size, half voxel size
         };
 
-        VoxelizeGS(const lgraphics::GeometryShaderRef& ref)
+        VoxelizePNGS(const lgraphics::GeometryShaderRef& ref)
             :ShaderGSBase(ref)
         {}
 
@@ -241,6 +260,14 @@ namespace render
         }
     private:
         lgraphics::ConstantBufferRef constant0_;
+    };
+
+    class VoxelizePNUGS : public ShaderGSBase
+    {
+    public:
+        VoxelizePNUGS(const lgraphics::GeometryShaderRef& ref)
+            :ShaderGSBase(ref)
+        {}
     };
 
     class VoxelizePS : public ShaderPSBase

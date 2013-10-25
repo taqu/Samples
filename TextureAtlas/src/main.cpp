@@ -342,7 +342,7 @@ namespace
             rowBytes = 4*width;
             break;
         case FileType_PNG:
-            success = lgraphics::io::IOPNG::read(in, buffer, width, height, rowBytes, format);
+            success = lgraphics::io::IOPNG::read(in, buffer, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_RGB);
             break;
         }
         in.close();
@@ -509,11 +509,12 @@ int main(int argc, char** argv)
                         success = lgraphics::io::IOTGA::read(in, NULL, width, height, format);
                         break;
                     case FileType_PNG:
-                        success = lgraphics::io::IOPNG::read(in, NULL, width, height, rowBytes, format);
+                        success = lgraphics::io::IOPNG::read(in, NULL, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_RGB);
                         break;
                     }
                 }
-                if(format != lgraphics::Data_R8G8B8A8_UNorm_SRGB){
+                if(format != lgraphics::Data_R8G8B8A8_UNorm_SRGB
+                    && format != lgraphics::Data_B8G8R8A8_UNorm_SRGB){
                     std::cerr << "invalid format" << std::endl;
                 }
                 if(success){

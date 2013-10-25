@@ -16,6 +16,9 @@ namespace lscene
     class Scene
     {
     public:
+        static const s32 NumMinCascades = 1;
+        static const s32 NumMaxCascades = 4;
+
         Scene();
         ~Scene();
 
@@ -64,27 +67,29 @@ namespace lscene
             return lightEnv_;
         }
 
-        const lmath::Matrix44& getLightViewProjection() const
+        const lmath::Matrix44& getLightViewProjection(s32 cascade) const
         {
-            return lightViewProjection_;
+            LASSERT(0<=cascade && cascade<numCascades_);
+
+            return lightViewProjection_[cascade];
         }
 
 
-        void setSceneAABB(const lmath::Vector4& aabbMin, const lmath::Vector4& aabbMax)
-        {
-            sceneAABBMin_ = aabbMin;
-            sceneAABBMax_ = aabbMax;
-        }
+        //void setSceneAABB(const lmath::Vector4& aabbMin, const lmath::Vector4& aabbMax)
+        //{
+        //    sceneAABBMin_ = aabbMin;
+        //    sceneAABBMax_ = aabbMax;
+        //}
 
-        const lmath::Vector4& getAABBMin() const
-        {
-            return sceneAABBMin_;
-        }
+        //const lmath::Vector4& getAABBMin() const
+        //{
+        //    return sceneAABBMin_;
+        //}
 
-        const lmath::Vector4& getAABBMax() const
-        {
-            return sceneAABBMax_;
-        }
+        //const lmath::Vector4& getAABBMax() const
+        //{
+        //    return sceneAABBMax_;
+        //}
 
         u32 getShadowMapSize() const
         {
@@ -98,6 +103,16 @@ namespace lscene
         }
 
 
+        f32 getShadowMapZNear() const
+        {
+            return shadowMapZNear_;
+        }
+
+        void setShadowMapZNear(f32 znear)
+        {
+            shadowMapZNear_ = znear;
+        }
+
         f32 getShadowMapZFar() const
         {
             return shadowMapZFar_;
@@ -108,19 +123,38 @@ namespace lscene
             shadowMapZFar_ = zfar;
         }
 
+        s32 getNumCascades() const
+        {
+            return numCascades_;
+        }
+
+        void setNumCascades(s32 numCascades)
+        {
+            LASSERT(NumMinCascades<=numCascades && numCascades<=NumMaxCascades);
+            numCascades_ = numCascades;
+        }
+
+        void calcCascadeSplitDepth();
         void calcLightViewProjection();
-        void getShadowMapProjection(lmath::Matrix44& mat) const;
+        void getShadowMapProjection(lmath::Matrix44& mat, s32 cascade) const;
+
+        void getCascadeSplitDepth(f32* dst);
     private:
+        void calcLightViewProjection(s32 cascade, f32 shadowMapZNear, f32 shadowMapZFar);
+
         Camera camera_;
         LightEnvironment lightEnv_;
 
-        lmath::Matrix44 lightViewProjection_;
+        lmath::Matrix44 lightViewProjection_[NumMaxCascades];
 
-        lmath::Vector4 sceneAABBMin_;
-        lmath::Vector4 sceneAABBMax_;
+        //lmath::Vector4 sceneAABBMin_;
+        //lmath::Vector4 sceneAABBMax_;
 
         u32 shadowMapSize_;
+        s32 numCascades_;
+        f32 shadowMapZNear_;
         f32 shadowMapZFar_;
+        f32 cascadeSplitDepth_[NumMaxCascades];
     };
 }
 

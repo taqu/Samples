@@ -12,6 +12,7 @@ namespace lcore
 {
     /**
     @brief 後方から文字探索
+    @return 見つからなければNULL
     @param src ... 入力
     @param c ... 探索文字
     @param size ... 文字列長

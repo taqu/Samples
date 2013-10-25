@@ -161,6 +161,7 @@ namespace lgraphics
     struct ResourceViewDesc
     {
         DataFormat format_;
+        ViewSRVDimension dimension_;
         union
         {
             BufferSRV buffer_;
@@ -862,6 +863,8 @@ namespace lgraphics
             ResourceMisc misc,
             TextureFilterType filter,
             TextureAddress adress,
+            CmpFunc compFunc,
+            f32 borderColor,
             const SubResourceData* initData,
             const ResourceViewDesc* resourceViewDesc);
 
@@ -877,6 +880,7 @@ namespace lgraphics
             ResourceMisc misc,
             TextureFilterType filter,
             TextureAddress adress,
+            CmpFunc compFunc,
             f32 borderColor,
             const SubResourceData* initData,
             const ResourceViewDesc* resourceViewDesc);
@@ -893,6 +897,8 @@ namespace lgraphics
             ResourceMisc misc,
             TextureFilterType filter,
             TextureAddress adress,
+            CmpFunc compFunc,
+            f32 borderColor,
             const SubResourceData* initData,
             const ResourceViewDesc* resourceViewDesc);
             

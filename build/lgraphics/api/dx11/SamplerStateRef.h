@@ -64,6 +64,7 @@ namespace lgraphics
             TextureAddress addressU,
             TextureAddress addressV,
             TextureAddress addressW,
+            CmpFunc compFunc,
             f32 borderColor = 0.0f);
     };
 }

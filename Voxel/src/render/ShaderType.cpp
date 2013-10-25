@@ -20,17 +20,23 @@ namespace
 
     //Normal
     //------------------------------------
-    const u8 DefaultVSSource[] =
+    const u8 DefaultPNVSSource[] =
     {
-#include "shader/DefaultVS.byte"
+#include "shader/DefaultPNVS.byte"
     };
-    const u32 DefaultVSSourceSize = sizeof(DefaultVSSource);
+    const u32 DefaultPNVSSourceSize = sizeof(DefaultPNVSSource);
 
     const u8 DefaultPSSource[] =
     {
 #include "shader/DefaultPS.byte"
     };
     const u32 DefaultPSSourceSize = sizeof(DefaultPSSource);
+
+    const u8 DefaultPNUVSSource[] =
+    {
+#include "shader/DefaultPNUVS.byte"
+    };
+    const u32 DefaultPNUVSSourceSize = sizeof(DefaultPNUVSSource);
 
     const u8 DefaultTexturePSSource[] =
     {
@@ -93,17 +99,30 @@ namespace
 
     //Voxelize
     //------------------------------------
-    const u8 VoxelizeVSSource[] =
+    const u8 VoxelizePNVSSource[] =
     {
-#include "shader/VoxelizeVS.byte"
+#include "shader/VoxelizePNVS.byte"
     };
-    const u32 VoxelizeVSSourceSize = sizeof(VoxelizeVSSource);
+    const u32 VoxelizePNVSSourceSize = sizeof(VoxelizePNVSSource);
 
-    const u8 VoxelizeGSSource[] =
+    const u8 VoxelizePNUVSSource[] =
     {
-#include "shader/VoxelizeGS.byte"
+#include "shader/VoxelizePNUVS.byte"
     };
-    const u32 VoxelizeGSSourceSize = sizeof(VoxelizeGSSource);
+    const u32 VoxelizePNUVSSourceSize = sizeof(VoxelizePNUVSSource);
+
+    const u8 VoxelizePNGSSource[] =
+    {
+#include "shader/VoxelizePNGS.byte"
+    };
+    const u32 VoxelizePNGSSourceSize = sizeof(VoxelizePNGSSource);
+
+    const u8 VoxelizePNUGSSource[] =
+    {
+#include "shader/VoxelizePNUGS.byte"
+    };
+    const u32 VoxelizePNUGSSourceSize = sizeof(VoxelizePNUGSSource);
+
 
     const u8 VoxelizePSSource[] =
     {
@@ -215,14 +234,14 @@ namespace
 
     const Entry ShaderEntries[Shader_Num]=
     {
-        { DefaultVSSource, DefaultVSSourceSize, DefaultPSSource, DefaultPSSourceSize },
-        { NULL, 0, DefaultTexturePSSource, DefaultTexturePSSourceSize },
+        { DefaultPNVSSource, DefaultPNVSSourceSize, DefaultPSSource, DefaultPSSourceSize },
+        { DefaultPNUVSSource, DefaultPNUVSSourceSize, DefaultTexturePSSource, DefaultTexturePSSourceSize },
         { DepthVSSource, DepthVSSourceSize, DepthPSSource, DepthPSSourceSize },
         { RectangleVSSource, RectangleVSSourceSize, RectanglePSSource, RectanglePSSourceSize },
         { DebugVCVSSource, DebugVCVSSourceSize, DebugVCPSSource, DebugVCPSSourceSize },
         { NULL, 0, TonemappingStaticPSSource, TonemappingStaticPSSourceSize },
-        { VoxelizeVSSource, VoxelizeVSSourceSize, VoxelizePSSource, VoxelizePSSourceSize },
-        { NULL, 0, VoxelizeTexturePSSource, VoxelizeTexturePSSourceSize },
+        { VoxelizePNVSSource, VoxelizePNVSSourceSize, VoxelizePSSource, VoxelizePSSourceSize },
+        { VoxelizePNUVSSource, VoxelizePNUVSSourceSize, VoxelizeTexturePSSource, VoxelizeTexturePSSourceSize },
         { VoxelRenderVSSource, VoxelRenderVSSourceSize, VoxelRenderPSSource, VoxelRenderPSSourceSize },
         { OctreeTagVSSource, OctreeTagVSSourceSize, OctreeTagPSSource, OctreeTagPSSourceSize },
         { NULL, 0, OctreeCreateNodePSSource, OctreeCreateNodePSSourceSize },
@@ -245,7 +264,8 @@ namespace
 
     const EntryGS ShaderGSEntries[ShaderGS_Num]=
     {
-        { VoxelizeGSSource, VoxelizeGSSourceSize },
+        { VoxelizePNGSSource, VoxelizePNGSSourceSize },
+        { VoxelizePNUGSSource, VoxelizePNUGSSourceSize },
     };
 }
 

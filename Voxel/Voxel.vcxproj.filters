@@ -99,9 +99,6 @@
     <ClInclude Include="src\render\Shader.h">
       <Filter>src\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\ShaderBase.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\ShaderManager.h">
       <Filter>src\render</Filter>
     </ClInclude>

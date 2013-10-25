@@ -2,8 +2,9 @@ SET COMPILER=..\..\..\..\ShaderCompiler.exe
 SET SHADERDIR=.\src\render\shader\
 
 pushd %SHADERDIR%
-%COMPILER% -vs -p5 Default.vs DefaultVS.byte
+%COMPILER% -vs -p5 DefaultPN.vs DefaultPNVS.byte
 %COMPILER% -ps -p5 Default.ps DefaultPS.byte
+%COMPILER% -vs -p5 DefaultPNU.vs DefaultPNUVS.byte
 %COMPILER% -ps -p5 DefaultTexture.ps DefaultTexturePS.byte
 
 %COMPILER% -vs -p5 Depth.vs DepthVS.byte
@@ -17,8 +18,10 @@ pushd %SHADERDIR%
 
 %COMPILER% -ps -p5 TonemappingStatic.ps TonemappingStaticPS.byte
 
-%COMPILER% -vs -p5 Voxelize.vs VoxelizeVS.byte
-%COMPILER% -gs -p5 Voxelize.gs VoxelizeGS.byte
+%COMPILER% -vs -p5 VoxelizePN.vs VoxelizePNVS.byte
+%COMPILER% -vs -p5 VoxelizePNU.vs VoxelizePNUVS.byte
+%COMPILER% -gs -p5 VoxelizePN.gs VoxelizePNGS.byte
+%COMPILER% -gs -p5 VoxelizePNU.gs VoxelizePNUGS.byte
 %COMPILER% -ps -p5 Voxelize.ps VoxelizePS.byte
 %COMPILER% -ps -p5 VoxelizeTexture.ps VoxelizeTexturePS.byte
 

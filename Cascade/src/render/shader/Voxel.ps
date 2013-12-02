@@ -1,0 +1,118 @@
+#define F32_MAX (3.402823466e+38F)
+#define F32_EPSILON (1.192092896e-06F)
+
+#define MARCH_COUNT (7)
+
+#define USE_SHADE (0)
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 invDepthExtent;
+}
+
+struct GSOutput
+{
+    float4 position : SV_POSITION;
+    float3 color : TEXCOORD0;
+    float3 bmin : TEXCOORD1;
+    float3 bmax : TEXCOORD2;
+    float3 posInVoxel : TEXCOORD3;
+    float3 cameraPosInVoxel : TEXCOORD4;
+    float3 invSize : TEXCOORD5;
+#if USE_SHADE
+    float3x3 mat : TEXCOORD6;
+#endif
+};
+
+Texture3D<float> tex : register(t0);
+SamplerState samTex : register(s0);
+
+Texture2D texNormalDepth : register(t1);
+SamplerState samPoint : register(s1);
+
+void testRayAABB(out float tmin, out float tmax, float3 dir, float3 pos, float3 bmin, float3 bmax)
+{
+    tmin = 0;
+    tmax = F32_MAX;
+    float3 invDir = 1/dir;
+
+    for(int i=0; i<3; ++i){
+        if(!any(dir[i])){
+            if(pos[i]<bmin[i] || bmax[i]<pos[i]){
+                tmax = tmin;
+                return;
+            }
+            continue;
+        }
+        float t1 = (bmin[i] - pos[i])*invDir[i];
+        float t2 = (bmax[i] - pos[i])*invDir[i];
+        if(t1>t2){
+            if(t2>tmin) tmin = t2;
+            if(t1<tmax) tmax = t1;
+        }else{
+            if(t1>tmin) tmin = t1;
+            if(t2<tmax) tmax = t2;
+        }
+        if(tmin>tmax){
+            tmax = tmin;
+            return;
+        }
+        if(tmax<0){
+            tmax = tmin;
+            return;
+        }
+    }
+}
+
+float4 main(GSOutput input) : SV_Target
+{
+    float3 dir = normalize(input.posInVoxel - input.cameraPosInVoxel);
+    float tmin, tmax;
+    testRayAABB(tmin, tmax, dir, input.cameraPosInVoxel, input.bmin, input.bmax);
+
+    float3 p0 = (input.cameraPosInVoxel + dir * tmin - input.bmin) * input.invSize;
+    float3 p1 = (input.cameraPosInVoxel + dir * tmax - input.bmin) * input.invSize;
+
+    float3 pd = (p1-p0)/MARCH_COUNT;
+    float step = (tmax - tmin)/MARCH_COUNT;
+    float depthStep = abs(tmax-tmin)*invDepthExtent.x/MARCH_COUNT;
+
+    float2 uv = input.position.xy * float2(0.5,-0.5) + float2(0.5, 0.5);
+    float sampleDepth = texNormalDepth.SampleLevel(samPoint, uv, 0).w;
+
+#if USE_SHADE
+    float3 lightDir = mul(dlDir.xyz, input.mat);
+#endif
+
+    float totalDot = 0;
+    float density = 0;
+    float depth = input.position.z;
+    int i;
+    [unroll(MARCH_COUNT)]
+    for(i=1; i<=MARCH_COUNT; ++i){
+        if(sampleDepth<depth){
+            break;
+        }
+        float sampleDesnity = tex.Sample(samTex, p0);
+#if USE_SHADE
+        float3 dir = (2*p0-1);
+        float l = length(dir);
+        dir = (l<F32_EPSILON)? dir : dir/l;
+        totalDot += max(0, dot(dir, lightDir)) * sampleDesnity;
+#endif
+        density += sampleDesnity;
+
+        p0 += pd;
+        tmin += step;
+        depth += depthStep;
+    }
+    density /= i;
+#if USE_SHADE
+    float3 color = dlColor.xyz * input.color * totalDot;
+#else
+    float3 color = dlColor.xyz * input.color;
+#endif
+    return float4(color, density);
+}

@@ -1,0 +1,50 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 offset[4];
+    float4 weight[2];
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex0 : TEXCOORD0;
+};
+
+Texture2D tex : register(t0);
+SamplerState samLinear : register(s0);
+
+float4 main(VSOutput input) : SV_Target
+{
+    float4 c = (float4)0;
+#if 1
+    c += tex.Sample(samLinear, input.tex0 + offset[0].xy) * weight[0].x;
+    c += tex.Sample(samLinear, input.tex0 + offset[0].zw) * weight[0].y;
+    c += tex.Sample(samLinear, input.tex0 + offset[1].xy) * weight[0].z;
+    c += tex.Sample(samLinear, input.tex0 + offset[1].zw) * weight[0].w;
+
+    c += tex.Sample(samLinear, input.tex0 + offset[2].xy) * weight[1].x;
+    c += tex.Sample(samLinear, input.tex0 + offset[2].zw) * weight[1].y;
+    c += tex.Sample(samLinear, input.tex0 + offset[3].xy) * weight[1].z;
+    c += tex.Sample(samLinear, input.tex0 + offset[3].zw) * weight[1].w;
+
+    c += tex.Sample(samLinear, input.tex0 - offset[0].zw) * weight[0].y;
+    c += tex.Sample(samLinear, input.tex0 - offset[1].xy) * weight[0].z;
+    c += tex.Sample(samLinear, input.tex0 - offset[1].zw) * weight[0].w;
+    c += tex.Sample(samLinear, input.tex0 - offset[2].xy) * weight[1].x;
+
+    c += tex.Sample(samLinear, input.tex0 - offset[2].zw) * weight[1].y;
+    c += tex.Sample(samLinear, input.tex0 - offset[3].xy) * weight[1].z;
+    c += tex.Sample(samLinear, input.tex0 - offset[3].zw) * weight[1].w;
+
+#else
+    c += tex.Sample(samLinear, input.tex0 + offset[0].xy) * weight[0].x;
+    c += tex.Sample(samLinear, input.tex0 + offset[0].zw) * weight[0].y;
+    c += tex.Sample(samLinear, input.tex0 + offset[1].xy) * weight[0].z;
+    c += tex.Sample(samLinear, input.tex0 + offset[1].zw) * weight[0].w;
+
+    c += tex.Sample(samLinear, input.tex0 - offset[0].zw) * weight[0].y;
+    c += tex.Sample(samLinear, input.tex0 - offset[1].xy) * weight[0].z;
+    c += tex.Sample(samLinear, input.tex0 - offset[1].zw) * weight[0].w;
+#endif
+    return c;
+}

@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C8B4711D-D368-4128-BCEB-781E26A3EEB3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Cascade</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\build\;$(ProjectDir)..\Common\;$(ProjectDir)src\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\build\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\build\;$(ProjectDir)..\Common\;$(ProjectDir)src\;$(ProjectDir)LibOVR\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\build\lib\;$(ProjectDir)LibOVR\Lib\Win32\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>lframework_dx11_sse_vc110_d.lib;linput_vc110_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>lframework_dx11_sse_vc110.lib;linput_vc110.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\font\FontManager.cpp" />
+    <ClCompile Include="..\Common\font\FontPack.cpp" />
+    <ClCompile Include="..\Common\font\FontShader.cpp" />
+    <ClCompile Include="..\Common\Input.cpp" />
+    <ClCompile Include="..\Common\render\AnimObject.cpp" />
+    <ClCompile Include="..\Common\render\Geometry.cpp" />
+    <ClCompile Include="..\Common\render\Material.cpp" />
+    <ClCompile Include="..\Common\render\Mesh.cpp" />
+    <ClCompile Include="..\Common\render\Node.cpp" />
+    <ClCompile Include="..\Common\render\Object.cpp" />
+    <ClCompile Include="..\Common\Timer.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\load\ModelLoader.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Noise.cpp" />
+    <ClCompile Include="src\render\CascadedShadowMap.cpp" />
+    <ClCompile Include="src\render\Glare.cpp" />
+    <ClCompile Include="src\render\DebugDraw.cpp" />
+    <ClCompile Include="src\render\InputLayoutFactory.cpp" />
+    <ClCompile Include="src\render\Rectangle.cpp" />
+    <ClCompile Include="src\render\Renderer.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="src\render\ShaderManager.cpp" />
+    <ClCompile Include="src\render\ShaderType.cpp" />
+    <ClCompile Include="src\render\Voxel.cpp" />
+    <ClCompile Include="src\scene\DebugCamera.cpp" />
+    <ClCompile Include="src\scene\SkyBox.cpp" />
+    <ClCompile Include="src\System.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\font\FontManager.h" />
+    <ClInclude Include="..\Common\font\FontPack.h" />
+    <ClInclude Include="..\Common\font\FontShader.h" />
+    <ClInclude Include="..\Common\font\FontType.h" />
+    <ClInclude Include="..\Common\Input.h" />
+    <ClInclude Include="..\Common\load\load.h" />
+    <ClInclude Include="..\Common\load\load_geometry.h" />
+    <ClInclude Include="..\Common\load\load_material.h" />
+    <ClInclude Include="..\Common\load\load_mesh.h" />
+    <ClInclude Include="..\Common\load\load_node.h" />
+    <ClInclude Include="..\Common\load\load_texture.h" />
+    <ClInclude Include="..\Common\render\AnimObject.h" />
+    <ClInclude Include="..\Common\render\Geometry.h" />
+    <ClInclude Include="..\Common\render\Material.h" />
+    <ClInclude Include="..\Common\render\Mesh.h" />
+    <ClInclude Include="..\Common\render\Node.h" />
+    <ClInclude Include="..\Common\render\Object.h" />
+    <ClInclude Include="..\Common\render\render.h" />
+    <ClInclude Include="..\Common\render\ShaderBase.h" />
+    <ClInclude Include="..\Common\stdafx.h" />
+    <ClInclude Include="..\Common\Timer.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\load\ModelLoader.h" />
+    <ClInclude Include="src\Noise.h" />
+    <ClInclude Include="src\render\CascadedShadowMap.h" />
+    <ClInclude Include="src\render\Glare.h" />
+    <ClInclude Include="src\render\DebugDraw.h" />
+    <ClInclude Include="src\render\InputLayoutFactory.h" />
+    <ClInclude Include="src\render\Rectangle.h" />
+    <ClInclude Include="src\render\Renderer.h" />
+    <ClInclude Include="src\render\Shader.h" />
+    <ClInclude Include="src\render\ShaderManager.h" />
+    <ClInclude Include="src\render\ShaderType.h" />
+    <ClInclude Include="src\render\Voxel.h" />
+    <ClInclude Include="src\scene\DebugCamera.h" />
+    <ClInclude Include="src\scene\scene.h" />
+    <ClInclude Include="src\scene\SkyBox.h" />
+    <ClInclude Include="src\System.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,101 @@
+#define NUM_CASCADES 2
+static const float PI = 3.14159265f;
+static const float INV_PI = 0.31830988618379067153f;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 cameraPos;
+    float4 cascadeDepth;
+    float4 cascadeScale;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+    float4 specular;
+    float4 shadow;
+}
+
+//Texture2D texAlbedo;
+Texture2DArray<float2> texShadow : register(t0);
+
+SamplerState samShadow : register(s0);
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float3 worldPos : TEXCOORD1;
+    float3 viewNormal : TEXCOORD2;
+    float4 texS[NUM_CASCADES] : TEXCOORD3;
+};
+
+struct PSOutput
+{
+    float4 color : SV_Target0;
+    float4 normalDepth : SV_Target1;
+    float depth : SV_Depth;
+};
+
+void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
+{
+    float F1 = 1 - F0;
+    rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
+    rd = 1 - rs;
+}
+
+float linstep(float low, float high, float v)
+{
+    return saturate((v-low)/(high-low));
+}
+
+PSOutput main(VSOutput input)
+{
+    float3 L = dlDir.xyz;
+    float3 N = normalize(input.normal);
+    float3 E = normalize(cameraPos.xyz - input.worldPos); //視線ベクトル
+    float3 H = normalize(L+E); //ハーフベクトル
+
+    //Irradiance
+    float3 shadowInfluence = 1;
+
+    float d = distance(input.worldPos, cameraPos.xyz);
+    [unroll(4)]
+    for(int i=0; i<NUM_CASCADES; ++i){
+        if(d<cascadeDepth[i]){
+            float2 moments = texShadow.Sample(samShadow, input.texS[i].xyz);
+            float p = smoothstep(input.texS[i].w-0.02, input.texS[i].w, moments.x);
+            float variance = max(moments.y-moments.x*moments.x, -0.001);
+            float d2 = input.texS[i].w - moments.x;
+            float p_max = linstep(0.2, 1.0, variance/(variance+d2*d2));
+            shadowInfluence = max(max(p,p_max), shadow.xyz);
+            break;
+        }
+    }
+    float cosEH = saturate(dot(E,H));
+    float cosNL = saturate(dot(N,L));
+    float cosNH = saturate(dot(N,H));
+
+    float3 irradiance = dlColor.xyz * shadowInfluence * cosNL;
+
+    //BRDF
+    float rd, rs;
+    calcFresnel(rd, rs, shadow.w, cosEH);
+
+    float3 kd = diffuse.xyz * rd * INV_PI;
+    float3 ks = specular.xyz * rs * pow(cosNH, specular.w);
+
+    ks *= specular.w*0.039662 + 0.090587;
+
+    float4 color;
+    color.xyz = (kd + ks)*irradiance;
+    color.w = diffuse.w;
+
+    PSOutput output;
+    output.color = color;
+    output.normalDepth = float4(normalize(input.viewNormal), input.position.z);
+    output.depth = input.position.z;
+    return output;
+}

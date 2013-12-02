@@ -1,0 +1,37 @@
+Texture2DArray<float> texShadow : register(t0);
+SamplerState samShadow : register(s0);
+
+struct GSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    uint rtIndex : SV_RenderTargetArrayIndex;
+};
+
+float2 main(GSOutput input) : SV_Target
+{
+#if 1
+    uint w, h, elems;
+    texShadow.GetDimensions(w, h, elems);
+
+    float2 offset = float2(1.0/w, 1.0/h);
+
+    float sum = 0;
+    float sum2 = 0;
+
+    for(int i=-1; i<=1; ++i){
+        for(int j=-1; j<=1; ++j){
+            float sample = texShadow.Sample(samShadow, float3(input.tex + float2(j*offset.x, i*offset.y), input.rtIndex));
+            sum += sample;
+            sum2 += sample*sample;
+        }
+    }
+
+    return float2(sum/9.0, sum2/9.0);
+
+#else
+    float sample = texShadow.Sample(samShadow, float3(input.tex, input.rtIndex));
+    return float2(sample, sample*sample);
+#endif
+
+}

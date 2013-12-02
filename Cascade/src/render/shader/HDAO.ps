@@ -1,0 +1,210 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float2 RTSize : packoffset(c0.x);
+    float normalScale : packoffset(c0.z);
+    float rejectRadius : packoffset(c0.w);
+    float acceptRadius : packoffset(c1.x);
+    float acceptAngle : packoffset(c1.y);
+    float intensity : packoffset(c1.z);
+    float dummy : packoffset(c1.w);
+};
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex0 : TEXCOORD0;
+};
+
+Texture2D texNormalDepth : register(t0);
+SamplerState samPoint : register(s0);
+
+
+//Num Rings, Num Pixels
+#define RING_1 (1)
+#define RING_2 (2)
+#define RING_3 (3)
+#define RING_4 (4)
+#define NUM_RING_1_GATHERS (2)
+#define NUM_RING_2_GATHERS (6)
+#define NUM_RING_3_GATHERS (12)
+#define NUM_RING_4_GATHERS (20)
+
+// Ring sampling pattern
+static const float2 RingPattern[NUM_RING_4_GATHERS] =
+{
+    //Ring 1
+    {1, -1},
+    {0, 1},
+
+    //Ring 2
+    {0, 3},
+    {2, 1},
+    {3, -1},
+    {1, -3},
+
+    //Ring 3
+    {1, -5},
+    {3, -3},
+    {5, -1},
+    {4, 1},
+    {2, 3},
+    {0, 5},
+
+    //Ring 4
+    {0, 7},
+    {2, 5},
+    {4, 3},
+    {6, 1},
+    {7, -1},
+    {5, -3},
+    {3, -5},
+    {1, -7},
+};
+
+//Weight
+static const float4 RingWeight[NUM_RING_4_GATHERS] =
+{
+    // Ring 1 (Sum = 5.30864)
+    { 1.00000, 0.50000, 0.44721, 0.70711 },
+    { 0.50000, 0.44721, 0.70711, 1.00000 },
+    
+    // Ring 2 (Sum = 6.08746)
+    { 0.30000, 0.29104, 0.37947, 0.40000 },
+    { 0.42426, 0.33282, 0.37947, 0.53666 },
+    { 0.40000, 0.30000, 0.29104, 0.37947 },
+    { 0.53666, 0.42426, 0.33282, 0.37947 },
+    
+    // Ring 3 (Sum = 6.53067)
+    { 0.31530, 0.29069, 0.24140, 0.25495 },
+    { 0.36056, 0.29069, 0.26000, 0.30641 },
+    { 0.26000, 0.21667, 0.21372, 0.25495 },
+    { 0.29069, 0.24140, 0.25495, 0.31530 },
+    { 0.29069, 0.26000, 0.30641, 0.36056 },
+    { 0.21667, 0.21372, 0.25495, 0.26000 },
+    
+    // Ring 4 (Sum = 7.00962)
+    { 0.17500, 0.17365, 0.19799, 0.20000 },
+    { 0.22136, 0.20870, 0.24010, 0.25997 },
+    { 0.24749, 0.21864, 0.24010, 0.28000 },
+    { 0.22136, 0.19230, 0.19799, 0.23016 },
+    { 0.20000, 0.17500, 0.17365, 0.19799 },
+    { 0.25997, 0.22136, 0.20870, 0.24010 },
+    { 0.28000, 0.24749, 0.21864, 0.24010 },
+    { 0.23016, 0.22136, 0.19230, 0.19799 },
+};
+
+//Total Weight
+static const float TotalRingWeight[RING_4] =
+{
+    5.30864,
+    11.39610,
+    17.92677,
+	24.93639,
+};
+
+//Normal Pattern
+#define NUM_NORMAL_LOADS (4)
+static const int2 NormalLoadPattern[NUM_NORMAL_LOADS] =
+{
+    {1, 8},
+    {8, -1},
+    {5, 4},
+    {4, -4},
+};
+
+float NormalRejectionTest(int2 iScreenCoord)
+{
+    float accm = 0;
+    for(int i=0; i<NUM_NORMAL_LOADS; ++i){
+        int2 mirrored = (NormalLoadPattern[i] + int2(1,1)) * int2(-1,-1);
+        int3 t0 = int3(iScreenCoord + NormalLoadPattern[i], 0);
+        int3 t1 = int3(iScreenCoord + mirrored, 0);
+
+        float3 n0 = texNormalDepth.Load(t0).xyz;
+        float3 n1 = texNormalDepth.Load(t1).xyz;
+
+        float d = dot(n0, n1);
+        accm += (d>acceptAngle)? 0 : (1-(abs(d)*0.25));
+    }
+    return 0.5 + accm*0.25;
+}
+
+void Gather4(out float4 pixels[4], in int3 texcoord)
+{
+    pixels[0] = texNormalDepth.Load(texcoord, int2(0, 1));
+    pixels[1] = texNormalDepth.Load(texcoord, int2(1, 1));
+    pixels[2] = texNormalDepth.Load(texcoord, int2(1, 0));
+    pixels[3] = texNormalDepth.Load(texcoord, int2(0, 0));
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    float2 fScreenCoord = input.tex0 * RTSize;
+    int2 iScreenCoord = (int2)fScreenCoord;
+
+    float normalTest = NormalRejectionTest(iScreenCoord);
+
+    if(normalTest<0.5){
+        return float4(0, 0, 0, 1);
+    }
+
+    //Sample center pixel
+    float4 normalDepth = texNormalDepth.SampleLevel(samPoint, input.tex0, 0);
+    float offsetCenterZ = normalDepth.w - normalDepth.z * normalScale;
+    
+    float4 occlusion = (float4)0;
+    for(int iGather=0; iGather<NUM_RING_4_GATHERS; ++iGather){
+        int2 mirrorScreenCoord = (RingPattern[iGather] + int2(1,1)) * int2(-1,-1);
+        int3 texcoord = int3(iScreenCoord + RingPattern[iGather], 0);
+        int3 texMirrored = int3(iScreenCoord + mirrorScreenCoord, 0);
+
+        float4 pixels[4];
+        Gather4(pixels, texcoord);
+
+        float4 mirrors[4];
+        Gather4(mirrors, texMirrored);
+
+        //Detect valleys
+        float4 depth0 = float4(pixels[0].w, pixels[1].w, pixels[2].w, pixels[3].w);
+        float4 depth1 = float4(mirrors[0].w, mirrors[1].w, mirrors[2].w, mirrors[3].w);
+
+        float4 diff;
+        float4 compare[2];
+
+        diff = normalDepth.wwww - depth0;
+        compare[0] = (diff<rejectRadius.xxxx)? 1 : 0;
+        compare[0] *= (diff>acceptRadius.xxxx)? 1 : 0;
+
+        diff = normalDepth.wwww - depth1;
+        compare[1] = (diff<rejectRadius.xxxx)? 1 : 0;
+        compare[1] *= (diff>acceptRadius.xxxx)? 1 : 0;
+
+        occlusion += RingWeight[iGather].xyzw * (compare[0].xyzw * compare[1].zwxy) * normalTest;
+#if 1
+        float4 n0 = float4(pixels[0].z, pixels[1].z, pixels[2].z, pixels[3].z);
+        float4 n1 = float4(mirrors[0].z, mirrors[1].z, mirrors[2].z, mirrors[3].z);
+        depth0 -= n0 * normalScale;
+        depth1 -= n1 * normalScale;
+
+        diff = offsetCenterZ.xxxx - depth0;
+        compare[0] = (diff<rejectRadius.xxxx)? 1 : 0;
+        compare[0] *= (diff>acceptRadius.xxxx)? 1 : 0;
+
+        diff = offsetCenterZ.xxxx - depth1;
+        compare[1] = (diff<rejectRadius.xxxx)? 1 : 0;
+        compare[1] *= (diff>acceptRadius.xxxx)? 1 : 0;
+
+        occlusion += RingWeight[iGather].xyzw * (compare[0].xyzw * compare[1].zwxy) * normalTest;
+#endif
+    }
+
+#if 1
+    float occ = (occlusion.x + occlusion.y + occlusion.z + occlusion.w) / (3 * TotalRingWeight[RING_4-1]);
+#else
+    float occ = (occlusion.x + occlusion.y + occlusion.z + occlusion.w) / (2 * TotalRingWeight[RING_4-1]);
+#endif
+    occ *= intensity;
+    occ = 1 - saturate(occ);
+    return float4(0,0,0, occ);
+    //return float4(occ,occ,occ, occ);
+}

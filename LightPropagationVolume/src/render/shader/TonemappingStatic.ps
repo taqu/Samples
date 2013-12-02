@@ -1,0 +1,77 @@
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex0 : TEXCOORD0;
+};
+
+Texture2D texAlbedo : register(t0);
+SamplerState samPoint : register(s0);
+
+Texture2D texEffect : register(t1);
+SamplerState samLinear : register(s1);
+
+static const float A = 0.10f;//0.22; //ShoulderStrength
+static const float B = 0.50;//0.30; //LinearStrength
+static const float C = 0.10; //LinearAngle
+static const float D = 0.20; //ToeStrength
+static const float E = 0.02; //ToeNumerator
+static const float F = 0.30; //ToeDenominator
+static const float W = 5.0f;//11.2; //LinearWhitePoint
+
+float3 tonemap(float3 x)
+{
+    return ((x*(A*x + C*B) + D*E)/(x*(A*x+B) + D*F)) - E/F;
+}
+
+float tonemapLum(float x)
+{
+    return ((x*(A*x + C*B) + D*E)/(x*(A*x+B) + D*F)) - E/F;
+}
+
+float tonemap1()
+{
+    return ((W*(A*W + C*B) + D*E)/(W*(A*W+B) + D*F)) - E/F;
+}
+
+
+float RGBToLum(float4 rgb)
+{
+    return dot(rgb.xyz, float3(0.299, 0.587, 0.114));
+}
+
+float4 tonemapSimple(float4 c)
+{
+#if 1
+    c *= 1.6;
+    return c/(1+c);
+    //return pow(c/(1+c), 1/2.2);
+#elif 1
+    c *= 1.6;
+    c = max(0, c-0.004);
+    return (c*(6.2*c+0.5))/(c*(6.2*c+1.7)+0.06);
+#else
+    c *= 1.6;
+    float l = RGBToLum(c)
+    l = max(0, l-0.004);
+    return c*(l*(6.2*l+0.5))/(l*(6.2*l+1.7)+0.06);
+#endif
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    float4 c = texAlbedo.Sample(samPoint, input.tex0) + texEffect.Sample(samLinear, input.tex0);
+#if 1
+    c.xyz *= 1.6f;//exposure
+    c.xyz = tonemap(c.xyz*2);
+    c.xyz *= 1/tonemap1();
+    //c.xyz = pow(c.xyz, 1/2.2);
+#elif 0
+    c.xyz *= 1.6f;//exposure
+    c.xyz *= tonemapLum(RGBToLum(c)*2);
+    c.xyz *= (1/tonemap1());
+    //c.xyz = pow(c.xyz, 1/2.2);
+#else
+    c = tonemapSimple(c);
+#endif
+    return c;
+}

@@ -1,0 +1,36 @@
+//cbuffer ConstantBuffer0 : register(b0)
+//{
+    //float4 dlDir;
+    //float4 dlColor;
+    //float4 diffuse;
+    //float4 ambient;
+//}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float4 direct : TEXCOORD1;
+};
+
+struct PSOutput
+{
+    float4 color : SV_Target0;
+    float4 normal : SV_Target1;
+    float depth : SV_Depth;
+};
+
+PSOutput main(VSOutput input)
+{
+    PSOutput output;
+    float3 normal = input.normal;
+    //float d = max(dot(dlDir.xyz, normal), 0.0f);
+    //output.color.rgb = d * diffuse.rgb * dlColor.xyz;
+    //output.color.a = diffuse.a;
+    output.color = input.direct;
+
+    normal = normal * 0.5f + float3(0.5f, 0.5f, 0.5f);
+    output.normal = float4(normal, 1.0f);
+    output.depth = input.position.z;
+    return output;
+}

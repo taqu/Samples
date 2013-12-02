@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{a7801013-d9f1-40a2-a1b5-4205bb3028f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\font">
+      <UniqueIdentifier>{8390fd5f-e3a1-4211-ac7a-e399a403a295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\load">
+      <UniqueIdentifier>{dbd8568d-79f7-4faf-ae7b-c0254bd46fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{12cb280c-f9f8-4e47-8bf2-0db741a24d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{5084c34c-4b8b-439c-a65d-667a79097011}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Application.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\scene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\DebugCamera.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\CascadedShadowMap.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\DebugDraw.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Glare.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\InputLayoutFactory.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Rectangle.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Renderer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Shader.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShaderManager.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShaderType.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\load\ModelLoader.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontPack.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontManager.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontShader.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontType.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_material.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_geometry.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_mesh.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_node.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_texture.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Geometry.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Material.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Mesh.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Node.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Object.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\render.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\ShaderBase.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Input.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Timer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\AnimObject.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\LightPropagationVolume.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\LPVBuffer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ReflectiveShadowMap.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\DebugCamera.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Glare.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\CascadedShadowMap.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\DebugDraw.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\InputLayoutFactory.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Rectangle.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Renderer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Shader.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderManager.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderType.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\load\ModelLoader.cpp">
+      <Filter>src\load</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontManager.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontPack.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontShader.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Object.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Geometry.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Material.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Mesh.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Node.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\AnimObject.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\LightPropagationVolume.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\LPVBuffer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ReflectiveShadowMap.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

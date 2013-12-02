@@ -1,0 +1,87 @@
+Texture3D texR0 : register(t0);
+Texture3D texG0 : register(t1);
+Texture3D texB0 : register(t2);
+
+Texture3D texR1 : register(t3);
+Texture3D texG1 : register(t4);
+Texture3D texB1 : register(t5);
+
+Texture3D texR2 : register(t6);
+Texture3D texG2 : register(t7);
+Texture3D texB2 : register(t8);
+
+Texture3D texR3 : register(t9);
+Texture3D texG3 : register(t10);
+Texture3D texB3 : register(t11);
+
+Texture3D texR4 : register(t12);
+Texture3D texG4 : register(t13);
+Texture3D texB4 : register(t14);
+
+Texture3D texR5 : register(t15);
+Texture3D texG5 : register(t16);
+Texture3D texB5 : register(t17);
+
+Texture3D texR6 : register(t18);
+Texture3D texG6 : register(t19);
+Texture3D texB6 : register(t20);
+
+Texture3D texR7 : register(t21);
+Texture3D texG7 : register(t22);
+Texture3D texB7 : register(t23);
+
+struct GSOutput
+{
+    float4 position : SV_Position;
+    uint RTIndex : SV_RenderTargetArrayIndex;
+};
+
+struct PSOutput
+{
+    float4 coeffR : SV_Target0;
+    float4 coeffG : SV_Target1;
+    float4 coeffB : SV_Target2;
+};
+
+PSOutput main(GSOutput input)
+{
+    int4 uvw = int4(input.position.x, input.position.y, input.RTIndex, 0);
+
+    float4 coeffR = texR0.Load(uvw);
+    float4 coeffG = texG0.Load(uvw);
+    float4 coeffB = texB0.Load(uvw);
+
+    coeffR += texR1.Load(uvw);
+    coeffG += texG1.Load(uvw);
+    coeffB += texB1.Load(uvw);
+
+    coeffR += texR2.Load(uvw);
+    coeffG += texG2.Load(uvw);
+    coeffB += texB2.Load(uvw);
+
+    coeffR += texR3.Load(uvw);
+    coeffG += texG3.Load(uvw);
+    coeffB += texB3.Load(uvw);
+
+    coeffR += texR4.Load(uvw);
+    coeffG += texG4.Load(uvw);
+    coeffB += texB4.Load(uvw);
+
+    coeffR += texR5.Load(uvw);
+    coeffG += texG5.Load(uvw);
+    coeffB += texB5.Load(uvw);
+
+    coeffR += texR6.Load(uvw);
+    coeffG += texG6.Load(uvw);
+    coeffB += texB6.Load(uvw);
+
+    coeffR += texR7.Load(uvw);
+    coeffG += texG7.Load(uvw);
+    coeffB += texB7.Load(uvw);
+
+    PSOutput output;
+    output.coeffR = coeffR;
+    output.coeffG = coeffG;
+    output.coeffB = coeffB;
+    return output;
+}

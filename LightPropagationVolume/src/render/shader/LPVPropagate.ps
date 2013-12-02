@@ -1,0 +1,290 @@
+static const float PI = 3.14159265f;
+
+static const float4 SH = float4(
+     0.282094792f,
+    -0.4886025119f,
+     0.4886025119f,
+    -0.4886025119f);
+
+static const float4 ClampedSH = float4(
+    PI * 0.282094792f,
+    (PI*2.0f/3.0f) * -0.4886025119f,
+    (PI*2.0f/3.0f) *  0.4886025119f,
+    (PI*2.0f/3.0f) * -0.4886025119f);
+
+static const float SolidAngle = 0.4006696846f/PI;
+static const float SideFaceSolidAngle = 0.4234413544f/PI;
+
+float4 calcSH(float3 c)
+{
+    return SH * float4(1.0, c.yzx);
+}
+
+float4 clampledCosineCoeff(float3 c)
+{
+    return ClampedSH * float4(1.0, c.yzx);
+}
+
+static const float4 gatherParams1[36] =
+{
+float4(0.000000, 0.000000, 1.000000, 0.127537),
+float4(0.000000, 0.000000, 1.000000, 0.000000),
+float4(0.447214, 0.000000, 0.894427, 0.134786),
+float4(-0.447214, 0.000000, 0.894427, 0.134786),
+float4(0.000000, 0.447214, 0.894427, 0.134786),
+float4(0.000000, -0.447214, 0.894427, 0.134786),
+
+float4(0.000000, 0.000000, -1.000000, 0.000000),
+float4(0.000000, 0.000000, -1.000000, 0.127537),
+float4(0.447214, 0.000000, -0.894427, 0.134786),
+float4(-0.447214, 0.000000, -0.894427, 0.134786),
+float4(0.000000, 0.447214, -0.894427, 0.134786),
+float4(0.000000, -0.447214, -0.894427, 0.134786),
+
+float4(0.894427, 0.000000, 0.447214, 0.134786),
+float4(0.894427, 0.000000, -0.447214, 0.134786),
+float4(1.000000, 0.000000, 0.000000, 0.127537),
+float4(1.000000, 0.000000, 0.000000, 0.000000),
+float4(0.894427, 0.447214, 0.000000, 0.134786),
+float4(0.894427, -0.447214, 0.000000, 0.134786),
+
+float4(-0.894427, 0.000000, 0.447214, 0.134786),
+float4(-0.894427, 0.000000, -0.447214, 0.134786),
+float4(-1.000000, 0.000000, 0.000000, 0.000000),
+float4(-1.000000, 0.000000, 0.000000, 0.127537),
+float4(-0.894427, 0.447214, 0.000000, 0.134786),
+float4(-0.894427, -0.447214, 0.000000, 0.134786),
+
+float4(0.000000, 0.894427, 0.447214, 0.134786),
+float4(0.000000, 0.894427, -0.447214, 0.134786),
+float4(0.447214, 0.894427, 0.000000, 0.134786),
+float4(-0.447214, 0.894427, 0.000000, 0.134786),
+float4(0.000000, 1.000000, 0.000000, 0.127537),
+float4(0.000000, 1.000000, 0.000000, 0.000000),
+
+float4(0.000000, -0.894427, 0.447214, 0.134786),
+float4(0.000000, -0.894427, -0.447214, 0.134786),
+float4(0.447214, -0.894427, 0.000000, 0.134786),
+float4(-0.447214, -0.894427, 0.000000, 0.134786),
+float4(0.000000, -1.000000, 0.000000, 0.000000),
+float4(0.000000, -1.000000, 0.000000, 0.127537)
+};
+
+Texture3D texR : register(t0);
+Texture3D texG : register(t1);
+Texture3D texB : register(t2);
+
+struct GSOutput
+{
+    float4 position : SV_Position;
+    uint RTIndex : SV_RenderTargetArrayIndex;
+};
+
+struct PSOutput
+{
+    float4 coeffR : SV_Target0;
+    float4 coeffG : SV_Target1;
+    float4 coeffB : SV_Target2;
+};
+
+
+void loadOffsetTexValues(int4 uvw, int3 offset, inout float4 r, inout float4 g, inout float4 b)
+{
+    r = texR.Load(uvw, offset);
+    g = texG.Load(uvw, offset);
+    b = texB.Load(uvw, offset);
+}
+
+
+void addCoeff(inout float4 coeffR, inout float4 coeffG, inout float4 coeffB,
+    float3 direction, float solidAngle, float4 r, float4 g, float4 b)
+{
+    float4 sh = calcSH(direction);
+    float4 cosLobeSH = clampledCosineCoeff(direction) * solidAngle;
+
+    coeffR += dot(r, sh) * cosLobeSH;
+    coeffG += dot(g, sh) * cosLobeSH;
+    coeffB += dot(b, sh) * cosLobeSH;
+}
+
+PSOutput main(GSOutput input)
+{
+#if 0
+    int4 uvw = int4(input.position.x, input.position.y, input.RTIndex, 0);
+
+    PSOutput output;
+    loadOffsetTexValues(uvw, int3(0, 0, 0), output.coeffR, output.coeffG, output.coeffB);
+    return output;
+#else
+    int4 uvw = int4(input.position.x, input.position.y, input.RTIndex, 0);
+
+    float4 SHCoefficientsRed = (float4)0;
+    float4 SHCoefficientsGreen = (float4)0;
+    float4 SHCoefficientsBlue = (float4)0;
+
+    int3 neighborOffset;
+
+    float4 inSHCoefficientsRed = (float4)0;
+    float4 inSHCoefficientsGreen = (float4)0;
+    float4 inSHCoefficientsBlue = (float4)0;
+
+    //+X
+    //--------------------
+    neighborOffset = int3(1, 0, 0);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[2*6 + 2].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[2*6 + 0].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[2*6 + 1].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[2*6 + 4].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[2*6 + 5].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    //-X
+    //--------------------
+    neighborOffset = int3(-1, 0, 0);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[3*6 + 3].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[3*6 + 0].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[3*6 + 1].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[3*6 + 4].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[3*6 + 5].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    //+Y
+    //--------------------
+    neighborOffset = int3(0, 1, 0);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[4*6 + 4].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[4*6 + 0].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[4*6 + 1].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[4*6 + 2].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[4*6 + 3].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    //-Y
+    //--------------------
+    neighborOffset = int3(0, -1, 0);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[5*6 + 5].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[5*6 + 0].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[5*6 + 1].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[5*6 + 2].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[5*6 + 3].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    //+Z
+    //--------------------
+    neighborOffset = int3(0, 0, 1);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[0*6 + 0].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[0*6 + 2].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[0*6 + 3].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[0*6 + 4].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[0*6 + 5].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    //-Z
+    //--------------------
+    neighborOffset = int3(0, 0, -1);
+    loadOffsetTexValues(uvw, neighborOffset, inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[1*6 + 1].xyz, SolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[1*6 + 2].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[1*6 + 3].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[1*6 + 4].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+    addCoeff(SHCoefficientsRed, SHCoefficientsGreen, SHCoefficientsBlue,
+        gatherParams1[1*6 + 5].xyz, SideFaceSolidAngle,
+        inSHCoefficientsRed, inSHCoefficientsGreen, inSHCoefficientsBlue);
+
+
+    PSOutput output;
+    
+    output.coeffR = SHCoefficientsRed;
+    output.coeffG = SHCoefficientsGreen;
+    output.coeffB = SHCoefficientsBlue;
+
+    return output;
+#endif
+}

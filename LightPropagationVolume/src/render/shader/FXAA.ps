@@ -1,0 +1,78 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 rcpFrame; //(1/width, 1/height, 0, 0)
+    float4 rcpFrameOpt; //(2/width, 2/height, 0.5/width, 0.5/height)
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex0 : TEXCOORD0;
+    float4 posPos : TEXCOORD1;
+};
+
+Texture2D texAlbedo : register( t0 );
+SamplerState samLinear : register( s0 );
+
+#define FXAA_EDGE_SHARPNESS 8.0
+
+#define FxaaTexTop(p) texAlbedo.SampleLevel(samLinear, p, 0.0)
+
+float RGBToLum(float4 rgb)
+{
+    return sqrt(dot(rgb.xyz, float3(0.299, 0.587, 0.114)));
+    //return dot(rgb.xyz, float3(0.299, 0.587, 0.114));
+}
+
+float4 FXAA(float2 pos, float4 posPos)
+{
+    float lumNE = RGBToLum(FxaaTexTop(posPos.zy)) + 1.0/384.0;
+    float lumSW = RGBToLum(FxaaTexTop(posPos.xw));
+    float lumNW = RGBToLum(FxaaTexTop(posPos.xy));
+    float lumSE = RGBToLum(FxaaTexTop(posPos.zw));
+
+    float2 dir;
+    dir.x = ((lumSW + lumSE) - (lumNW + lumNE));
+    dir.y = ((lumNW + lumSW) - (lumNE + lumSE));
+
+    //Edge
+    float4 dir1Pos;
+    dir1Pos.xy = normalize(dir);
+    float dirAbsMinTimesC = min(abs(dir1Pos.x), abs(dir1Pos.y)) * FXAA_EDGE_SHARPNESS;
+
+    float4 dir2Pos;
+    dir2Pos.xy = clamp(dir1Pos.xy/dirAbsMinTimesC, -2, 2);
+
+    dir1Pos.zw = pos;
+    dir2Pos.zw = pos;
+
+    float4 temp1N = FxaaTexTop(dir1Pos.zw - dir1Pos.xy * rcpFrameOpt.zw);
+    temp1N.w = RGBToLum(temp1N);
+    
+    float4 rgba1 = FxaaTexTop(dir1Pos.zw + dir1Pos.xy * rcpFrameOpt.zw);
+    rgba1.w = RGBToLum(rgba1);
+    rgba1 = (temp1N + rgba1) * 0.5;
+
+    float4 temp2N = RGBToLum( FxaaTexTop(dir2Pos.zw - dir2Pos.xy * rcpFrameOpt.xy) );
+    temp2N.w = RGBToLum(temp2N);
+
+    float4 rgba2 = FxaaTexTop(dir2Pos.zw + dir2Pos.xy * rcpFrameOpt.xy);
+    rgba2.w = RGBToLum(rgba2);
+    rgba2 = (temp2N + rgba2) * 0.5;
+
+    float lumMin = min(min(lumNW, lumSW), min(lumNE, lumSE));
+    float lumMax = max(max(lumNW, lumSW), max(lumNE, lumSE));
+
+    rgba2 = (rgba1 + rgba2) * 0.5;
+    bool twoTapLt = rgba2.w < lumMin;
+    bool twoTapGt = rgba2.w > lumMax;
+
+    if(twoTapLt || twoTapGt) rgba2 = rgba1;
+    return rgba2;
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    //return texAlbedo.SampleLevel(samLinear, input.tex0, 0.0);
+    return FXAA(input.tex0, input.posPos);
+}

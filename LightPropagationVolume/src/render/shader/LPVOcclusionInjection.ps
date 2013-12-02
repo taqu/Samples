@@ -1,0 +1,32 @@
+static const float PI = 3.14159265f;
+
+// sqrt(PI)/(2*PI) sqrt(PI/3)/PI
+static const float4 SH = float4(
+    0.282094792f,
+    (2.0f/3.0f) * -0.4886025119f,
+    (2.0f/3.0f) *  0.4886025119f,
+    (2.0f/3.0f) * -0.4886025119f);
+
+void SHCoefficient(float3 n, out float4 c)
+{
+    c = SH * float4(1.0, n.yzx);
+}
+
+struct GSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : NORMAL0;
+    float4 color : COLOR0;
+    uint RTIndex : SV_RenderTargetArrayIndex;
+};
+
+float4 main(GSOutput input) : SV_Target0
+{
+    float3 n = normalize(input.normal);
+
+    float4 coeff;
+    SHCoefficient(n, coeff);
+
+    float4 output = coeff * saturate(input.color.a);
+    return output;
+}

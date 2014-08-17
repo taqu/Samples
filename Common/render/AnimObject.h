@@ -10,6 +10,7 @@
 namespace lmath
 {
     class Matrix34;
+    class DualQuaternion;
 }
 
 namespace render
@@ -39,6 +40,9 @@ namespace render
         const lmath::Matrix34* getSkinningMatrices() const{ return skinningMatrices_;}
         lmath::Matrix34* getSkinningMatrices(){ return skinningMatrices_;}
 
+        const lmath::DualQuaternion* getDualQuaternions() const{ return dualQuaternions_;}
+        lmath::DualQuaternion* getDualQuaternions(){ return dualQuaternions_;}
+
         /// ÉXÉèÉbÉv
         void swap(AnimObject& rhs);
     private:
@@ -50,6 +54,7 @@ namespace render
 
         u32 numMatrices_;
         lmath::Matrix34* skinningMatrices_;
+        lmath::DualQuaternion* dualQuaternions_;
     };
 }
 #endif //INC_RENDER_ANIMOBJECT_H__

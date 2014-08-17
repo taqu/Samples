@@ -89,6 +89,7 @@ namespace render
             lgraphics::ResourceMisc_None,
             lgraphics::TexFilter_MinMagLinearMipPoint,
             lgraphics::TexAddress_Border,
+            lgraphics::Cmp_Never,
             255.0f,
             NULL,
             &desc);

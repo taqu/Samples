@@ -13,16 +13,10 @@
     <ClCompile Include="src\scene\DebugCamera.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\DebugDraw.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\GPUOctree.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\InputLayoutFactory.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Rectangle.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Renderer.cpp">
@@ -64,7 +58,13 @@
     <ClCompile Include="..\Common\render\Object.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\load\ModelLoader.cpp">
+    <ClCompile Include="..\Common\render\DebugDraw.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Rectangle.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\load\ModelLoader.cpp">
       <Filter>src\load</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,16 +81,10 @@
     <ClInclude Include="src\scene\DebugCamera.h">
       <Filter>src\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\DebugDraw.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\GPUOctree.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\InputLayoutFactory.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Rectangle.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\Renderer.h">
@@ -156,7 +150,13 @@
     <ClInclude Include="..\Common\stdafx.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\load\ModelLoader.h">
+    <ClInclude Include="..\Common\render\DebugDraw.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Rectangle.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\ModelLoader.h">
       <Filter>src\load</Filter>
     </ClInclude>
   </ItemGroup>

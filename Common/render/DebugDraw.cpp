@@ -8,10 +8,10 @@
 #include <lmath/lmath.h>
 #include <lgraphics/lgraphics.h>
 
-#include "../System.h"
+#include "System.h"
 
-#include "Shader.h"
-#include "ShaderManager.h"
+#include "render/Shader.h"
+#include "render/ShaderManager.h"
 
 namespace render
 {

@@ -11,8 +11,8 @@
 
 #include "Rectangle.h"
 
-#include "ShaderManager.h"
-#include "Shader.h"
+#include "render/ShaderManager.h"
+#include "render/Shader.h"
 
 namespace render
 {

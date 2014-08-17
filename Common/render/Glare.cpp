@@ -4,8 +4,8 @@
 @date 2013/07/11 create
 */
 #include "Glare.h"
-#include "ShaderManager.h"
-#include "Shader.h"
+#include "render/ShaderManager.h"
+#include "render/Shader.h"
 
 namespace render
 {

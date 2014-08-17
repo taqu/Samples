@@ -106,6 +106,7 @@
     <ClInclude Include="..\Common\render\Mesh.h" />
     <ClInclude Include="..\Common\render\Node.h" />
     <ClInclude Include="..\Common\render\Object.h" />
+    <ClInclude Include="..\Common\render\Rectangle.h" />
     <ClInclude Include="..\Common\render\render.h" />
     <ClInclude Include="..\Common\render\ShaderBase.h" />
     <ClInclude Include="..\Common\stdafx.h" />
@@ -115,7 +116,6 @@
     <ClInclude Include="src\render\InputLayoutFactory.h" />
     <ClInclude Include="src\render\LightPropagationVolume.h" />
     <ClInclude Include="src\render\LPVBuffer.h" />
-    <ClInclude Include="src\render\Rectangle.h" />
     <ClInclude Include="src\render\ReflectiveShadowMap.h" />
     <ClInclude Include="src\render\Renderer.h" />
     <ClInclude Include="src\render\Shader.h" />
@@ -139,6 +139,7 @@
     <ClCompile Include="..\Common\render\Mesh.cpp" />
     <ClCompile Include="..\Common\render\Node.cpp" />
     <ClCompile Include="..\Common\render\Object.cpp" />
+    <ClCompile Include="..\Common\render\Rectangle.cpp" />
     <ClCompile Include="..\Common\stdafx.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="src\Application.cpp" />
@@ -147,7 +148,6 @@
     <ClCompile Include="src\render\InputLayoutFactory.cpp" />
     <ClCompile Include="src\render\LightPropagationVolume.cpp" />
     <ClCompile Include="src\render\LPVBuffer.cpp" />
-    <ClCompile Include="src\render\Rectangle.cpp" />
     <ClCompile Include="src\render\ReflectiveShadowMap.cpp" />
     <ClCompile Include="src\render\Renderer.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />

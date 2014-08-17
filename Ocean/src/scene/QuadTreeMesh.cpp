@@ -42,7 +42,7 @@ namespace
         screenArea_ = screenArea;
         maxGridCoverage_ = maxGridCoverage;
 
-        frustum_.calc(camera, camera.getZNear(), camera.getZFar());
+        frustum_.calcInView(camera, camera.getZNear(), camera.getZFar());
     }
 
     void QuadTreeMesh::create(s32 resolution, f32 patchSize)

@@ -36,9 +36,6 @@
     <ClInclude Include="src\render\InputLayoutFactory.h">
       <Filter>src\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\Rectangle.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\Renderer.h">
       <Filter>src\render</Filter>
     </ClInclude>
@@ -132,6 +129,9 @@
     <ClInclude Include="..\Common\render\DebugDraw.h">
       <Filter>src\render</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\render\Rectangle.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -150,9 +150,6 @@
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\InputLayoutFactory.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Rectangle.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Renderer.cpp">
@@ -219,6 +216,9 @@
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\render\DebugDraw.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Rectangle.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
   </ItemGroup>

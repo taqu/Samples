@@ -51,7 +51,7 @@ namespace load
         f32 v_;
 
         u16 bone_[2];
-        f32 weight_;
+        u16 weight_[2];
     };
 
     class Geometry
@@ -76,10 +76,20 @@ namespace load
     class GeometryCVT : public Geometry
     {
     public:
-        typedef std::vector<f32> VertexVector;
+        typedef std::vector<f32> FloatVector;
+        typedef std::vector<u16> U16Vector;
+        typedef std::vector<u32> U32Vector;
         typedef std::vector<u16> IndexVector;
 
-        VertexVector vertices_;
+        FloatVector positions_;
+        FloatVector normals_;
+        FloatVector tangents_;
+        FloatVector binormals_;
+        U32Vector colors_;
+        U16Vector texcoords_;
+        U16Vector bones_;
+        U16Vector weights_;
+
         IndexVector indices_;
         //std::string name_;
     };

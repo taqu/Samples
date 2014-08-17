@@ -57,11 +57,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lframework_dx11_sse_vc110_d.lib;linput_vc110_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lframework_dx11_sse_vc110_d.lib;linput_vc110_d.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,31 +75,32 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>lframework_dx11_sse_vc110.lib;linput_vc110.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lframework_dx11_sse_vc110.lib;linput_vc110.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\Input.cpp" />
+    <ClCompile Include="..\Common\load\ModelLoader.cpp" />
     <ClCompile Include="..\Common\render\AnimObject.cpp" />
+    <ClCompile Include="..\Common\render\DebugDraw.cpp" />
     <ClCompile Include="..\Common\render\Geometry.cpp" />
     <ClCompile Include="..\Common\render\Material.cpp" />
     <ClCompile Include="..\Common\render\Mesh.cpp" />
     <ClCompile Include="..\Common\render\Node.cpp" />
     <ClCompile Include="..\Common\render\Object.cpp" />
+    <ClCompile Include="..\Common\render\Rectangle.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\load\ModelLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\render\DebugDraw.cpp" />
     <ClCompile Include="src\render\GPUOctree.cpp" />
     <ClCompile Include="src\render\InputLayoutFactory.cpp" />
-    <ClCompile Include="src\render\Rectangle.cpp" />
     <ClCompile Include="src\render\Renderer.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\ShaderManager.cpp" />
@@ -115,21 +117,21 @@
     <ClInclude Include="..\Common\load\load_mesh.h" />
     <ClInclude Include="..\Common\load\load_node.h" />
     <ClInclude Include="..\Common\load\load_texture.h" />
+    <ClInclude Include="..\Common\load\ModelLoader.h" />
     <ClInclude Include="..\Common\render\AnimObject.h" />
+    <ClInclude Include="..\Common\render\DebugDraw.h" />
     <ClInclude Include="..\Common\render\Geometry.h" />
     <ClInclude Include="..\Common\render\Material.h" />
     <ClInclude Include="..\Common\render\Mesh.h" />
     <ClInclude Include="..\Common\render\Node.h" />
     <ClInclude Include="..\Common\render\Object.h" />
+    <ClInclude Include="..\Common\render\Rectangle.h" />
     <ClInclude Include="..\Common\render\render.h" />
     <ClInclude Include="..\Common\stdafx.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\load\ModelLoader.h" />
-    <ClInclude Include="src\render\DebugDraw.h" />
     <ClInclude Include="src\render\GPUOctree.h" />
     <ClInclude Include="src\render\InputLayoutFactory.h" />
-    <ClInclude Include="src\render\Rectangle.h" />
     <ClInclude Include="src\render\Renderer.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\ShaderManager.h" />

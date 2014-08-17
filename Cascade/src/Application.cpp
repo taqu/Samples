@@ -224,7 +224,7 @@ namespace
 
 
         if(NULL != object_){
-            //system.getRenderer().add(object_);
+            system.getRenderer().add(object_);
         }
 
         if(NULL != plane_){

@@ -5,6 +5,7 @@
 */
 #include "AnimObject.h"
 #include <lmath/lmath.h>
+#include <lmath/DualQuaternion.h>
 
 namespace render
 {
@@ -12,6 +13,7 @@ namespace render
     AnimObject::AnimObject()
         :numMatrices_(0)
         ,skinningMatrices_(NULL)
+        ,dualQuaternions_(NULL)
     {
     }
 
@@ -64,10 +66,15 @@ namespace render
         offset += numTextures_ * sizeof(lgraphics::Texture2DRef);
 
         skinningMatrices_ = placementArrayConstruct<lmath::Matrix34>(buffer+offset, numMatrices_);
+        offset += numMatrices_ * sizeof(lmath::Matrix34);
+
+        dualQuaternions_ = placementArrayConstruct<lmath::DualQuaternion>(buffer+offset, numMatrices_);
+        offset += numMatrices_ * sizeof(lmath::DualQuaternion);
 
         //マトリックスクリア
         for(u32 i=0; i<numMatrices_; ++i){
             skinningMatrices_[i].identity();
+            dualQuaternions_[i].identity();
         }
         return true;
     }
@@ -91,11 +98,17 @@ namespace render
         Object::swap(rhs);
         lcore::swap(numMatrices_, rhs.numMatrices_);
         lcore::swap(skinningMatrices_, rhs.skinningMatrices_);
+        lcore::swap(dualQuaternions_, rhs.dualQuaternions_);
     }
 
     //-----------------------------------------------------
     void AnimObject::release()
     {
+        for(u32 i=0; i<numMatrices_; ++i){
+            dualQuaternions_[i].~DualQuaternion();
+        }
+        dualQuaternions_ = NULL;
+
         for(u32 i=0; i<numMatrices_; ++i){
             skinningMatrices_[i].~Matrix34();
         }
@@ -107,7 +120,7 @@ namespace render
     //-----------------------------------------------------
     u32 AnimObject::calcBufferSize() const
     {
-        return Object::calcBufferSize() + numMatrices_ * sizeof(lmath::Matrix34);
+        return Object::calcBufferSize() + numMatrices_ * sizeof(lmath::Matrix34) + numMatrices_ * sizeof(lmath::DualQuaternion);
     }
 
     //-----------------------------------------------------
@@ -117,6 +130,7 @@ namespace render
         dst.numMatrices_ = numMatrices_;
         for(u32 i=0; i<numMatrices_; ++i){
             dst.skinningMatrices_[i] = skinningMatrices_[i];
+            dst.dualQuaternions_[i] = dualQuaternions_[i];
         }
     }
 }

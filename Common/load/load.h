@@ -26,8 +26,10 @@ namespace load
     static const u32 MaxVertices = 0xFFFFU;
     static const u8 MaxNodes = 0xFEU;
     static const u8 InvalidNode = 0xFFU;
-    static const u32 MaxNameLength = 31;
+    static const u32 MaxNameLength = 23;
     static const u32 MaxNameSize = MaxNameLength + 1;
+    static const u32 MaxFileNameLength = 63;
+    static const u32 MaxFileNameSize = MaxFileNameLength + 1;
     static const u32 MaxPathLength = 127;
     static const u32 MaxPathSize = MaxPathLength + 1;
 
@@ -47,6 +49,7 @@ namespace load
         Elem_Material,
         Elem_Mesh,
         Elem_Node,
+        Elem_Joint,
         Elem_Texture,
         Elem_Num,
     };
@@ -63,6 +66,19 @@ namespace load
         VElem_Bone     = (0x01U<<6),
         VElem_BoneWeight = (0x01U<<7),
         VElem_Num = 8,
+    };
+
+    enum VSize
+    {
+        VSize_Position = sizeof(f32)*3,
+        VSize_Normal   = sizeof(u16)*4,
+        VSize_Tangent  = sizeof(u16)*4,
+        VSize_Binormal = sizeof(u16)*4,
+        VSize_Color    = sizeof(u32),
+        VSize_Texcoord = sizeof(u16)*2,
+        VSize_Bone     = sizeof(u16)*2,
+        VSize_BoneWeight = sizeof(u16)*2,
+        VSize_Num = 8,
     };
 
     enum TexType

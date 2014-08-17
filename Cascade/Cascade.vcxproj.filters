@@ -10,19 +10,10 @@
     <ClCompile Include="src\System.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\load\ModelLoader.cpp">
-      <Filter>src\load</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene\DebugCamera.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\DebugDraw.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\InputLayoutFactory.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\ShaderManager.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Shader.cpp">
@@ -31,17 +22,11 @@
     <ClCompile Include="src\render\Renderer.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\Rectangle.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\ShaderType.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SkyBox.cpp">
       <Filter>src\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Glare.cpp">
-      <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\font\FontManager.cpp">
       <Filter>src\font</Filter>
@@ -85,6 +70,24 @@
     <ClCompile Include="src\Noise.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\load\ModelLoader.cpp">
+      <Filter>src\load</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\DebugDraw.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Glare.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Rectangle.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShadowMap.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderManager.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -93,28 +96,16 @@
     <ClInclude Include="src\System.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\load\ModelLoader.h">
-      <Filter>src\load</Filter>
-    </ClInclude>
     <ClInclude Include="src\scene\DebugCamera.h">
       <Filter>src\scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\DebugDraw.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\render\InputLayoutFactory.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\ShaderManager.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\Shader.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\Renderer.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Rectangle.h">
       <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="src\render\ShaderType.h">
@@ -125,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="src\scene\SkyBox.h">
       <Filter>src\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Glare.h">
-      <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\font\FontManager.h">
       <Filter>src\font</Filter>
@@ -200,6 +188,24 @@
     </ClInclude>
     <ClInclude Include="src\Noise.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\ModelLoader.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\DebugDraw.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Glare.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Rectangle.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShadowMap.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShaderManager.h">
+      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

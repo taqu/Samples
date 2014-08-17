@@ -15,15 +15,24 @@ namespace load
     class Node
     {
     public:
+        enum Type
+        {
+            Type_None = 0,
+            Type_Null,
+            Type_Mesh,
+        };
+
         Node()
             :index_(0)
             ,parentIndex_(0)
             ,childStartIndex_(0)
             ,numChildren_(0)
+            ,type_(Type_None)
+            ,rotationOrder_(0)
             ,meshStartIndex_(0)
             ,numMeshes_(0)
         {
-            scale_.set(0.0f, 0.0f, 0.0f);
+            scale_.zero();
             translation_ = rotation_ = scale_;
         }
 
@@ -39,8 +48,8 @@ namespace load
         lmath::Vector3 rotation_;
         lmath::Vector3 scale_;
 
+        u8 type_;
         u8 rotationOrder_;
-        u8 reserved_;
         u8 meshStartIndex_;
         u8 numMeshes_;
     };

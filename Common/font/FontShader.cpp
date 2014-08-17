@@ -6,9 +6,12 @@
 #include "FontShader.h"
 #include <lmath/lmath.h>
 #include <lgraphics/lgraphics.h>
+#include <lgraphics/api/dx11/ShaderCompiler.h>
 
 namespace font
 {
+    typedef lgraphics::ShaderCompiler<0> ShaderCompiler;
+
     void ShaderVS::initialize()
     {
         constants_ = lgraphics::ConstantBuffer::create(
@@ -103,7 +106,7 @@ namespace font
     // 頂点シェーダ作成
     void createShader(ShaderVS& vs, lgraphics::BlobRef& blob)
     {
-        lgraphics::VertexShaderRef vsRef = lgraphics::Shader::createVertexShaderFromMemory(
+        lgraphics::VertexShaderRef vsRef = ShaderCompiler::createVertexShaderFromMemory(
             FontVSSource,
             FontVSSourceSize,
             0,
@@ -119,7 +122,7 @@ namespace font
     // ピクセルシェーダ作成
     void createShader(ShaderPS& ps)
     {
-        lgraphics::PixelShaderRef psRef = lgraphics::Shader::createPixelShaderFromMemory(
+        lgraphics::PixelShaderRef psRef = ShaderCompiler::createPixelShaderFromMemory(
             FontPSSource,
             FontPSSourceSize,
             0,
@@ -132,7 +135,7 @@ namespace font
     // ピクセルシェーダ作成
     void createDistanceFieldShader(ShaderPS& ps)
     {
-        lgraphics::PixelShaderRef psRef = lgraphics::Shader::createPixelShaderFromMemory(
+        lgraphics::PixelShaderRef psRef = ShaderCompiler::createPixelShaderFromMemory(
             FontDistanceFieldPSSource,
             FontDistanceFieldPSSourceSize,
             0,

@@ -7,6 +7,7 @@
 */
 #include "load/load.h"
 #include <lcore/liostream.h>
+#include <lframework/anim/Skeleton.h>
 
 namespace lgraphics
 {
@@ -61,10 +62,12 @@ namespace load
         @return 成否
         @param 出力。オブジェクト
         */
-        bool load(render::AnimObject& obj, u32 numSkinningMatrices);
+        bool load(render::AnimObject& obj);
+
+        lanim::Skeleton::pointer getSkeleton(){ return skeleton_;}
 
         void getTextureNameTable(u32 numTextures, load::Texture* textures);
-        static bool save(render::Object& obj, load::Texture* textures, const Char* filepath);
+        static bool save(render::Object& obj, load::Texture* textures, lanim::Skeleton::pointer& skeleton, const Char* filepath);
     private:
         ModelLoader(const ModelLoader&);
         ModelLoader& operator=(const ModelLoader&);
@@ -112,6 +115,11 @@ namespace load
         bool load(render::Object& obj, render::Node& node);
 
         /**
+        @brief スケルトンロード
+        */
+        lanim::Skeleton* loadSkeleton(u32 numJoints);
+
+        /**
         @brief テクスチャロード
         @return 成否
         @param 出力。テクスチャ
@@ -130,6 +138,8 @@ namespace load
         Header header_; /// ヘッダ
         u32 directoryPathLength_;
         Char directoryPath_[MaxPathSize+MaxNameLength];
+
+        lanim::Skeleton::pointer skeleton_;
     };
 }
 #endif //INC_RENDER_MODELLOADER_H__

@@ -17,13 +17,14 @@
 #include "load/load_material.h"
 #include "load/load_mesh.h"
 #include "load/load_node.h"
+#include "load/load_joint.h"
 #include "load/load_texture.h"
 
 #include "render/Object.h"
 #include "render/AnimObject.h"
 #include <lcore/liostream.h>
 
-#include "../System.h"
+#include "System.h"
 
 namespace load
 {
@@ -74,12 +75,13 @@ namespace load
 
     //---------------------------------------------
     // オブジェクトロード
-    bool ModelLoader::load(render::AnimObject& obj, u32 numSkinningMatrices)
+    bool ModelLoader::load(render::AnimObject& obj)
     {
         u32 numGeometries = header_.elems_[Elem_Geometry].number_;
         u32 numMeshes = header_.elems_[Elem_Mesh].number_;
         u32 numMaterials = header_.elems_[Elem_Material].number_;
         u32 numNodes = header_.elems_[Elem_Node].number_;
+        u32 numJoints = header_.elems_[Elem_Joint].number_;
         u32 numTextures = header_.elems_[Elem_Texture].number_;
 
         bool ret = obj.create(
@@ -88,7 +90,7 @@ namespace load
             numMaterials,
             numNodes,
             numTextures,
-            numSkinningMatrices);
+            numJoints);
 
         if(!ret){
             return false;
@@ -99,8 +101,9 @@ namespace load
         //ノードに行列セット
         if(ret){
             for(u32 i=0; i<obj.getNumNodes(); ++i){
-                obj.getNode(i).numSkinningMatrices_ = numSkinningMatrices;
+                obj.getNode(i).numSkinningMatrices_ = numJoints;
                 obj.getNode(i).skinningMatrices_ = obj.getSkinningMatrices();
+                obj.getNode(i).dualQuaternions_ = obj.getDualQuaternions();
             }
         }
 
@@ -115,6 +118,7 @@ namespace load
         u32 numMeshes = header_.elems_[Elem_Mesh].number_;
         u32 numMaterials = header_.elems_[Elem_Material].number_;
         u32 numNodes = header_.elems_[Elem_Node].number_;
+        u32 numJoints = header_.elems_[Elem_Joint].number_;
         u32 numTextures = header_.elems_[Elem_Texture].number_;
 
 
@@ -149,6 +153,10 @@ namespace load
                     return false;
                 }
             }
+        }
+
+        {//スケルトンロード
+            skeleton_ = loadSkeleton(numJoints);
         }
 
         {//テクスチャロード
@@ -323,10 +331,11 @@ namespace load
         node.translation_ = tmp.translation_;
         //node.rotation_ = tmp.rotation_;
         node.scale_ = tmp.scale_;
+        node.type_ = tmp.type_;
         node.rotationOrder_ = tmp.rotationOrder_;
-        node.numSkinningMatrices_ = tmp.reserved_;
         node.meshStartIndex_ = tmp.meshStartIndex_;
         node.numMeshes_ = tmp.numMeshes_;
+        node.numSkinningMatrices_ = 0;
 
         node.calcRotation(tmp.rotation_);
         node.world_.identity();
@@ -338,6 +347,28 @@ namespace load
         }
 
         return true;
+    }
+
+    //---------------------------------------------
+    lanim::Skeleton* ModelLoader::loadSkeleton(u32 numJoints)
+    {
+        lanim::Skeleton* skeleton = LIME_NEW lanim::Skeleton(numJoints);
+        load::Joint tjoint;
+        lanim::Name name;
+        for(u32 i=0; i<numJoints; ++i){
+            if(LOAD_TRUE != lcore::io::read(is_, tjoint)){
+                LIME_DELETE(skeleton);
+                return NULL;
+            }
+            lanim::Joint& joint = skeleton->getJoint(i);
+            joint.setParentIndex(tjoint.parent_);
+            joint.setSubjectTo(tjoint.subjectTo_);
+            joint.setType(tjoint.type_);
+            joint.setFlag(tjoint.flag_);
+            joint.setPosition(tjoint.position_);
+            skeleton->setJointName(i, tjoint.name_, load::MaxNameLength);
+        }
+        return skeleton;
     }
 
     //---------------------------------------------
@@ -453,8 +484,36 @@ namespace load
         render::Layout layoutType = render::Layout_P;
         switch(vflag)
         {
+        case (VElem_Position):
+            layoutType = render::Layout_P;
+            break;
+
         case (VElem_Position|VElem_Normal):
             layoutType = render::Layout_PN;
+            break;
+
+        case (VElem_Position|VElem_Texcoord):
+            layoutType = render::Layout_PU;
+            break;
+
+        case (VElem_Position|VElem_Color):
+            layoutType = render::Layout_PC;
+            break;
+
+        case (VElem_Position|VElem_Normal|VElem_Tangent|VElem_Binormal):
+            layoutType = render::Layout_PNTB;
+            break;
+
+        case (VElem_Position|VElem_Normal|VElem_Texcoord):
+            layoutType = render::Layout_PNU;
+            break;
+
+        case (VElem_Position|VElem_Normal|VElem_Color|VElem_Texcoord):
+            layoutType = render::Layout_PNCU;
+            break;
+
+        case (VElem_Position|VElem_Normal|VElem_Tangent|VElem_Binormal|VElem_Texcoord):
+            layoutType = render::Layout_PNTBU;
             break;
 
         case (VElem_Position|VElem_Normal|VElem_Texcoord|VElem_Bone|VElem_BoneWeight):
@@ -487,7 +546,7 @@ namespace load
     }
 
     //
-    bool ModelLoader::save(render::Object& obj, load::Texture* textures, const Char* filepath)
+    bool ModelLoader::save(render::Object& obj, load::Texture* textures, lanim::Skeleton::pointer& skeleton, const Char* filepath)
     {
         lcore::ofstream os(filepath, lcore::ios::binary);
         if(!os.is_open()){
@@ -557,14 +616,34 @@ namespace load
             loadNodes[i].rotation_.set(node.rotation_.x_, node.rotation_.y_, node.rotation_.z_);
             loadNodes[i].scale_.set(node.scale_.x_, node.scale_.y_, node.scale_.z_);
 
+            loadNodes[i].type_ = node.type_;
             loadNodes[i].rotationOrder_ = node.rotationOrder_;
-            loadNodes[i].reserved_ = node.numSkinningMatrices_;
             loadNodes[i].meshStartIndex_ = node.meshStartIndex_;
             loadNodes[i].numMeshes_ = node.numMeshes_;
 
             offset += sizeof(load::Node);
         }
 
+        load::Joint* loadJoints = NULL;
+        if(NULL == skeleton){
+            loadHeader.elems_[load::Elem_Joint].number_ = 0;
+            loadHeader.elems_[load::Elem_Joint].offset_ = offset;
+        }else{
+            loadJoints = LIME_NEW load::Joint[skeleton->getNumJoints()];
+            loadHeader.elems_[load::Elem_Joint].number_ = skeleton->getNumJoints();
+            loadHeader.elems_[load::Elem_Joint].offset_ = offset;
+
+            for(s32 i=0; i<skeleton->getNumJoints(); ++i){
+                lanim::Joint& joint = skeleton->getJoint(i);
+                loadJoints[i].parent_ = joint.getParentIndex();
+                loadJoints[i].subjectTo_ = joint.getSubjectTo();
+                loadJoints[i].type_ = joint.getType();
+                loadJoints[i].flag_ = joint.getFlag();
+                loadJoints[i].position_ = joint.getPosition();
+                lcore::memcpy(loadJoints[i].name_, skeleton->getJointName(i).c_str(), load::MaxNameSize);
+                offset += sizeof(load::Joint);
+            }
+        }
         loadHeader.elems_[load::Elem_Texture].number_ = obj.getNumTextures();
         loadHeader.elems_[load::Elem_Texture].offset_ = offset;
 
@@ -581,10 +660,15 @@ namespace load
         lcore::io::write(os, loadMaterials, sizeof(load::Material)*obj.getNumMaterials());
         lcore::io::write(os, loadMeshes, sizeof(load::Mesh)*obj.getNumMeshes());
         lcore::io::write(os, loadNodes, sizeof(load::Node)*obj.getNumNodes());
+        if(NULL != loadJoints){
+            lcore::io::write(os, loadJoints, sizeof(load::Joint)*skeleton->getNumJoints());
+        }
+
         lcore::io::write(os, textures, sizeof(load::Texture)*obj.getNumTextures());
 
         os.close();
 
+        LIME_DELETE_ARRAY(loadJoints);
         LIME_DELETE_ARRAY(loadNodes);
         LIME_DELETE_ARRAY(loadMeshes);
         LIME_DELETE_ARRAY(loadMaterials);

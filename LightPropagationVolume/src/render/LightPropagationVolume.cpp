@@ -383,7 +383,7 @@ namespace render
 
         lmath::Vector4 frustumPoints[8];
         lscene::Frustum frustum;
-        frustum.calc(scene.getCamera(), scene.getCamera().getZNear(), zfar_);
+        frustum.calcInView(scene.getCamera(), scene.getCamera().getZNear(), zfar_);
         frustum.getPoints(frustumPoints, -LPVCellSize_*1.7320508f * 3.0f);
 
         lmath::Vector4 lightCameraOrthoMin(FLT_MAX, FLT_MAX, FLT_MAX, 1.0f);
@@ -396,8 +396,8 @@ namespace render
             //ワールド座標へ変換
             frustumPoints[i].mul(invView, frustumPoints[i]);
 
-            LPVMin_.min(LPVMin_, frustumPoints[i]);
-            LPVMax.max(LPVMax, frustumPoints[i]);
+            LPVMin_.minimum(LPVMin_, frustumPoints[i]);
+            LPVMax.maximum(LPVMax, frustumPoints[i]);
         }
 
         LPVMin_ += LPVMax;
@@ -427,8 +427,8 @@ namespace render
 
             //ライトの座標へ変換
             worldPoint.mul(lightView, frustumPoints[i]);
-            lightCameraOrthoMin.min(lightCameraOrthoMin, worldPoint);
-            lightCameraOrthoMax.max(lightCameraOrthoMax, worldPoint);
+            lightCameraOrthoMin.minimum(lightCameraOrthoMin, worldPoint);
+            lightCameraOrthoMax.maximum(lightCameraOrthoMax, worldPoint);
         }
         lightViewProjection_.orthoOffsetCenter(
             lightCameraOrthoMin.x_,

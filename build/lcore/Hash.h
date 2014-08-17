@@ -41,32 +41,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace lcore
 {
-    inline size_t calc_hash(const unsigned char* v, size_t count)
+    inline u32 calc_hash(const u8* v, u32 count)
     {
-        size_t val = 216136261U;
-        do{
-            --count;
-            val = 16777619U * val ^ v[count];
-        }while(count != 0);
+        //Bernstein hash
+        u32 val = 5381U;
 
+        for(u32 i=0; i<count; ++i){
+            val = 33*val + v[i]; //((val<<5)+val) + v[i];
+        }
         return val;
     }
 
-    inline size_t calc_hash_string(const unsigned char* v)
+    inline u32 calc_hash_string(const u8* v)
     {
-        size_t val = 216136261U;
-        do{
-            val = 16777619U * val ^ *v;
-            ++v;
-        }while(*v != '\0');
+        //Bernstein hash
+        u32 val = 5381U;
 
+        u8 c = *v;
+        while(c != '\0'){
+            val = 33*val + c; //((val<<5)+val) + c;
+            ++v;
+            c = *v;
+        }
         return val;
     }
 
     template<typename T>
     struct hash_type_traits
     {
-        static std::size_t count(const T& /*t*/)
+        static u32 count(const T& /*t*/)
         {
             return sizeof(T); //sizeofが0になることはない
         }
@@ -75,10 +78,10 @@ namespace lcore
     template<typename T>
     struct hasher
     {
-        inline static size_t calc(const T& t)
+        inline static u32 calc(const T& t)
         {
-            const unsigned char* v = reinterpret_cast<const unsigned char*>(&t);
-            size_t count = hash_type_traits<T>::count(t);
+            const u8* v = reinterpret_cast<const u8*>(&t);
+            u32 count = hash_type_traits<T>::count(t);
             return calc_hash(v, count);
         }
     };
@@ -87,10 +90,10 @@ namespace lcore
     template<>\
     struct hasher<type>\
     {\
-        inline static size_t calc(const type t)\
+        inline static u32 calc(const type t)\
         {\
-            const unsigned char* v = reinterpret_cast<const unsigned char*>(&t);\
-            size_t count = hash_type_traits<type>::count(t);\
+            const u8* v = reinterpret_cast<const u8*>(&t);\
+            u32 count = hash_type_traits<type>::count(t);\
             return calc_hash(v, count);\
         }\
     };\
@@ -115,10 +118,10 @@ HASH_TYPE_TRAITS_PRIMITIVE_CREATOR(double)
     template<>\
     struct hasher<type*>\
     {\
-        inline static size_t calc(const type* t)\
+        inline static u32 calc(const type* t)\
         {\
-            const unsigned char* v = reinterpret_cast<const unsigned char*>(t);\
-            size_t count = hash_type_traits<type>::count(*t);\
+            const u8* v = reinterpret_cast<const u8*>(t);\
+            u32 count = hash_type_traits<type>::count(*t);\
             return calc_hash(v, count);\
         }\
     };\
@@ -155,14 +158,14 @@ HASH_TYPE_TRAITS_PRIMITIVE_POINTER_CREATOR(double)
     {
         inline static size_t calc(const char* t)
         {
-            return calc_hash_string(reinterpret_cast<const unsigned char*>(t));
+            return calc_hash_string(reinterpret_cast<const u8*>(t));
         }
     };
 
     template<>
-    struct hasher<unsigned char*>
+    struct hasher<u8*>
     {
-        inline static size_t calc(const unsigned char* t)
+        inline static size_t calc(u8* t)
         {
             return calc_hash_string(t);
         }

@@ -13,6 +13,7 @@ namespace lmath
 {
     class Vector4;
     class Matrix34;
+    class Quaternion;
 
     //--------------------------------------------
     //---
@@ -138,6 +139,15 @@ namespace lmath
             setRotateAxis(axis.x_, axis.y_, axis.z_, radian);
         }
 
+        /// X軸回転
+        void setRotateX(f32 radian);
+
+        /// Y軸回転
+        void setRotateY(f32 radian);
+
+        /// Z軸回転
+        void setRotateZ(f32 radian);
+
         /// 軸回転
         void setRotateAxis(f32 x, f32 y, f32 z, f32 radian);
 
@@ -149,6 +159,8 @@ namespace lmath
 
         void lookAt(const Vector4& eye, const Vector4& at, const Vector4& up);
         void lookAt(const Vector3& eye, const Vector3& at, const Vector3& up);
+
+        void lookAt(const Vector4& at);
 
         void viewPointAlign(const Matrix44& view, const Vector4& position);
         void axisAlign(const Vector4& axis, const Matrix44& view, const Vector4& position);
@@ -200,6 +212,8 @@ namespace lmath
         void getRow(Vector4& dst, s32 row) const;
 
         bool isNan() const;
+
+        void getRotation(Quaternion& rotation) const;
 
         f32 m_[4][4];
 

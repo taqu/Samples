@@ -56,6 +56,9 @@ namespace lmath
 
         void normalize();
 
+        void translate(f32 x, f32 y, f32 z);
+        inline void translate(const lmath::Vector3& v){ translate(v.x_, v.y_, v.z_);}
+        inline void translate(const lmath::Vector4& v){ translate(v.x_, v.y_, v.z_);}
 
         Vector4 v_; /// 平面の法線, 原点から平面までの距離
     };

@@ -40,27 +40,23 @@ namespace intrusive
         ~ListNodeBase()
         {}
 
-    private:
         void reset()
         {
-            prev_ = this;
-            next_ = this;
+            prev_ = next_ = this;
         }
 
         void unlink()
         {
             next_->prev_ = prev_;
             prev_->next_ = next_;
-            prev_ = NULL;
-            next_ = NULL;
+            prev_ = next_ = this;
         }
 
         void link(this_type* node)
         {
             prev_ = node->prev_;
             next_ = node;
-            node->prev_ = this;
-            prev_->next_ = this;
+            prev_->next_ = node->prev_ = this;
         }
 
         this_poitner_type prev_;
@@ -113,7 +109,7 @@ namespace intrusive
         {
             return value_;
         }
-    private:
+
         T value_;
     };
 
@@ -164,7 +160,7 @@ namespace intrusive
         {
             return value_;
         }
-    private:
+
         T* value_;
     };
 
@@ -197,8 +193,14 @@ namespace intrusive
         inline const_pointer_type rbegin() const;
         inline const_pointer_type end() const;
 
+        inline void clear();
+
         void push_front(pointer_type node);
         void push_back(pointer_type node);
+
+        pointer_type pop_front();
+        pointer_type pop_back();
+
         void remove(pointer_type node);
 
         void swap(this_type& rhs);
@@ -262,13 +264,10 @@ namespace intrusive
     }
 
     template<class T>
-    void List<T>::remove(pointer_type node)
+    inline void List<T>::clear()
     {
-        LASSERT(NULL != node);
-        LASSERT(size_>0);
-
-        node->unlink();
-        --size_;
+        size_ = 0;
+        top_.reset();
     }
 
     template<class T>
@@ -285,6 +284,34 @@ namespace intrusive
         LASSERT(NULL != node);
         node->link(static_cast<pointer_type>(&top_));
         ++size_;
+    }
+
+    template<class T>
+    typename List<T>::pointer_type List<T>::pop_front()
+    {
+        LASSERT(0<size_);
+        pointer_type front = begin();
+        remove(front);
+        return front;
+    }
+
+    template<class T>
+    typename List<T>::pointer_type List<T>::pop_back()
+    {
+        LASSERT(0<size_);
+        pointer_type back = rbegin();
+        remove(back);
+        return back;
+    }
+
+    template<class T>
+    void List<T>::remove(pointer_type node)
+    {
+        LASSERT(NULL != node);
+        LASSERT(0<size_);
+
+        node->unlink();
+        --size_;
     }
 
     template<class T>

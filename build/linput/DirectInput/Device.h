@@ -28,7 +28,7 @@ namespace linput
 
         bool setCooperateLevel(HWND__* hWnd);
         bool setDataFormat(DeviceType type);
-
+        bool setEventNotification(HANDLE handle);
     private:
         Device(const Device&);
         Device& operator=(const Device&);

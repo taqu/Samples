@@ -19,6 +19,11 @@ namespace lgraphics
             HardwareLevel_10,
         };
 
+        enum Flag
+        {
+            Flag_DepthStencilShaderResource = (0x01<<0),
+        };
+
         InitParam()
             :type_(DriverType_Hardware)
             ,backBufferWidth_(1)
@@ -32,6 +37,7 @@ namespace lgraphics
             ,interval_(PresentInterval_One)
             ,swapEffect_(DXGISwapEffect_Discard)
             ,supportHardwareLevel_(HardwareLevel_10)
+            ,flags_(0)
         {
         }
 
@@ -45,6 +51,7 @@ namespace lgraphics
         s16 windowed_;
         s16 allowSoftwareDevice_;
         s32 supportHardwareLevel_;
+        u32 flags_;
 
         PresentInterval interval_;
         DXGISwapEffect swapEffect_;

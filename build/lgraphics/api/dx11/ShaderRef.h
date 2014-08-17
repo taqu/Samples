@@ -65,6 +65,7 @@ namespace lgraphics
 
     private:
         friend class Shader;
+        template<int T> friend class ShaderCompiler;
 
         void destroy();
 
@@ -115,6 +116,7 @@ namespace lgraphics
 
     private:
         friend class Shader;
+        template<int T> friend class ShaderCompiler;
 
         void destroy();
 
@@ -165,6 +167,7 @@ namespace lgraphics
 
     private:
         friend class Shader;
+        template<int T> friend class ShaderCompiler;
 
         void destroy();
 
@@ -176,6 +179,16 @@ namespace lgraphics
         ID3D11GeometryShader* shader_;
     };
 
+    struct StreamOutputDeclarationEntry
+    {
+        u32 stream_;
+        const Char* semanticName_;
+        u32 semanticIndex_;
+        u8 startComponent_;
+        u8 componentCount_;
+        u8 outputSlot_;
+    };
+
     //------------------------------------------------------------
     //---
     //--- Shader
@@ -184,61 +197,6 @@ namespace lgraphics
     class Shader
     {
     public:
-        static const s32 MaxDefines = 63; /// defineの最大数
-
-        /**
-        @brief ファイルからピクセルシェーダ作成
-        @param filename ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static PixelShaderRef createPixelShaderFromFile(const Char* filename, s32 numDefines, const char** defines, BlobRef* blob);
-
-        /**
-        @brief メモリからピクセルシェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static PixelShaderRef createPixelShaderFromMemory(const Char* memory, u32 size, s32 numDefines, const char** defines, BlobRef* blob);
-
-        /**
-        @brief ファイルから頂点シェーダ作成
-        @param filename ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static VertexShaderRef createVertexShaderFromFile(const Char* filename, s32 numDefines, const char** defines, BlobRef* blob);
-
-        /**
-        @brief メモリから頂点シェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static VertexShaderRef createVertexShaderFromMemory(const Char* memory, u32 size, s32 numDefines, const char** defines, BlobRef* blob);
-
-        /**
-        @brief ファイルからジオメトリシェーダ作成
-        @param filename ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static GeometryShaderRef createGeometryShaderFromFile(const Char* filename, s32 numDefines, const char** defines, BlobRef* blob);
-
-        /**
-        @brief メモリからジオメトリシェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static GeometryShaderRef createGeometryShaderFromMemory(const Char* memory, u32 size, s32 numDefines, const char** defines, BlobRef* blob);
-
-
-
         /**
         @brief メモリからピクセルシェーダ作成
         @param memory ... 
@@ -254,39 +212,26 @@ namespace lgraphics
         static VertexShaderRef createVertexShaderFromBinary(const u8* memory, u32 size);
 
         /**
+        @brief メモリからジオメトリシェーダ作成。StreamOutput用
+        @param memory ... 
+        @param size ... 
+        */
+        static GeometryShaderRef createGeometryShaderWithStreamOutputFromBinary(
+            const u8* memory,
+            u32 size,
+            const StreamOutputDeclarationEntry* entries,
+            u32 numEntries,
+            const u32* bufferStrides,
+            u32 numStrides,
+            u32 rasterizedStream);
+
+        /**
         @brief メモリからジオメトリシェーダ作成
         @param memory ... 
         @param size ... 
         */
         static GeometryShaderRef createGeometryShaderFromBinary(const u8* memory, u32 size);
 
-
-        /**
-        @brief メモリからピクセルシェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static BlobRef createPixelShaderBlobFromMemory(const Char* memory, u32 size, const Char* profile, s32 numDefines, const char** defines, BlobRef* error);
-
-        /**
-        @brief メモリから頂点シェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static BlobRef createVertexShaderBlobFromMemory(const Char* memory, u32 size, const Char* profile, s32 numDefines, const char** defines, BlobRef* error);
-
-        /**
-        @brief メモリからジオメトリシェーダ作成
-        @param memory ... 
-        @param size ... 
-        @param numDefines ... defineマクロの数
-        @param defines ... defineマクロ名
-        */
-        static BlobRef createGeometryShaderBlobFromMemory(const Char* memory, u32 size, const Char* profile, s32 numDefines, const char** defines, BlobRef* error);
     };
 
 

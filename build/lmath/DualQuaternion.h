@@ -45,7 +45,7 @@ namespace lmath
 
         inline void set(const lmath::Quaternion& rotation, const lmath::Quaternion& translation);
 
-        inline DualQuaternion& mul(const DualQuaternion& d0, const DualQuaternion& d1);
+        DualQuaternion& mul(const DualQuaternion& d0, const DualQuaternion& d1);
 
         inline DualQuaternion& operator+=(const DualQuaternion& q);
         inline DualQuaternion& operator-=(const DualQuaternion& q);
@@ -126,32 +126,6 @@ namespace lmath
     inline const f32* DualQuaternion::get() const
     {
         return reinterpret_cast<const f32*>(dq_);
-    }
-
-    inline DualQuaternion& DualQuaternion::mul(const DualQuaternion& d0, const DualQuaternion& d1)
-    {
-        lmath::Quaternion rot = d0.dq_[0];
-        rot *= d1.dq_[0];
-
-#if 1
-        lmath::Quaternion t0 = d0.dq_[0];
-        t0 *= d1.dq_[1];
-
-        lmath::Quaternion t1 = d0.dq_[1];
-        t1 *= d1.dq_[0];
-#else
-
-        lmath::Quaternion t0 = d1.translation_;
-        t0 *= d0.rotation_;
-
-        lmath::Quaternion t1 = d1.rotation_;
-        t1 *= d0.translation_;
-#endif
-        dq_[0] = rot;
-        dq_[1] = t0;
-        dq_[1] += t1;
-
-        return *this;
     }
 
     inline DualQuaternion& DualQuaternion::operator+=(const DualQuaternion& q)

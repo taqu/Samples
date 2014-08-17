@@ -51,7 +51,6 @@ namespace linput
         const Mouse* getMouse() const{ return reinterpret_cast<const Mouse*>( devices_[DevType_Mouse] );}
         const Joystick* getJoystick() const{ return reinterpret_cast<const Joystick*>( devices_[DevType_Joystick] );}
 
-
     private:
         Input();
         ~Input();

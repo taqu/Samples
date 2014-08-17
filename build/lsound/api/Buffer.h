@@ -8,7 +8,7 @@
 */
 #include <lcore/smart_ptr/intrusive_ptr.h>
 
-#include "../Type.h"
+#include "lsound.h"
 #include <xaudio2.h>
 
 namespace lsound
@@ -52,7 +52,7 @@ namespace lsound
         void release()
         {
             if(--refCount_ == 0){
-                LIME_DELETE_NONULL this;
+                LIME_DELETE_NONULL(this);
             }
         }
 

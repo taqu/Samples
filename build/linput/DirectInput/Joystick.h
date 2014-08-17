@@ -28,6 +28,7 @@ namespace linput
         inline s32 get(JoystickAxis axis) const;
         inline s32 getDuration(JoystickAxis axis) const;
 
+        inline bool valid() const;
     private:
         void acquire();
         inline void setOn(u32 index);
@@ -64,6 +65,11 @@ namespace linput
     {
         LASSERT(0<= axis && axis < JoystickAxis_Num);
         return axisDuration_[axis];
+    }
+
+    inline bool Joystick::valid() const
+    {
+        return device_.valid();
     }
 }
 

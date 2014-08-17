@@ -53,7 +53,7 @@ namespace lcore
 
             typedef HashTable<Key, Value, Hasher> this_type;
 
-            typedef size_t size_type;
+            typedef u32 size_type;
             typedef ptrdiff_t difference_type;
 
             typedef typename type_traits<Value>::pointer pointer;

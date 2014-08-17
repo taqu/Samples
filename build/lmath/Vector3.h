@@ -23,6 +23,10 @@ namespace lmath
     class Vector3
     {
     public:
+        static const Vector3 Forward;
+        static const Vector3 Up;
+        static const Vector3 Right;
+
         Vector3()
         {}
 
@@ -39,6 +43,8 @@ namespace lmath
             x_ = x; y_ = y; z_ = z;
         }
 
+        Vector3& operator=(const lmath::Vector4& rhs);
+
         void set(const lmath::Vector4& v);
 
         inline void zero();
@@ -47,7 +53,6 @@ namespace lmath
         inline f32 operator[](s32 index) const;
         inline f32& operator[](s32 index);
         inline Vector3 operator-() const;
-
 
         inline Vector3& operator+=(const Vector3& v);
         inline Vector3& operator-=(const Vector3& v);
@@ -67,6 +72,9 @@ namespace lmath
         inline f32 length() const;
         inline f32 lengthSqr() const;
         void normalize();
+        void normalize(f32 lengthSqr);
+        void normalizeChecked();
+
         inline f32 dot(const Vector3& v) const;
         f32 distanceSqr(const Vector3& v) const;
         inline f32 distance(const Vector3& v) const;
@@ -106,8 +114,8 @@ namespace lmath
         inline void add(const Vector3& v0, const Vector3& v1);
         inline void sub(const Vector3& v0, const Vector3& v1);
 
-        inline void min(const Vector3& v0, const Vector3& v1);
-        inline void max(const Vector3& v0, const Vector3& v1);
+        inline void minimum(const Vector3& v0, const Vector3& v1);
+        inline void maximum(const Vector3& v0, const Vector3& v1);
 
         /**
         @brief v0*v1 + v2
@@ -295,14 +303,14 @@ namespace lmath
     }
 
 
-    inline void Vector3::min(const Vector3& v0, const Vector3& v1)
+    inline void Vector3::minimum(const Vector3& v0, const Vector3& v1)
     {
         x_ = lcore::minimum(v0.x_, v1.x_);
         y_ = lcore::minimum(v0.y_, v1.y_);
         z_ = lcore::minimum(v0.z_, v1.z_);
     }
 
-    inline void Vector3::max(const Vector3& v0, const Vector3& v1)
+    inline void Vector3::maximum(const Vector3& v0, const Vector3& v1)
     {
         x_ = lcore::maximum(v0.x_, v1.x_);
         y_ = lcore::maximum(v0.y_, v1.y_);

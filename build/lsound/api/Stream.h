@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2013/02/24 create
 */
-#include "../Type.h"
+#include "lsound.h"
 
 namespace lsound
 {

@@ -39,7 +39,7 @@ namespace lgraphics
             BufferRefBase::swap(rhs);
         }
 
-        void attach(DataFormat format, u32 offset);
+        void attach(DataFormat format, u32 offsetInBytes);
     private:
         friend class IndexBuffer;
 

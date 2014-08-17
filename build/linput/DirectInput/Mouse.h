@@ -32,6 +32,7 @@ namespace linput
         inline s32 getY() const;
         inline s32 get(MouseAxis axis) const;
 
+        void resize();
     private:
         void acquire();
         inline void getMousePoint();
@@ -43,12 +44,14 @@ namespace linput
 
         struct MousePoint
         {
-            s32 value_[MouseAxis_Num];
+            LONG value_[MouseAxis_Num-1];
         };
 
         HWND__* hWnd_;
         MousePoint mousePoint_;
         DIDEVICEOBJECTDATA devObjectData_[BufferSize];
+        s32 width_;
+        s32 height_;
         u16 onState_;
         u16 clickState_;
     };
@@ -83,7 +86,7 @@ namespace linput
 
     inline s32 Mouse::get(MouseAxis axis) const
     {
-        LASSERT(0<=axis && axis<MouseAxis_Num);
+        LASSERT(0<=axis && axis<(MouseAxis_Num-1));
         return mousePoint_.value_[axis];
     }
 }

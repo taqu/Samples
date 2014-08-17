@@ -6,7 +6,7 @@
 @date 2012/08/02 create
 
 */
-#include "../Type.h"
+#include "lsound.h"
 
 namespace lsound
 {

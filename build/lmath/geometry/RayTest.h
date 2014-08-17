@@ -65,6 +65,10 @@ namespace lmath
 
     bool testRayAABB(const Ray& ray, const Vector3& bmin, const Vector3& bmax);
 
+    bool testRayAABB(f32& tmin, f32& tmax, const Ray& ray, const Vector4& bmin, const Vector4& bmax);
+
+    bool testRayAABB(const Ray& ray, const Vector4& bmin, const Vector4& bmax);
+
     //-----------------------------------------------------------
     // 線分とスラブ（平行な平面の組の間）の交差判定
     bool testRaySlab(f32& tmin, f32& tmax, const Ray& ray, f32 slabMin, f32 slabMax, s32 axis);

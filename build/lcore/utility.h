@@ -153,10 +153,54 @@ namespace lcore
     ClockType getPerformanceFrequency();
 
     /// 秒単位の時間差分計算
-    f32 calcTime(ClockType prevTime, ClockType currentTime);
+    f64 calcTime64(ClockType prevTime, ClockType currentTime);
+
+    inline f32 calcTime(ClockType prevTime, ClockType currentTime)
+    {
+        return static_cast<f32>(calcTime64(prevTime, currentTime));
+    }
 
     /// ミリ秒単位の時間を取得
     u32 getTime();
+
+
+    template<bool enable>
+    struct Timer
+    {
+        Timer()
+            :time_(0)
+            ,count_(0)
+            ,totalTime_(0.0f)
+        {}
+
+        void begin()
+        {
+            time_ = getPerformanceCounter();
+        }
+
+        void end()
+        {
+            totalTime_ += calcTime64(time_, getPerformanceCounter());
+            ++count_;
+        }
+
+        f64 getAverage() const
+        {
+            return (0 == count_)? 0.0 : totalTime_/count_;
+        }
+
+        ClockType time_;
+        s32 count_;
+        f64 totalTime_;
+    };
+
+    template<>
+    struct Timer<false>
+    {
+        void begin(){}
+        void end(){}
+        f64 getAverage() const{return 0.0;}
+    };
 
     //---------------------------------------------------------
     //---

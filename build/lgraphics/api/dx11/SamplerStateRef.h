@@ -41,6 +41,13 @@ namespace lgraphics
             lcore::swap(state_, rhs.state_);
         }
 
+        SamplerStateRef& operator=(const SamplerStateRef& rhs)
+        {
+            SamplerStateRef tmp(rhs);
+            tmp.swap(*this);
+            return *this;
+        }
+
     private:
         friend class SamplerState;
 

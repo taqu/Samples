@@ -11,6 +11,7 @@
 namespace lmath
 {
     class Matrix44;
+    class Quaternion;
 
     //--------------------------------------------
     //---
@@ -122,6 +123,8 @@ namespace lmath
         Matrix34& operator*=(const Matrix44& rhs);
 
         bool isNan() const;
+
+        void getRotation(Quaternion& rotation) const;
 
 #if defined(LMATH_USE_SSE)
         //SSEセット・ストア命令

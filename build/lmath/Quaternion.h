@@ -56,7 +56,19 @@ namespace lmath
         void setRotateZYX(f32 radx, f32 rady, f32 radz);
 
         inline void setRotateAxis(const lmath::Vector3& axis, f32 radian);
+        inline void setRotateAxis(const lmath::Vector4& axis, f32 radian);
         void setRotateAxis(f32 x, f32 y, f32 z, f32 radian);
+
+        void lookAt(const Vector3& eye, const Vector3& at);
+        /**
+        @param dir ... 正規化済み方向
+        */
+        void lookAt(const Vector3& dir);
+        void lookAt(const Vector4& eye, const Vector4& at);
+        /**
+        @param dir ... 正規化済み方向
+        */
+        void lookAt(const Vector4& dir);
 
         inline void conjugate();
         inline void conjugate(const Quaternion& q);
@@ -223,6 +235,11 @@ namespace lmath
     }
 
     inline void Quaternion::setRotateAxis(const lmath::Vector3& axis, f32 radian)
+    {
+        setRotateAxis(axis.x_, axis.y_, axis.z_, radian);
+    }
+
+    inline void Quaternion::setRotateAxis(const lmath::Vector4& axis, f32 radian)
     {
         setRotateAxis(axis.x_, axis.y_, axis.z_, radian);
     }

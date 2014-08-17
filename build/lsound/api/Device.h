@@ -8,7 +8,7 @@
 */
 #include <lcore/async/SyncObject.h>
 
-#include "../Type.h"
+#include "lsound.h"
 #include "Voice.h"
 
 struct IXAudio2;

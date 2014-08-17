@@ -36,86 +36,86 @@ namespace smart_ptr
         typedef typename intrusive_ptr_traits<T>::reference_type reference_type;
 
         intrusive_ptr()
-            :_pointer(NULL)
+            :pointer_(NULL)
         {
         }
 
         explicit intrusive_ptr(T* pointer, bool add_ref = true)
-            :_pointer(pointer)
+            :pointer_(pointer)
         {
-            if(_pointer != NULL
+            if(pointer_ != NULL
                 && add_ref)
             {
-                intrusive_ptr_addref(_pointer);
+                intrusive_ptr_addref(pointer_);
             }
         }
 
         intrusive_ptr(const intrusive_ptr& rhs)
-            :_pointer(rhs._pointer)
+            :pointer_(rhs.pointer_)
         {
-            if(_pointer != NULL){
-                intrusive_ptr_addref(_pointer);
+            if(pointer_ != NULL){
+                intrusive_ptr_addref(pointer_);
             }
         }
 
         template<class U>
         explicit intrusive_ptr(U* ptr)
-            :_pointer(ptr)
+            :pointer_(ptr)
         {
-            if(_pointer != NULL){
-                intrusive_ptr_addref(_pointer);
+            if(pointer_ != NULL){
+                intrusive_ptr_addref(pointer_);
             }
         }
 
         template<class U>
         intrusive_ptr(const intrusive_ptr<U>& rhs)
-            :_pointer(rhs.get())
+            :pointer_(rhs.get())
         {
-            if(_pointer != NULL){
-                intrusive_ptr_addref(_pointer);
+            if(pointer_ != NULL){
+                intrusive_ptr_addref(pointer_);
             }
         }
 
         ~intrusive_ptr()
         {
-            if(_pointer != NULL){
-                intrusive_ptr_release(_pointer);
+            if(pointer_ != NULL){
+                intrusive_ptr_release(pointer_);
             }
         }
 
         pointer_type get() const
         {
-            return _pointer;
+            return pointer_;
         }
 
         //operator pointer_type()
         //{
-        //    return _pointer;
+        //    return pointer_;
         //}
 
         //operator const pointer_type() const
         //{
-        //    return _pointer;
+        //    return pointer_;
         //}
 
         reference_type operator*() const
         {
-            return *_pointer;
+            return *pointer_;
         }
 
         pointer_type operator->() const
         {
-            return _pointer;
+            return pointer_;
         }
 
         operator bool() const
         {
-            return (_pointer != NULL);
+            return (pointer_ != NULL);
         }
 
         bool operator!() const
         {
-            return (_pointer == NULL);
+            return (pointer_ == NULL);
         }
 
         intrusive_ptr& operator=(const intrusive_ptr& rhs)
@@ -132,13 +132,13 @@ namespace smart_ptr
 
         void swap(intrusive_ptr& rhs)
         {
-            T* tmp = _pointer;
-            _pointer = rhs._pointer;
-            rhs._pointer = tmp;
+            T* tmp = pointer_;
+            pointer_ = rhs.pointer_;
+            rhs.pointer_ = tmp;
         }
     private:
 
-        T *_pointer;
+        T *pointer_;
     };
 
     template<class T, class U>

@@ -39,9 +39,9 @@ namespace lgraphics
             BufferRefBase::swap(rhs);
         }
 
-        void attach(u32 start, u32 stride, u32 offset);
+        void attach(u32 startSlot, u32 stride, u32 offsetInBytes);
 
-        void attachStreamOut(u32 offset);
+        void attachStreamOut(u32 offsetInBytes);
     private:
         friend class VertexBuffer;
 
@@ -85,7 +85,9 @@ namespace lgraphics
             CPUAccessFlag accessFlags,
             ResourceMisc miscFlags,
             u32 structureByteStride,
-            const void* data)
+            const void* data,
+            u32 pitch = 0,
+            u32 slicePitch = 0)
         {
             ID3D11Buffer* buffer = BufferBase::create(
                 size,
@@ -94,7 +96,9 @@ namespace lgraphics
                 accessFlags,
                 miscFlags,
                 structureByteStride,
-                data);
+                data,
+                pitch,
+                slicePitch);
 
             return VertexBufferRef(buffer);
         }

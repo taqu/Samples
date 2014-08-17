@@ -55,6 +55,26 @@ namespace lgraphics
 
     static const u32 MAX_TEXTURES = 3;
 
+    //Bufferの場合はバイト単位、テクスチャの場合はテクセル単位
+    struct Box
+    {
+        Box(){}
+        Box(u32 left, u32 top, u32 front, u32 right, u32 bottom, u32 back)
+            :left_(left)
+            ,top_(top)
+            ,front_(front)
+            ,right_(right)
+            ,bottom_(bottom)
+            ,back_(back)
+        {}
+
+        u32 left_;
+        u32 top_;
+        u32 front_;
+        u32 right_;
+        u32 bottom_;
+        u32 back_;
+    };
 
     template<class T>
     class ScopedCOMPtr
@@ -104,7 +124,7 @@ static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (64);
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (256-1);
+static const lgraphics::u8 LIME_MAX_SKINNING_MATRICES = (255);
 static const u32 MaxRenderTargets = 8;
 
 #elif defined(LIME_GLES1)

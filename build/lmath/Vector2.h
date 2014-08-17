@@ -63,12 +63,14 @@ namespace lmath
         inline f32 distanceSqr(const Vector2& v) const;
 
 
-        void setLerp(const Vector2& v1, const Vector2& v2, f32 f);
+        Vector2& lerp(const Vector2& v0, const Vector2& v1, f32 t);
 
         inline bool isNan() const;
 
         inline void add(const Vector2& v0, const Vector2& v1);
         inline void sub(const Vector2& v0, const Vector2& v1);
+
+        void muladd(f32 t, const Vector2& v0, const Vector2& v1);
 
         f32 x_, y_;
     };

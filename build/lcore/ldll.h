@@ -23,7 +23,16 @@ namespace lcore
         void close();
 
         void* getProcAddress(const char* name);
+
+        void swap(DLL& rhs)
+        {
+            lcore::swap(module_, rhs.module_);
+        }
+
     private:
+        DLL(const DLL&);
+        DLL& operator=(const DLL&);
+
         LHMODULE module_;
     };
 

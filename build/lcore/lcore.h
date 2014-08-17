@@ -42,9 +42,9 @@
 #endif
 
 //-------------------
-#if defined(ANDROID) || defined(__linux__)
+#if defined(ANDROID) || defined(__GNUC__)
 #include <stdint.h>
-#endif //ANDROID __linux__
+#endif //ANDROID __GNUC__
 
 //-------------------
 #if defined(ANDROID)
@@ -162,7 +162,7 @@ inline void operator delete[](void* ptr, const char* /*file*/, int /*line*/)
 #if defined(ANDROID)
 #define LASSERT(expression) {if((expression)==false){__android_log_assert("assert", "lime", "%s (%d)", __FILE__, __LINE__);}}while(0)
 
-#elif defined(__linux__)
+#elif defined(__GNUC__)
 #define LASSERT(expression) ( assert(expression) )
 
 #else
@@ -181,7 +181,7 @@ namespace lcore
 {
 
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_MSC_VER)
     typedef char Char;
     typedef __int8 s8;
     typedef __int16 s16;
@@ -196,12 +196,14 @@ namespace lcore
     typedef float f32;
     typedef double f64;
 
+    typedef intptr_t  intptr_t;
+    typedef uintptr_t  uintptr_t;
     typedef ptrdiff_t  ptrdiff_t;
     typedef size_t lsize_t;
 
     typedef void* LHMODULE;
 
-#elif defined(ANDROID) || defined(__linux__)
+#elif defined(ANDROID) || defined(__GNUC__)
     typedef char Char;
     typedef int8_t s8;
     typedef int16_t s16;
@@ -216,6 +218,8 @@ namespace lcore
     typedef float f32;
     typedef double f64;
 
+    typedef intptr_t  intptr_t;
+    typedef uintptr_t  uintptr_t;
     typedef ptrdiff_t  ptrdiff_t;
     typedef size_t lsize_t;
 
@@ -236,13 +240,15 @@ namespace lcore
     typedef float f32;
     typedef double f64;
 
+    typedef intptr_t  intptr_t;
+    typedef uintptr_t  uintptr_t;
     typedef ptrdiff_t  ptrdiff_t;
     typedef size_t lsize_t;
 
     typedef void* LHMODULE;
 #endif
 
-#if defined(ANDROID) || defined(__linux__)
+#if defined(ANDROID) || defined(__GNUC__)
     typedef clock_t ClockType;
 #else
     typedef u64 ClockType;
@@ -506,9 +512,9 @@ namespace lcore
         LeakCheck leakCheck_;
     };
 
-
-//#define LIME_ENABLE_LOG (1)
     void Log(const Char* format, ...);
+
+    void Print(const Char* format, ...);
 
     class MemorySpace
     {
@@ -530,6 +536,19 @@ namespace lcore
     private:
         void* mspace_;
     };
+
+    u32 populationCount(u32 val);
+
+    /**
+    _BitScanReverse
+    __builtin_clzl
+    */
+    u32 mostSiginificantBit(u32 val);
+
+    /**
+    _BitScanForward
+    */
+    u32 leastSignificantBit(u32 val);
 }
 
 #endif //INC_LCORE_H__

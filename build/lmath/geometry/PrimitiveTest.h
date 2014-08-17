@@ -63,6 +63,45 @@ namespace lmath
         const lmath::Vector3& l2);
 
     //---------------------------------------------------------------------------------
+    f32 sqDistancePointAABB(
+        const f32* point,
+        const f32* bmin,
+        const f32* bmax);
+
+    inline f32 sqDistancePointAABB(const lmath::Vector4& point, const lmath::Vector4& bmin, const lmath::Vector4& bmax)
+    {
+        return sqDistancePointAABB(&point.x_, &bmin.x_, &bmax.x_);
+    }
+
+    inline f32 sqDistancePointAABB(const lmath::Vector3& point, const lmath::Vector3& bmin, const lmath::Vector3& bmax)
+    {
+        return sqDistancePointAABB(&point.x_, &bmin.x_, &bmax.x_);
+    }
+
+    inline f32 sqDistancePointAABB(const lmath::Vector3& point, const lmath::Vector4& bmin, const lmath::Vector4& bmax)
+    {
+        return sqDistancePointAABB(&point.x_, &bmin.x_, &bmax.x_);
+    }
+
+    inline f32 sqDistancePointAABB(const lmath::Vector4& point, const lmath::Vector3& bmin, const lmath::Vector3& bmax)
+    {
+        return sqDistancePointAABB(&point.x_, &bmin.x_, &bmax.x_);
+    }
+
+    //---------------------------------------------------------------------------------
+    void closestPointPointVSAABB(
+        lmath::Vector4& result,
+        const lmath::Vector4& point,
+        const lmath::Vector4& bmin,
+        const lmath::Vector4& bmax);
+
+    void closestPointPointVSAABB(
+        lmath::Vector3& result,
+        const lmath::Vector3& point,
+        const lmath::Vector3& bmin,
+        const lmath::Vector3& bmax);
+
+    //---------------------------------------------------------------------------------
     /**
     @return 球と平面が交差するか
     @param sphere ...
@@ -76,6 +115,15 @@ namespace lmath
 
     //---------------------------------------------------------------------------------
     bool testSphereVsSphere(f32& distance, const Sphere& sphere0, const Sphere& sphere1);
+
+    //---------------------------------------------------------------------------------
+    bool testAABBVsAABB(const lmath::Vector4& bmin0, const lmath::Vector4& bmax0, const lmath::Vector4& bmin1, const lmath::Vector4& bmax1);
+
+    //---------------------------------------------------------------------------------
+    bool testSphereVsAABB(const Sphere& sphere, const lmath::Vector4& bmin, const lmath::Vector4& bmax);
+
+    //---------------------------------------------------------------------------------
+    bool testSphereVsAABB(lmath::Vector4& close, const Sphere& sphere, const lmath::Vector4& bmin, const lmath::Vector4& bmax);
 
     //---------------------------------------------------------------------------------
     struct Triangle

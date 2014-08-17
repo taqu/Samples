@@ -43,7 +43,7 @@ namespace lanim
     static const u32 LANIM_MAX_ANIM_NODE = 512;
 
 
-    typedef lcore::String<LANIM_MAX_NAME_SIZE> Name;
+    typedef lcore::StringWithHash<LANIM_MAX_NAME_SIZE> Name;
 
 #define LANIM_FRAME_DURATION_MIN (1.192092896e-04F)
 

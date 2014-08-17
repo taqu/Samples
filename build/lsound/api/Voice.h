@@ -7,7 +7,7 @@
 
 */
 #include <xaudio2.h>
-#include "../Type.h"
+#include "lsound.h"
 
 namespace lsound
 {

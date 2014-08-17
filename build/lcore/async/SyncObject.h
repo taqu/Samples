@@ -14,6 +14,23 @@
 
 namespace lcore
 {
+namespace thread
+{
+    static const u32 Infinite = 0xFFFFFFFFU; /// タイムアウト時間に指定すると、シグナル状態になるまで待機
+    enum WaitStatus
+    {
+        Wait_Abandoned = WAIT_ABANDONED, /// 所有していたオブジェクトが解放しないで終了した
+        Wait_Success = WAIT_OBJECT_0 , /// シグナル状態になった
+        Wait_Timeout = WAIT_TIMEOUT , /// タイムアウトした
+        Wait_Failed = WAIT_FAILED , /// 関数失敗
+    };
+
+    inline void sleep(u32 milliSeconds)
+    {
+        ::Sleep(milliSeconds);
+    }
+}
+
     //-------------------------------------------------------
     //---
     //--- ConditionVariable
@@ -83,6 +100,57 @@ namespace lcore
 
     //-------------------------------------------------------
     //---
+    //--- Event
+    //---
+    //-------------------------------------------------------
+#if _WIN32
+    class Event
+    {
+    public:
+        Event(bool manualReset, bool initState);
+        ~Event();
+
+        thread::WaitStatus wait(u32 timeout)
+        {
+            return (thread::WaitStatus)WaitForSingleObject(event_, timeout);
+        }
+
+        void set()
+        {
+            SetEvent(event_);
+        }
+
+        void reset()
+        {
+            ResetEvent(event_);
+        }
+    private:
+        Event(const Event&);
+        Event& operator=(const Event&);
+        HANDLE event_;
+    };
+
+#else
+    class Event
+    {
+    public:
+        Event(bool manualReset, bool initState);
+        ~Event();
+
+        thread::WaitStatus wait(u32 timeout);
+
+        void set();
+        void reset();
+    private:
+        pthread_cond_t condVariable_;
+        pthread_mutex_t lock_;
+        s16 manualReset_;
+        s16 state_;
+    };
+#endif
+
+    //-------------------------------------------------------
+    //---
     //--- ConditionVariable
     //---
     //-------------------------------------------------------
@@ -92,8 +160,12 @@ namespace lcore
     class ConditionVariable
     {
     public:
-        ConditionVariable(CriticalSection& cs);
+        ConditionVariable();
         ~ConditionVariable();
+
+        void wait(CriticalSection& externalLock, u32 timeout);
+        void broadcast();
+        void signal();
 
     private:
         friend class CondLock;
@@ -101,48 +173,16 @@ namespace lcore
         ConditionVariable(const ConditionVariable&);
         ConditionVariable& operator=(const ConditionVariable&);
 
-        void notifyAll();
-        void wait();
-
-        CriticalSection& external_;// 外部条件変数のロック
-        CriticalSection internal_; // 内部変数のロック
-
-        u32 numWaitings_; //待っているスレッド数
-        u32 numToWakes_; //起こすスレッド数
-        HANDLE signalNotify_; //起こすシグナル
-        HANDLE signalWaked_; //起きたシグナル
-    };
-
-    /**
-    @brief 条件変数用ロックオブジェクト
-    */
-    class CondLock
-    {
-    public:
-        CondLock(ConditionVariable& cond)
-            :cond_(cond)
-            ,lock_(cond.external_)
-        {}
-
-        ~CondLock()
-        {}
-
-        void notifyAll()
+        enum Event
         {
-            cond_.notifyAll();
-        }
+            Event_Signal =0,
+            Event_Broadcast = 1,
+            Event_Num = 2,
+        };
 
-        void wait()
-        {
-            cond_.wait();
-        }
-
-    private:
-        CondLock(const CondLock&);
-        CondLock& operator=(const CondLock&);
-
-        ConditionVariable& cond_;
-        CSLock lock_;
+        s32 waitCounter_;
+        CriticalSection waitCounterLock_;
+        HANDLE events_[Event_Num];
     };
 
 
@@ -172,6 +212,86 @@ namespace lcore
         CRITICAL_SECTION csWrite_;
         HANDLE readersCleared_;
     };
+
+    //-------------------------------------------------------
+    //---
+    //--- Semaphore
+    //---
+    //-------------------------------------------------------
+    class Semaphore
+    {
+    public:
+        Semaphore(s32 initCount, s32 maxCount);
+        ~Semaphore();
+
+        thread::WaitStatus wait(u32 timeout);
+        s32 release(s32 count);
+    private:
+        Semaphore(const Semaphore&);
+        Semaphore& operator=(const Semaphore&);
+
+        HANDLE semaphore_;
+    };
+
+    //-------------------------------------------------------
+    //---
+    //--- SpinLock
+    //---
+    //-------------------------------------------------------
+#if defined(__GNUC__)
+    class SpinLock
+    {
+    public:
+        SpinLock()
+            :value_(0)
+        {}
+
+        ~SpinLock()
+        {}
+
+        void enter()
+        {
+            while(__sync_lock_test_and_set(&value_, 1)){
+            }
+        }
+
+        void leave()
+        {
+            __sync_lock_release(&value_);
+        }
+
+    private:
+        s32 value_;
+    };
+
+#elif defined(WIN32)
+    class SpinLock
+    {
+    public:
+        SpinLock()
+            :value_(0)
+        {}
+
+        ~SpinLock()
+        {}
+
+        void enter()
+        {
+            while(0 != InterlockedCompareExchange(&value_, 1, 0)){
+            }
+        }
+
+        void leave()
+        {
+            InterlockedExchange(&value_, 0);
+        }
+
+    private:
+        LONG value_;
+    };
+
+    typedef ScopedLock<SpinLock> SPLock;
 }
+#endif
 
 #endif //INC_LCORE_SYNCOBJECT_H__

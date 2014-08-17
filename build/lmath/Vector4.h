@@ -23,21 +23,29 @@ namespace lmath
     class Vector4
     {
     public:
+        static const LIME_ALIGN16 f32 One[4];
+        static const LIME_ALIGN16 f32 Identity[4];
+        static const Vector4 Forward;
+        static const Vector4 Up;
+        static const Vector4 Right;
+
         Vector4()
         {}
 
         inline Vector4(f32 x, f32 y, f32 z, f32 w);
         inline Vector4(const Vector4& rhs);
-        inline Vector4& operator=(const Vector4& rhs);
-        inline Vector4& operator=(const Vector3& rhs);
-
         inline explicit Vector4(const Vector3& v);
         inline Vector4(const Vector3& v, f32 w);
+        inline explicit Vector4(f32 v);
+
+        inline Vector4& operator=(const Vector4& rhs);
+        inline Vector4& operator=(const Vector3& rhs);
+        inline Vector4& operator=(f32 rhs);
 
         inline void set(f32 x, f32 y, f32 z, f32 w);
-
         inline void set(const Vector3& v);
         inline void set(const Vector3& v, f32 w);
+        inline void set(f32 v);
 
         inline void zero();
         inline void identity();
@@ -67,6 +75,7 @@ namespace lmath
         f32 lengthSqr() const;
         void normalize();
         void normalize(f32 lengthSqr);
+        void normalizeChecked();
 
         f32 dot(const Vector4& v) const;
         void cross3(const Vector4& v0, const Vector4& v1);
@@ -74,8 +83,6 @@ namespace lmath
         f32 distanceSqr(const Vector4& v) const;
 
         f32 distance3(const Vector4& v) const;
-
-        void setLerp(const Vector4& v1, const Vector4& v2, f32 f);
 
         void mul(f32 a, const Vector4& v);
         void mul(const Vector4& v, f32 a){ mul(a, v);}
@@ -103,8 +110,8 @@ namespace lmath
         inline void add(f32 v);
         inline void sub(f32 v);
 
-        inline void min(const Vector4& v0, const Vector4& v1);
-        inline void max(const Vector4& v0, const Vector4& v1);
+        inline void minimum(const Vector4& v0, const Vector4& v1);
+        inline void maximum(const Vector4& v0, const Vector4& v1);
 
         /**
         @brief v0*v1 + v2
@@ -112,7 +119,7 @@ namespace lmath
         inline void muladd(const Vector4& v0, const Vector4& v1, const Vector4& v2);
 
         /**
-        @brief a*v1 + v2
+        @brief a*v0 + v1
         */
         inline void muladd(f32 a, const Vector4& v0, const Vector4& v1);
 
@@ -135,6 +142,11 @@ namespace lmath
             dst = *this;
             dst -= parallel;
         }
+
+        /**
+        @brief v0 * t + v1 * (1-t0)
+        */
+        void lerp(const lmath::Vector4& v0, const lmath::Vector4& v1, f32 t);
 
 #if defined(LMATH_USE_SSE)
         inline static lm128 load(const Vector4& v)
@@ -182,6 +194,32 @@ namespace lmath
 #endif
     }
 
+    inline Vector4::Vector4(const Vector3& v)
+        :x_(v.x_)
+        ,y_(v.y_)
+        ,z_(v.z_)
+        ,w_(0.0f)
+    {
+    }
+
+    inline Vector4::Vector4(const Vector3& v, f32 w)
+        :x_(v.x_)
+        ,y_(v.y_)
+        ,z_(v.z_)
+        ,w_(w)
+    {
+    }
+
+    inline Vector4::Vector4(f32 v)
+    {
+#if defined(LMATH_USE_SSE)
+        lm128 t = _mm_load1_ps(&v);
+        store(*this, t);
+#else
+        x_ = y_ = z_ = w_ = v;
+#endif
+    }
+
     inline Vector4& Vector4::operator=(const Vector4& rhs)
     {
 #if defined(LMATH_USE_SSE)
@@ -199,21 +237,10 @@ namespace lmath
         return *this;
     }
 
-
-    inline Vector4::Vector4(const Vector3& v)
-        :x_(v.x_)
-        ,y_(v.y_)
-        ,z_(v.z_)
-        ,w_(0.0f)
+    inline Vector4& Vector4::operator=(f32 v)
     {
-    }
-
-    inline Vector4::Vector4(const Vector3& v, f32 w)
-        :x_(v.x_)
-        ,y_(v.y_)
-        ,z_(v.z_)
-        ,w_(w)
-    {
+        set(v);
+        return *this;
     }
 
     inline void Vector4::set(f32 x, f32 y, f32 z, f32 w)
@@ -237,6 +264,16 @@ namespace lmath
         w_ = w;
     }
 
+    inline void Vector4::set(f32 v)
+    {
+#if defined(LMATH_USE_SSE)
+        lm128 t = _mm_load1_ps(&v);
+        store(*this, t);
+#else
+        x_ = y_ = z_ = w_ = v;
+#endif
+    }
+
     inline void Vector4::zero()
     {
 #if defined(LMATH_USE_SSE)
@@ -250,8 +287,7 @@ namespace lmath
     inline void Vector4::identity()
     {
 #if defined(LMATH_USE_SSE)
-        static const LIME_ALIGN16 f32 Init[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-        lm128 r = _mm_load_ps(Init);
+        lm128 r = _mm_load_ps(Identity);
         store(*this, r);
 #else
         x_ = y_ = z_ = 0.0f;
@@ -262,8 +298,7 @@ namespace lmath
     inline void Vector4::one()
     {
 #if defined(LMATH_USE_SSE)
-        static const LIME_ALIGN16 f32 Init[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-        lm128 r = _mm_load_ps(Init);
+        lm128 r = _mm_load_ps(One);
         store(*this, r);
 #else
         x_ = y_ = z_ = w_ = 1.0f;
@@ -525,7 +560,7 @@ namespace lmath
 #endif
     }
 
-    inline void Vector4::min(const Vector4& v0, const Vector4& v1)
+    inline void Vector4::minimum(const Vector4& v0, const Vector4& v1)
     {
 #if defined(LMATH_USE_SSE)
         lm128 r0 = load(v0);
@@ -541,7 +576,7 @@ namespace lmath
 #endif
     }
 
-    inline void Vector4::max(const Vector4& v0, const Vector4& v1)
+    inline void Vector4::maximum(const Vector4& v0, const Vector4& v1)
     {
 #if defined(LMATH_USE_SSE)
         lm128 r0 = load(v0);

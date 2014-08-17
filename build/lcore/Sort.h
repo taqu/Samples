@@ -10,6 +10,12 @@
 namespace lcore
 {
     template<class T>
+    struct SortCompFuncType
+    {
+        typedef bool(*SortCmp)(const T& lhs, const T& rhs);
+    };
+
+    template<class T>
     bool less(const T& lhs, const T& rhs)
     {
         return (lhs<rhs);

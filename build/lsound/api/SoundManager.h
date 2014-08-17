@@ -6,10 +6,10 @@
 @date 2013/02/12 create
 */
 #include <lcore/async/SyncObject.h>
+#include <lframework/pack/lpack.h>
 
-#include "../Type.h"
+#include "lsound.h"
 #include "Device.h"
-#include "Pack.h"
 #include "Stream.h"
 
 namespace lsound
@@ -21,6 +21,7 @@ namespace lsound
     {
     public:
         static const u32 DefaultSamplesPerSec = 22050;
+        //static const u32 DefaultSamplesPerSec = 44100;
         static const u32 DefaultChannels = 2;
         static const u32 DefaultBitsPerSample = 16;
         static const u32 DefaultVoices = 128;
@@ -33,8 +34,8 @@ namespace lsound
         static SoundManager& getInstance(){ return *instance_;}
         static bool exist() { return NULL != instance_;}
 
-        void setPack(const Char* filepath);
-        void setStreamPack(const Char* filepath);
+        bool setPack(const Char* filepath);
+        bool setStreamPack(const Char* filepath);
 
         bool play(u32 index, f32 volume = 1.0f);
 
@@ -70,8 +71,8 @@ namespace lsound
         static SoundManager* instance_;
 
         Device device_;
-        Pack voicePack_;
-        Pack streamPack_;
+        lpack::PackMemory voicePack_;
+        lpack::PackEntry streamPack_;
 
         Impl *impl_;
 

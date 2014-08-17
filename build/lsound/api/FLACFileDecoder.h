@@ -5,7 +5,7 @@
 @author t-sakai
 @date 2013/02/12 create
 */
-#include "../Type.h"
+#include "lsound.h"
 
 #include <xaudio2.h>
 #include <FLAC++/decoder.h>

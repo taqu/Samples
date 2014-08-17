@@ -9,12 +9,10 @@
 #include "lanim.h"
 #include <lcore/smart_ptr/intrusive_ptr.h>
 #include <lcore/Buffer.h>
-#include <lcore/HashMap.h>
 #include "Joint.h"
 
 namespace lanim
 {
-    //TODO:専用の内部ハッシュマップを作る
     /**
     @brief スケルトン
     */
@@ -22,7 +20,6 @@ namespace lanim
     {
     public:
         typedef smart_ptr::intrusive_ptr<Skeleton> pointer;
-        typedef lcore::HashMapCharArray<s32> NameJointIndexMap;
 
         Skeleton();
         explicit Skeleton(s32 numJoints);
@@ -43,6 +40,9 @@ namespace lanim
         /// ジョイント名セット
         inline void setJointName(s32 index, const Name& name);
 
+        /// ジョイント名セット
+        inline void setJointName(s32 index, const Char* name, u32 length);
+
         /// 名前取得
         inline const Name& getName() const;
 
@@ -59,16 +59,13 @@ namespace lanim
         const Joint* findJoint(const Name& name) const;
 
         /// 名前からジョイント検索
-        const Joint* findJoint(const char* name) const;
+        const Joint* findJoint(const Char* name) const;
 
         /// ジョイントインデックス計算
         u16 calcJointIndex(const Joint* joint) const;
 
         /// スワップ
         void swap(Skeleton& rhs);
-
-        /// ハッシュテーブル再計算
-        void recalcHash();
 
         static bool serialize(lcore::ostream& os, Skeleton::pointer& anim);
         static bool deserialize(Skeleton::pointer& anim, lcore::istream& is);
@@ -95,11 +92,9 @@ namespace lanim
         s32 numJoints_;
         Joint* joints_;
         Name* jointNames_;
-        NameJointIndexMap nameJointIndexMap_;
 
         lcore::Buffer resourceBuffer_;
     };
-
 
     // ジョイント数取得
     inline s32 Skeleton::getNumJoints() const
@@ -133,6 +128,13 @@ namespace lanim
     {
         LASSERT(0<=index && index<numJoints_);
         jointNames_[index] = name;
+    }
+
+    // ジョイント名セット
+    inline void Skeleton::setJointName(s32 index, const Char* name, u32 length)
+    {
+        LASSERT(0<=index && index<numJoints_);
+        jointNames_[index].assign(name, length);
     }
 
     // 名前取得

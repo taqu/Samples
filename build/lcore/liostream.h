@@ -146,6 +146,8 @@ namespace lcore
             seekg(afterOffset, lcore::ios::beg);
             return size;
         }
+
+        inline bool flush();
     protected:
         fstream_base();
         fstream_base(const Char* filepath, int mode);
@@ -248,6 +250,12 @@ namespace lcore
         return fwrite((void*)src, count, 1, file_);
     }
 
+    template<class Base>
+    inline bool fstream_base<Base>::flush()
+    {
+        LASSERT(file_ != NULL);
+        return 0 == fflush(file_);
+    }
 
     //----------------------------------------------------------
     //---
@@ -560,7 +568,160 @@ namespace lcore
         osstream(const osstream&);
         osstream& operator=(const osstream&);
     };
-    
+
+    //----------------------------------------------------------
+    //---
+    //--- range_stream_base
+    //---
+    //----------------------------------------------------------
+    template<class Base>
+    class range_stream_base : public Base
+    {
+    public:
+        range_stream_base(Base* stream, s32 begin, s32 end)
+            :stream_(stream)
+            ,begin_(begin)
+            ,end_(end)
+            ,pos_(begin)
+        {
+            LASSERT(NULL != stream_);
+            LASSERT(0<=begin_);
+            LASSERT(begin_<=end_);
+            LASSERT(check());
+        }
+
+        ~range_stream_base()
+        {}
+
+        virtual bool eof()
+        {
+            return (end_<=pos_);
+        }
+
+        virtual bool good()
+        {
+            return stream_->good();
+        }
+        
+        virtual bool seekg(s32 offset, int dir);
+
+        virtual s32 tellg()
+        {
+            return pos_;
+        }
+
+    protected:
+        bool check()
+        {
+            s32 cur = stream_->tellg();
+            stream_->seekg(0, lcore::ios::end);
+            s32 end = stream_->tellg();
+            stream_->seekg(cur, lcore::ios::beg);
+
+            return (end_<=end);
+        }
+
+        Base* stream_;
+        s32 begin_;
+        s32 end_;
+        s32 pos_;
+    };
+
+    template<class Base>
+    bool range_stream_base<Base>::seekg(s32 offset, int dir)
+    {
+        switch(dir)
+        {
+        case ios::beg:
+            if(stream_->seekg(offset+begin_, ios::beg)){
+                pos_ = offset;
+            }else{
+                return false;
+            }
+            break;
+
+        case ios::cur:
+            if(stream_->seekg(offset+pos_+begin_, ios::beg)){
+                pos_ += offset;
+            }else{
+                return false;
+            }
+            break;
+
+        case ios::end:
+            if(stream_->seekg(offset+end_, ios::beg)){
+                pos_ = end_ - begin_ - offset;
+            }else{
+                return false;
+            }
+            break;
+
+        default:
+            return false;
+        }
+        return true;
+    }
+
+    //----------------------------------------------------------
+    //---
+    //--- range_istream
+    //---
+    //----------------------------------------------------------
+    class range_istream : public range_stream_base<istream>
+    {
+    public:
+        typedef range_stream_base<istream> parent_type;
+
+        range_istream(istream* stream, s32 begin, s32 end)
+            :parent_type(stream, begin, end)
+        {
+        }
+
+        ~range_istream()
+        {}
+
+        virtual lsize_t read(Char* dst, u32 count)
+        {
+            if(!stream_->seekg(begin_+pos_, lcore::ios::beg)){
+                return 0;
+            }
+            lsize_t size = stream_->read(dst, count);
+
+            pos_ += size;
+            return size;
+        }
+    };
+
+    //----------------------------------------------------------
+    //---
+    //--- range_ostream
+    //---
+    //----------------------------------------------------------
+    class range_ostream : public range_stream_base<ostream>
+    {
+    public:
+        typedef range_stream_base<ostream> parent_type;
+
+        range_ostream(ostream* stream, s32 begin, s32 end)
+            :parent_type(stream, begin, end)
+        {
+        }
+
+        ~range_ostream()
+        {}
+
+        virtual lsize_t write(const Char* src, u32 count)
+        {
+            if(!stream_->seekg(begin_+pos_, lcore::ios::beg)){
+                return 0;
+            }
+            lsize_t size = stream_->write(src, count);
+
+            pos_ += size;
+            return size;
+        }
+    };
+
 namespace io
 {
     template<class T>

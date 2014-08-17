@@ -30,6 +30,7 @@ extern "C" {
 #include <stddef.h>   /* for size_t */
 
 #define MSPACES 1
+#define USE_LOCKS 1
 
 #ifndef ONLY_MSPACES
 #define ONLY_MSPACES 0     /* define to a value */

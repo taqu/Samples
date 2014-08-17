@@ -16,10 +16,10 @@ namespace xml
     class NodePtrStack
     {
     public:
-        static const int INITIAL_STACK_SIZE = 10;
+        static const s32 INITIAL_STACK_SIZE = 10;
         NodePtrStack()
-            :_nodes(INITIAL_STACK_SIZE),
-            _count(0)
+            :nodes_(INITIAL_STACK_SIZE),
+            count_(0)
         {
         }
 
@@ -34,8 +34,8 @@ namespace xml
         */
         void pop()
         {
-            XML_ASSERT(_count > 0);
-            --_count;
+            XML_ASSERT(count_ > 0);
+            --count_;
         }
 
         /**
@@ -43,16 +43,16 @@ namespace xml
         */
         Node* top()
         {
-            XML_ASSERT(_count > 0);
-            return _nodes[_count - 1];
+            XML_ASSERT(count_ > 0);
+            return nodes_[count_ - 1];
         }
 
         /**
         @return 現在スタックに積まれている個数
         */
-        size_t count() const
+        u32 count() const
         {
-            return _count;
+            return count_;
         }
 
     private:
@@ -62,13 +62,13 @@ namespace xml
         @brief スタック領域を拡張
         @param newSize ... 新しいサイズ
         */
-        void expand(size_t newSize);
+        void expand(u32 newSize);
 
         /// スタック
-        NodeArray _nodes;
+        NodeArray nodes_;
 
         /// スタック内の数
-        size_t _count;
+        u32 count_;
     };
 }
 #endif //__XML_NODEPTRSTACK_H__

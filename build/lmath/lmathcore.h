@@ -23,11 +23,12 @@
 #if defined(LMATH_USE_SSE)
 //#include <mmintrin.h>  //MMX命令セット
 #include <xmmintrin.h> //SSE命令セット
-//#include <emmintrin.h> //SSE2命令セット
+#include <emmintrin.h> //SSE2命令セット
 
 namespace lmath
 {
     typedef __m128 lm128; /// XMMレジスタに対応した単精度浮動小数点型
+    typedef __m128i lm128i;
     typedef __m64 lm64;
 }
 
@@ -43,6 +44,7 @@ namespace lmath
     using lcore::u32;
     using lcore::f32;
     using lcore::f64;
+    using lcore::Char;
 
     class Vector3;
     class Vector4;
@@ -425,6 +427,12 @@ namespace lmath
         return lcore::clamp01((x-e0)/(e1-e0));
     }
 
+    inline f32 smooth(f32 x)
+    {
+        LASSERT(0<=x && x<=1.0f);
+    	return x * x * (3.0f - 2.0f*x);
+    }
+
     inline f32 smoothstep(f32 x, f32 e0, f32 e1)
     {
         x = lcore::clamp01((x - e0) / (e1 - e0));
@@ -453,6 +461,19 @@ namespace lmath
     f32 gain(f32 a, f32 b);
 
     /**
+    @brief 単位球内ランダム
+    @param vx ... 
+    @param vy ... 
+    @param vz ... 
+    @param x0 ... 乱数0
+    @param x1 ... 乱数1
+    */
+    void randomInSphere(f32& vx, f32& vy, f32& vz, f32 x0, f32 x1, f32 x2);
+    void randomInSphere(lmath::Vector3& dst, f32 x0, f32 x1, f32 x2);
+    void randomInSphere(lmath::Vector4& dst, f32 x0, f32 x1, f32 x2);
+
+
+    /**
     @brief 単位球面上ランダム
     @param vx ... 
     @param vy ... 
@@ -461,6 +482,8 @@ namespace lmath
     @param x1 ... 乱数1
     */
     void randomOnSphere(f32& vx, f32& vy, f32& vz, f32 x0, f32 x1);
+    void randomOnSphere(lmath::Vector3& dst, f32 x0, f32 x1);
+    void randomOnSphere(lmath::Vector4& dst, f32 x0, f32 x1);
 
     template<class T>
     void randomOnSphere(f32& vx, f32& vy, f32& vz, T& random)
@@ -535,9 +558,35 @@ namespace lmath
         const Vector3& n,
         f32 x0, f32 x1);
 
+    void randomCone(
+        f32& vx, f32& vy, f32& vz,
+        f32 angle,
+        f32 nx, f32 ny, f32 nz,
+        f32 x0,
+        f32 x1);
 
     void reflect(Vector3& dst, const Vector3& src, const Vector3& normal);
     void reflect(Vector4& dst, const Vector4& src, const Vector4& normal);
+
+    void getColor(u8& r, u8& g, u8& b, u8& a, const Vector4& rgba);
+
+    u32 getARGB(const Vector4& rgba);
+    u32 getABGR(const Vector4& rgba);
+    u32 getRGBA(const Vector4& rgba);
+
+    void cubeToSphere(f32& x, f32& y, f32& z);
+
+    void cubeToSphere(lmath::Vector3& inout);
+
+    void cubeToSphere(lmath::Vector4& inout);
+
+    void calcNormalFromSphericalCoordinate(f32& x, f32& y, f32& z, f32 theta, f32 phi);
+    void calcNormalFromSphericalCoordinate(lmath::Vector3& normal, f32 theta, f32 phi);
+    void calcNormalFromSphericalCoordinate(lmath::Vector4& normal, f32 theta, f32 phi);
+
+    void normalToSphericalCoordinate(f32& theta, f32& phi, f32 x, f32 y, f32 z);
+    void normalToSphericalCoordinate(f32& theta, f32& phi, const lmath::Vector3& normal);
+    void normalToSphericalCoordinate(f32& theta, f32& phi, const lmath::Vector4& normal);
 }
 
 #endif //INC_LMATHCORE_H__

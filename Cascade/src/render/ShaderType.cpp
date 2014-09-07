@@ -64,23 +64,6 @@ namespace
     };
     const u32 DepthPSSourceSize = sizeof(DepthPSSource);
 
-    const u8 DepthBlurVSSource[] =
-    {
-#include "shader/DepthBlurVS.byte"
-    };
-    const u32 DepthBlurVSSourceSize = sizeof(DepthBlurVSSource);
-
-    const u8 DepthBlurGSSource[] =
-    {
-#include "shader/DepthBlurGS.byte"
-    };
-    const u32 DepthBlurGSSourceSize = sizeof(DepthBlurGSSource);
-
-    const u8 DepthBlurPSSource[] =
-    {
-#include "shader/DepthBlurPS.byte"
-    };
-    const u32 DepthBlurPSSourceSize = sizeof(DepthBlurPSSource);
 
     //テクスチャでフィル
     //------------------------------------
@@ -179,25 +162,6 @@ namespace
     };
     const u32 HDAOPSSourceSize = sizeof(HDAOPSSource);
 
-    //Voxel
-    //------------------------------------
-    const u8 VoxelVSSource[] =
-    {
-#include "shader/VoxelVS.byte"
-    };
-    const u32 VoxelVSSourceSize = sizeof(VoxelVSSource);
-
-    const u8 VoxelGSSource[] =
-    {
-#include "shader/VoxelGS.byte"
-    };
-    const u32 VoxelGSSourceSize = sizeof(VoxelGSSource);
-
-    const u8 VoxelPSSource[] =
-    {
-#include "shader/VoxelPS.byte"
-    };
-    const u32 VoxelPSSourceSize = sizeof(VoxelPSSource);
 
     //-----------------------------------------------------------------------------
     struct Entry
@@ -213,7 +177,6 @@ namespace
         { DefaultPNVSSource, DefaultPNVSSourceSize, DefaultPSSource, DefaultPSSourceSize },
         { DefaultPNUVSSource, DefaultPNUVSSourceSize, DefaultTexturePSSource, DefaultTexturePSSourceSize },
         { DepthVSSource, DepthVSSourceSize, DepthPSSource, DepthPSSourceSize },
-        { DepthBlurVSSource, DepthBlurVSSourceSize, DepthBlurPSSource, DepthBlurPSSourceSize },
         { RectangleVSSource, RectangleVSSourceSize, RectanglePSSource, RectanglePSSourceSize },
         { DebugVCVSSource, DebugVCVSSourceSize, DebugVCPSSource, DebugVCPSSourceSize },
         { FullQuadVSSource, FullQuadVSSourceSize, NULL, 0 },
@@ -223,7 +186,6 @@ namespace
         { NULL, 0, GaussPSSource, GaussPSSourceSize },
         { SkyBoxVSSource, SkyBoxVSSourceSize, SkyBoxPSSource, SkyBoxPSSourceSize },
         { NULL, 0, HDAOPSSource, HDAOPSSourceSize },
-        { VoxelVSSource, VoxelVSSourceSize, VoxelPSSource, VoxelPSSourceSize },
     };
 
 
@@ -238,8 +200,6 @@ namespace
     {
         { NULL, 0 },
         { DepthGSSource, DepthGSSourceSize },
-        { DepthBlurGSSource, DepthBlurGSSourceSize },
-        { VoxelGSSource, VoxelGSSourceSize },
     };
 }
 

@@ -21,7 +21,6 @@ VSOutput main(VSInput input)
     VSOutput output= (VSOutput)0;
 
     float4 outPos = mul(float4(input.position, 1.0f), mwvp[input.instanceId]);
-    //outPos.z *= outPos.w;
 
     output.position = outPos;
     output.instanceId = input.instanceId;

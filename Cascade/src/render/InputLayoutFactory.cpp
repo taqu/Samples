@@ -53,11 +53,6 @@ namespace render
         {
 #include "shader/Layout_PNUBone.byte"
         };
-
-        static const u8 LayoutData_Voxel[] =
-        {
-#include "shader/Layout_Voxel.byte"
-        };
     }
 
     InputLayoutFactory::InputLayoutFactory()
@@ -90,7 +85,7 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PN));
@@ -104,27 +99,13 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            };
-
-            compiler.resize(sizeof(LayoutData_PU));
-            u32 size = compiler.decompress(sizeof(LayoutData_PU), LayoutData_PU);
-            if(size>0){
-                layouts_[Layout_PU] = lgraphics::InputLayout::create(layout, 2, compiler.getData(), size);
-            }
-        }
-
-        {//Layout_PU16
-            D3D11_INPUT_ELEMENT_DESC layout[] =
-            {
-                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
                 { "TEXCOORD", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PU));
             u32 size = compiler.decompress(sizeof(LayoutData_PU), LayoutData_PU);
             if(size>0){
-                layouts_[Layout_PU16] = lgraphics::InputLayout::create(layout, 2, compiler.getData(), size);
+                layouts_[Layout_PU] = lgraphics::InputLayout::create(layout, 2, compiler.getData(), size);
             }
         }
 
@@ -146,9 +127,9 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TANGENT", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "BINORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PNTB));
@@ -162,8 +143,8 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PNU));
@@ -177,9 +158,9 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PNCU));
@@ -193,10 +174,10 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TANGENT", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "BINORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PNTBU));
@@ -210,32 +191,16 @@ namespace render
             D3D11_INPUT_ELEMENT_DESC layout[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "BLENDINDICES", 0, DXGI_FORMAT_R16G16_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "BLENDWEIGHT", 0, DXGI_FORMAT_R32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R16G16B16A16_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "BLENDINDICES", 0, DXGI_FORMAT_R16G16_UINT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "BLENDWEIGHT", 0, DXGI_FORMAT_R16G16_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
             compiler.resize(sizeof(LayoutData_PNUBone));
             u32 size = compiler.decompress(sizeof(LayoutData_PNUBone), LayoutData_PNUBone);
             if(size>0){
                 layouts_[Layout_PNUBone] = lgraphics::InputLayout::create(layout, 5, compiler.getData(), size);
-            }
-        }
-
-        {//Layout_Voxel
-            D3D11_INPUT_ELEMENT_DESC layout[] =
-            {
-                { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            };
-
-            compiler.resize(sizeof(LayoutData_Voxel));
-            u32 size = compiler.decompress(sizeof(LayoutData_Voxel), LayoutData_Voxel);
-            if(size>0){
-                layouts_[Layout_Voxel] = lgraphics::InputLayout::create(layout, 4, compiler.getData(), size);
             }
         }
         return true;

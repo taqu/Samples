@@ -27,7 +27,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         param.refreshRate_ = 60;
         param.windowed_ = 1;
         param.allowSoftwareDevice_ = 0;
-        param.supportHardwareLevel_ = lgraphics::InitParam::HardwareLevel_10;
+        param.supportHardwareLevel_ = lgraphics::InitParam::HardwareLevel_11;
 
         if(false == myApp.create(param, "Ocean", fractal::WndProc)){
             return 0;

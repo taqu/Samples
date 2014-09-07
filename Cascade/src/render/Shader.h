@@ -32,6 +32,7 @@ namespace render
             lmath::Matrix44 mwvp_;
             lmath::Matrix44 mw_;
             lmath::Matrix44 mv_;
+            lmath::Vector4 cameraPos_;
             lmath::Matrix44 mlwvp_[4];
         };
 
@@ -59,7 +60,7 @@ namespace render
             lmath::Vector4 dlDir_;
             lmath::Vector4 dlColor_;
             lmath::Vector4 cameraPos_;
-            f32 cascadeDepth_[4];
+            //f32 cascadeDepth_[4];
         };
 
         struct Constant1
@@ -139,35 +140,6 @@ namespace render
     {
     public:
         DepthPS(const lgraphics::PixelShaderRef& ref)
-            :ShaderPSBase(ref)
-        {}
-    };
-
-    //----------------------------------------------
-    //---
-    //--- DepthBlur
-    //---
-    //----------------------------------------------
-    class DepthBlurVS : public ShaderVSBase
-    {
-    public:
-        DepthBlurVS(const lgraphics::VertexShaderRef& ref)
-            :ShaderVSBase(ref)
-        {}
-    };
-
-    class DepthBlurGS : public ShaderGSBase
-    {
-    public:
-        DepthBlurGS(const lgraphics::GeometryShaderRef& ref)
-            :ShaderGSBase(ref)
-        {}
-    };
-
-    class DepthBlurPS : public ShaderPSBase
-    {
-    public:
-        DepthBlurPS(const lgraphics::PixelShaderRef& ref)
             :ShaderPSBase(ref)
         {}
     };
@@ -402,61 +374,6 @@ namespace render
         }
     private:
         lgraphics::ConstantBufferRef constant0_;
-    };
-
-
-    //----------------------------------------------
-    //---
-    //--- Voxel
-    //---
-    //----------------------------------------------
-    class VoxelVS : public ShaderVSBase
-    {
-    public:
-        VoxelVS(const lgraphics::VertexShaderRef& ref)
-            :ShaderVSBase(ref)
-        {}
-    };
-
-    class VoxelGS : public ShaderGSBase
-    {
-    public:
-        struct Constant0
-        {
-            lmath::Matrix44 viewProj_;
-            lmath::Vector4 cameraPos_;
-        };
-
-        VoxelGS(const lgraphics::GeometryShaderRef& ref)
-            :ShaderGSBase(ref)
-        {}
-
-        virtual void initialize();
-        void set(const Constant0& constant0);
-
-    private:
-        lgraphics::ConstantBufferRef constants_;
-    };
-
-    class VoxelPS : public ShaderPSBase
-    {
-    public:
-        struct Constant0
-        {
-            lmath::Vector4 dlDir_;
-            lmath::Vector4 dlColor_;
-            lmath::Vector4 invDepthExtent_;
-        };
-
-        VoxelPS(const lgraphics::PixelShaderRef& ref)
-            :ShaderPSBase(ref)
-        {}
-
-        virtual void initialize();
-        void set(const Constant0& constant0);
-
-    private:
-        lgraphics::ConstantBufferRef constants_;
     };
 }
 #endif //INC_RENDER_SHADER_H__

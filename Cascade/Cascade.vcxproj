@@ -110,8 +110,6 @@
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\ShaderManager.cpp" />
     <ClCompile Include="src\render\ShaderType.cpp" />
-    <ClCompile Include="src\render\ShadowMap.cpp" />
-    <ClCompile Include="src\render\Voxel.cpp" />
     <ClCompile Include="src\scene\DebugCamera.cpp" />
     <ClCompile Include="src\scene\SkyBox.cpp" />
     <ClCompile Include="src\System.cpp" />
@@ -150,12 +148,21 @@
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\ShaderManager.h" />
     <ClInclude Include="src\render\ShaderType.h" />
-    <ClInclude Include="src\render\ShadowMap.h" />
-    <ClInclude Include="src\render\Voxel.h" />
     <ClInclude Include="src\scene\DebugCamera.h" />
     <ClInclude Include="src\scene\scene.h" />
     <ClInclude Include="src\scene\SkyBox.h" />
     <ClInclude Include="src\System.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\Default.ps" />
+    <None Include="src\render\shader\DefaultPN.vs" />
+    <None Include="src\render\shader\DefaultPNU.vs" />
+    <None Include="src\render\shader\DefaultTexture.ps" />
+    <None Include="src\render\shader\Depth.gs" />
+    <None Include="src\render\shader\Depth.ps" />
+    <None Include="src\render\shader\Depth.vs" />
+    <None Include="src\render\shader\FullQuad.vs" />
+    <None Include="src\render\shader\HDAO.ps" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

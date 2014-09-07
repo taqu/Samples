@@ -32,24 +32,19 @@ namespace render
         void begin(lgraphics::GraphicsDeviceRef& device);
         void end(lgraphics::GraphicsDeviceRef& device, s32 numCascades);
 
-        lgraphics::Texture2DRef& getTex(){ return texBlur_;}
+        lgraphics::Texture2DRef& getTex(){ return texDepth_;}
 
         DepthVS* getVS(){ return depthVS_;}
     private:
         bool create(u32 size, s32 numCascades);
 
+        u32 size_;
         lgraphics::Texture2DRef texDepth_;
         lgraphics::DepthStencilViewRef viewDepth_;
-
-        lgraphics::Texture2DRef texBlur_;
-        lgraphics::RenderTargetViewRef viewBlur_;
 
         DepthVS* depthVS_;
         DepthGS* depthGS_;
         DepthPS* depthPS_;
-        DepthBlurVS* depthBlurVS_;
-        DepthBlurGS* depthBlurGS_;
-        DepthBlurPS* depthBlurPS_;
     };
 }
 

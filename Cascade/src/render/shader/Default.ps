@@ -1,4 +1,5 @@
-#define NUM_CASCADES 2
+#define NUM_CASCADES 3
+#define MAX_CASCADES 4
 static const float PI = 3.14159265f;
 static const float INV_PI = 0.31830988618379067153f;
 
@@ -7,8 +8,7 @@ cbuffer ConstantBuffer0 : register(b0)
     float4 dlDir;
     float4 dlColor;
     float4 cameraPos;
-    float4 cascadeDepth;
-    float4 cascadeScale;
+    //float4 cascadeDepth;
 }
 
 cbuffer ConstantBuffer1 : register(b1)
@@ -21,13 +21,14 @@ cbuffer ConstantBuffer1 : register(b1)
 //Texture2D texAlbedo;
 Texture2DArray<float2> texShadow : register(t0);
 
-SamplerState samShadow : register(s0);
+SamplerComparisonState samShadow : register(s0);
+//SamplerState samShadow : register(s0);
 
 struct VSOutput
 {
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
-    float3 worldPos : TEXCOORD1;
+    float4 worldPos : TEXCOORD1;
     float3 viewNormal : TEXCOORD2;
     float4 texS[NUM_CASCADES] : TEXCOORD3;
 };
@@ -51,29 +52,74 @@ float linstep(float low, float high, float v)
     return saturate((v-low)/(high-low));
 }
 
+void lightSpaceTexcoord(inout float4 uv)
+{
+    uv.xy = uv.xy*float2(0.5,-0.5)+float2(0.5,0.5);
+}
+
+static const float4 vCascadeColorsMultiplier[8] = 
+{
+    float4 ( 1.5f, 0.0f, 0.0f, 1.0f ),
+    float4 ( 0.0f, 1.5f, 0.0f, 1.0f ),
+    float4 ( 0.0f, 0.0f, 5.5f, 1.0f ),
+    float4 ( 1.5f, 0.0f, 5.5f, 1.0f ),
+    float4 ( 1.5f, 1.5f, 0.0f, 1.0f ),
+    float4 ( 1.0f, 1.0f, 1.0f, 1.0f ),
+    float4 ( 0.0f, 1.0f, 5.5f, 1.0f ),
+    float4 ( 0.5f, 3.5f, 0.75f, 1.0f )
+};
+
+#if 0
+int selectCascadeByInterval(float depth)
+{
+#if NUM_CASCADES<=1
+    return 0;
+#else
+    int cascade = 0;
+
+    float4 currentDepth = depth + 1.0f;
+    float4 comparison = (currentDepth>cascadeDepth);
+    float index = dot(
+                    float4(NUM_CASCADES>0, NUM_CASCADES>1, NUM_CASCADES>2, NUM_CASCADES>3),
+                    comparison);
+    index = min(index, NUM_CASCADES-1);
+    return index;
+#endif
+}
+#endif
+
+int selectCascadeByMap(out float4 tex, float depth, float4 texS[NUM_CASCADES])
+{
+#if NUM_CASCADES<=1
+    return 0;
+#else
+    for(int i=0; i<NUM_CASCADES; ++i){
+        tex = texS[i];
+        if(min(tex.x, tex.y)>-0.999
+            && max(tex.x, tex.y)<0.999)
+        {
+            return i;
+        }
+    }
+    return NUM_CASCADES-1;
+#endif
+}
+
 PSOutput main(VSOutput input)
 {
     float3 L = dlDir.xyz;
     float3 N = normalize(input.normal);
-    float3 E = normalize(cameraPos.xyz - input.worldPos); //視線ベクトル
+    float3 E = normalize(cameraPos.xyz - input.worldPos.xyz); //視線ベクトル
     float3 H = normalize(L+E); //ハーフベクトル
 
     //Irradiance
     float3 shadowInfluence = 1;
+    float4 tex;
+    int cascade = selectCascadeByMap(tex, input.worldPos.w, input.texS);
+    lightSpaceTexcoord(tex);
+    //float4 multipl = vCascadeColorsMultiplier[cascade];
+    shadowInfluence = texShadow.SampleCmp(samShadow, float3(tex.xy, cascade), tex.z).r;
 
-    float d = distance(input.worldPos, cameraPos.xyz);
-    [unroll(4)]
-    for(int i=0; i<NUM_CASCADES; ++i){
-        if(d<cascadeDepth[i]){
-            float2 moments = texShadow.Sample(samShadow, input.texS[i].xyz);
-            float p = smoothstep(input.texS[i].w-0.02, input.texS[i].w, moments.x);
-            float variance = max(moments.y-moments.x*moments.x, -0.001);
-            float d2 = input.texS[i].w - moments.x;
-            float p_max = linstep(0.2, 1.0, variance/(variance+d2*d2));
-            shadowInfluence = max(max(p,p_max), shadow.xyz);
-            break;
-        }
-    }
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));
@@ -96,6 +142,6 @@ PSOutput main(VSOutput input)
     PSOutput output;
     output.color = color;
     output.normalDepth = float4(normalize(input.viewNormal), input.position.z);
-    output.depth = input.position.z;
+    output.depth = 1.0-input.position.z/input.position.w;
     return output;
 }

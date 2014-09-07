@@ -16,14 +16,12 @@ namespace render
         Layout_P =0,
         Layout_PN,
         Layout_PU,
-        Layout_PU16,
         Layout_PC,
         Layout_PNTB,
         Layout_PNU,
         Layout_PNCU,
         Layout_PNTBU,
         Layout_PNUBone,
-        Layout_Voxel,
         Layout_Num,
     };
 

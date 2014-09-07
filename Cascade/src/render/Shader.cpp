@@ -104,38 +104,4 @@ namespace render
             lgraphics::ResourceMisc_None);
     }
 
-    //----------------------------------------------
-    //---
-    //--- Voxel
-    //---
-    //----------------------------------------------
-    void VoxelGS::initialize()
-    {
-        constants_ = lgraphics::ConstantBuffer::create(
-            sizeof(Constant0),
-            lgraphics::Usage_Default,
-            lgraphics::CPUAccessFlag_None,
-            lgraphics::ResourceMisc_None);
-    }
-
-    void VoxelGS::set(const Constant0& constant0)
-    {
-        constants_.update(0, NULL, &constant0, 0, 0);
-        constants_.setGS(0);
-    }
-
-    void VoxelPS::initialize()
-    {
-        constants_ = lgraphics::ConstantBuffer::create(
-            sizeof(Constant0),
-            lgraphics::Usage_Default,
-            lgraphics::CPUAccessFlag_None,
-            lgraphics::ResourceMisc_None);
-    }
-
-    void VoxelPS::set(const Constant0& constant0)
-    {
-        constants_.update(0, NULL, &constant0, 0, 0);
-        constants_.setPS(0);
-    }
 }

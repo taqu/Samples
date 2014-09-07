@@ -73,15 +73,6 @@ namespace render
         geometryShaders_[ShaderGS_Depth] = LIME_NEW DepthGS(gs);
 
         //
-        compiler.compileShader(vs, ps, Shader_DepthBlur);
-        LASSERT(vs.valid() && ps.valid());
-        entries_[Shader_DepthBlur].vs_ = LIME_NEW DepthBlurVS(vs);
-        entries_[Shader_DepthBlur].ps_ = LIME_NEW DepthBlurPS(ps);
-
-        compiler.compileShaderGS(gs, ShaderGS_DepthBlur);
-        geometryShaders_[ShaderGS_DepthBlur] = LIME_NEW DepthBlurGS(gs);
-
-        //
         compiler.compileShader(vs, ps, Shader_Rectangle);
         LASSERT(vs.valid() && ps.valid());
         entries_[Shader_Rectangle].vs_ = LIME_NEW RectangleVS(vs);
@@ -129,15 +120,6 @@ namespace render
         compiler.compileShaderPS(ps, Shader_HDAO);
         LASSERT(ps.valid());
         entries_[Shader_HDAO].ps_ = LIME_NEW HDAOPS(ps);
-
-        //
-        compiler.compileShader(vs, ps, Shader_Voxel);
-        LASSERT(vs.valid() && ps.valid());
-        entries_[Shader_Voxel].vs_ = LIME_NEW VoxelVS(vs);
-        entries_[Shader_Voxel].ps_ = LIME_NEW VoxelPS(ps);
-
-        compiler.compileShaderGS(gs, ShaderGS_Voxel);
-        geometryShaders_[ShaderGS_Voxel] = LIME_NEW VoxelGS(gs);
 
 
         for(u32 i=0; i<Shader_Num; ++i){

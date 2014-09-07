@@ -25,7 +25,6 @@ namespace render
         Shader_Default =0,
         Shader_DefaultTexture,
         Shader_Depth,
-        Shader_DepthBlur,
         Shader_Rectangle,
         Shader_DebugVC,
         Shader_FullQuad,
@@ -35,7 +34,6 @@ namespace render
         Shader_GaussianFilter,
         Shader_SkyBox,
         Shader_HDAO,
-        Shader_Voxel,
         Shader_Num,
     };
 
@@ -43,8 +41,6 @@ namespace render
     {
         ShaderGS_Dummy,
         ShaderGS_Depth,
-        ShaderGS_DepthBlur,
-        ShaderGS_Voxel,
         ShaderGS_Num,
     };
 

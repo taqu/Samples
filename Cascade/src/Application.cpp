@@ -28,6 +28,7 @@
 #include "render/Geometry.h"
 #include "render/Material.h"
 #include "render/Node.h"
+#include "render/DebugDraw.h"
 
 #include "System.h"
 
@@ -35,24 +36,6 @@ namespace fractal
 {
 namespace
 {
-    lgraphics::Texture2DRef loadDDS(const Char* filepath)
-    {
-        lgraphics::Texture2DRef ret;
-
-        lcore::ifstream in(filepath, lcore::ios::binary);
-        if(!in.is_open()){
-            return ret;
-        }
-
-        u32 size = in.getSize(0);
-        const s8* buffer = LIME_NEW s8[size];
-        in.read((Char*)buffer, size);
-        lgraphics::io::IODDS::read(ret, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
-        LIME_DELETE_ARRAY(buffer);
-        return ret;
-    }
-
-
     f32 RGB2Gray(u8 r, u8 g, u8 b)
     {
         const f32 inv = 1.0f/255.0f;
@@ -98,12 +81,14 @@ namespace
         lscene::Scene& scene = System::getScene();
         lscene::Camera& camera = scene.getCamera();
 
-        camera.perspectiveFovLinearZ(45.0f/180.0f*PI, static_cast<lcore::f32>(viewWidth)/viewHeight, 0.001f, 10000.0f);
-        //camera_.initialize(camera, lmath::Vector3(0.0f, 200.0f, -30.0f), lmath::Vector3(0.0f, 190.0f, 0.0f));
-        camera_.initialize(camera, lmath::Vector3(0.0f, 10.0f, -30.0f), lmath::Vector3(0.0f, 10.0f, 0.0f));
+        //camera.perspectiveFovLinearZ(45.0f/180.0f*PI, static_cast<lcore::f32>(viewWidth)/viewHeight, 0.001f, 10000.0f);
+        camera.perspectiveFov(45.0f/180.0f*PI, static_cast<lcore::f32>(viewWidth)/viewHeight, 0.001f, 10000.0f);
+
+        camera_.initialize(camera, lmath::Vector3(0.0f, 10.0f, -30.0f), lmath::Vector3(0.0f, 0.0f, 0.0f));
         scene.getLightEnv().getDirectionalLight().setColor(lmath::Vector4(3.5f, 3.5f, 3.0f, 1.0f));
         lightDirection_ = scene.getLightEnv().getDirectionalLight().getDirection();
         lightDirection_.set(0.454518f, 0.618679f, -0.640678f, 0);
+        lightDirection_.set(-320.0f, 300.0f, -220.3f, 0.0f);
         lightDirection_.normalize();
         scene.getLightEnv().getDirectionalLight().setDirection(lightDirection_);
         System::getRenderer().setFlag(render::Renderer::Flag_HDR, hdr_);
@@ -116,69 +101,23 @@ namespace
                 render::Object* obj = LIME_NEW render::Object();
                 if(loader.load(*obj)){
                     lcore::swap(object_, obj);
-
-                    lgraphics::Texture2DRef color0 = loadDDS("../data/model/miku_xx_head.dds");
-                    lgraphics::Texture2DRef color1 = loadDDS("../data/model/miku_xx_body.dds");
-
-                    object_->getTexture(0) = color0;
-                    object_->getTexture(1) = color1;
-                    //object_->setT
-                    for(u32 i=0; i<object_->getNumMaterials(); ++i){
-                        render::Material& material = object_->getMaterial(i);
-                        switch(material.textureIDs_[0])
-                        {
-                        case 0:
-                            material.textures_[0] = &object_->getTexture(0);
-                            break;
-
-                        case 1:
-                            material.textures_[0] = &object_->getTexture(1);
-                            break;
-                        }
-                    }
                 }
                 LIME_DELETE(obj);
             }
         }
 
         {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/plane.lm")){
-
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(plane_, obj);
-                }
-                LIME_DELETE(obj);
-            }
+            plane_ = render::DebugDraw::createPlane(100.0f, 2, 0xFFFFFFFFU);
         }
 
         {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/box.lm")){
-
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(box_, obj);
-
-                    box_->setPosition(lmath::Vector4(10.0f, 2.5f, 0.0f, 0.0f));
-                }
-                LIME_DELETE(obj);
-            }
+            box_ = render::DebugDraw::createBox(2.0f, 0xFFFE0000U);
+            box_->setPosition(lmath::Vector4(10.0f, 2.5f, 0.0f, 0.0f));
         }
 
         {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/sphere.lm")){
-
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(sphere_, obj);
-
-                    sphere_->setPosition(lmath::Vector4(-10.0f, 2.5f, 0.0f, 0.0f));
-                }
-                LIME_DELETE(obj);
-            }
+            sphere_ = render::DebugDraw::createSphere(1.0f, 10, 0xFF00FF00U);
+            sphere_->setPosition(lmath::Vector4(-10.0f, 2.5f, 0.0f, 0.0f));
         }
 
     }

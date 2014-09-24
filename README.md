@@ -1,7 +1,7 @@
 Samples
 =======
 * ビルド・実行環境
- * Windows7以上, DirectX 11 SDK
+ * Windows7以上, DirectX 11 SDK, Visual Studio 2012
 
 * テスト環境
  * OS: Windows7 64bit Service Pack 1

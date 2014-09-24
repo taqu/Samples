@@ -29,6 +29,8 @@ namespace fractal
             linput::Key_C,
 
             linput::Key_RETURN,
+
+            linput::Key_V,
         };
 
         static linput::MouseButton MouseMap[] =

@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3F6E8944-8DC9-4FCE-901B-047AEB4601BD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VoxelConeTracing</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)src\;$(ProjectDir)..\build\;$(ProjectDir)..\Common\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\build\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)src\;$(ProjectDir)..\build\;$(ProjectDir)..\Common\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\build\lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>lframework_dx11_sse_vc110_d.lib;linput_vc110_d.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;LIME_DX11;LMATH_USE_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>lframework_dx11_sse_vc110.lib;linput_vc110.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\font\FontManager.h" />
+    <ClInclude Include="..\Common\font\FontPack.h" />
+    <ClInclude Include="..\Common\font\FontShader.h" />
+    <ClInclude Include="..\Common\font\FontType.h" />
+    <ClInclude Include="..\Common\Input.h" />
+    <ClInclude Include="..\Common\load\load.h" />
+    <ClInclude Include="..\Common\load\load_geometry.h" />
+    <ClInclude Include="..\Common\load\load_joint.h" />
+    <ClInclude Include="..\Common\load\load_material.h" />
+    <ClInclude Include="..\Common\load\load_mesh.h" />
+    <ClInclude Include="..\Common\load\load_node.h" />
+    <ClInclude Include="..\Common\load\load_texture.h" />
+    <ClInclude Include="..\Common\load\ModelLoader.h" />
+    <ClInclude Include="..\Common\render\AnimObject.h" />
+    <ClInclude Include="..\Common\render\CascadedShadowMap.h" />
+    <ClInclude Include="..\Common\render\DebugDraw.h" />
+    <ClInclude Include="..\Common\render\Geometry.h" />
+    <ClInclude Include="..\Common\render\Glare.h" />
+    <ClInclude Include="..\Common\render\Material.h" />
+    <ClInclude Include="..\Common\render\Mesh.h" />
+    <ClInclude Include="..\Common\render\Node.h" />
+    <ClInclude Include="..\Common\render\Object.h" />
+    <ClInclude Include="..\Common\render\Rectangle.h" />
+    <ClInclude Include="..\Common\render\render.h" />
+    <ClInclude Include="..\Common\render\ShaderBase.h" />
+    <ClInclude Include="..\Common\scene\DebugCamera.h" />
+    <ClInclude Include="..\Common\scene\scene.h" />
+    <ClInclude Include="..\Common\scene\SkyBox.h" />
+    <ClInclude Include="..\Common\stdafx.h" />
+    <ClInclude Include="..\Common\Timer.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\render\Debug.h" />
+    <ClInclude Include="src\render\InputLayoutFactory.h" />
+    <ClInclude Include="src\render\Renderer.h" />
+    <ClInclude Include="src\render\Shader.h" />
+    <ClInclude Include="src\render\ShaderManager.h" />
+    <ClInclude Include="src\render\ShaderType.h" />
+    <ClInclude Include="src\System.h" />
+    <ClInclude Include="src\VCT\vct.h" />
+    <ClInclude Include="src\vct\Voxel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\font\FontManager.cpp" />
+    <ClCompile Include="..\Common\font\FontPack.cpp" />
+    <ClCompile Include="..\Common\font\FontShader.cpp" />
+    <ClCompile Include="..\Common\Input.cpp" />
+    <ClCompile Include="..\Common\load\ModelLoader.cpp" />
+    <ClCompile Include="..\Common\render\AnimObject.cpp" />
+    <ClCompile Include="..\Common\render\CascadedShadowMap.cpp" />
+    <ClCompile Include="..\Common\render\DebugDraw.cpp" />
+    <ClCompile Include="..\Common\render\Geometry.cpp" />
+    <ClCompile Include="..\Common\render\Glare.cpp" />
+    <ClCompile Include="..\Common\render\Material.cpp" />
+    <ClCompile Include="..\Common\render\Mesh.cpp" />
+    <ClCompile Include="..\Common\render\Node.cpp" />
+    <ClCompile Include="..\Common\render\Object.cpp" />
+    <ClCompile Include="..\Common\render\Rectangle.cpp" />
+    <ClCompile Include="..\Common\scene\DebugCamera.cpp" />
+    <ClCompile Include="..\Common\scene\SkyBox.cpp" />
+    <ClCompile Include="..\Common\stdafx.cpp" />
+    <ClCompile Include="..\Common\Timer.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\render\Debug.cpp" />
+    <ClCompile Include="src\render\InputLayoutFactory.cpp" />
+    <ClCompile Include="src\render\Renderer.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="src\render\ShaderManager.cpp" />
+    <ClCompile Include="src\render\ShaderType.cpp" />
+    <ClCompile Include="src\System.cpp" />
+    <ClCompile Include="src\vct\Voxel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\Debug.ps" />
+    <None Include="src\render\shader\Debug.vs" />
+    <None Include="src\render\shader\DebugVC.ps" />
+    <None Include="src\render\shader\DebugVC.vs" />
+    <None Include="src\render\shader\Default.ps" />
+    <None Include="src\render\shader\DefaultPN.vs" />
+    <None Include="src\render\shader\DefaultPNU.vs" />
+    <None Include="src\render\shader\DefaultTexture.ps" />
+    <None Include="src\render\shader\Depth.gs" />
+    <None Include="src\render\shader\Depth.ps" />
+    <None Include="src\render\shader\Depth.vs" />
+    <None Include="src\render\shader\FullQuad.vs" />
+    <None Include="src\render\shader\FXAA.ps" />
+    <None Include="src\render\shader\FXAA.vs" />
+    <None Include="src\render\shader\Gauss.ps" />
+    <None Include="src\render\shader\Glare.ps" />
+    <None Include="src\render\shader\Layout_P.vs" />
+    <None Include="src\render\shader\Layout_PC.vs" />
+    <None Include="src\render\shader\Layout_PN.vs" />
+    <None Include="src\render\shader\Layout_PNCU.vs" />
+    <None Include="src\render\shader\Layout_PNTB.vs" />
+    <None Include="src\render\shader\Layout_PNTBU.vs" />
+    <None Include="src\render\shader\Layout_PNU.vs" />
+    <None Include="src\render\shader\Layout_PU.vs" />
+    <None Include="src\render\shader\Rectangle.ps" />
+    <None Include="src\render\shader\Rectangle.vs" />
+    <None Include="src\render\shader\ReflectiveShadowMap.ps" />
+    <None Include="src\render\shader\ReflectiveShadowMap.vs" />
+    <None Include="src\render\shader\ReflectiveShadowMapTexture.ps" />
+    <None Include="src\render\shader\ReflectiveShadowMapTexture.vs" />
+    <None Include="src\render\shader\SkyBox.ps" />
+    <None Include="src\render\shader\SkyBox.vs" />
+    <None Include="src\render\shader\TonemappingStatic.ps" />
+    <None Include="src\render\shader\VoxelInjection.ps" />
+    <None Include="src\render\shader\VoxelInjection.vs" />
+    <None Include="src\render\shader\Voxelize.gs" />
+    <None Include="src\render\shader\Voxelize.ps" />
+    <None Include="src\render\shader\Voxelize.vs" />
+    <None Include="src\render\shader\VoxelMipmap.ps" />
+    <None Include="src\render\shader\VoxelMipmap.vs" />
+    <None Include="src\render\shader\VoxelRender.gs" />
+    <None Include="src\render\shader\VoxelRender.ps" />
+    <None Include="src\render\shader\VoxelRender.vs" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

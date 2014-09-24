@@ -48,6 +48,7 @@ namespace lmath
 
     class Vector3;
     class Vector4;
+    class Matrix44;
 
 #define PI      static_cast<lmath::f32>(3.14159265358979323846)
 #define PI2     static_cast<lmath::f32>(6.28318530717958647692)
@@ -574,10 +575,24 @@ namespace lmath
     u32 getABGR(const Vector4& rgba);
     u32 getRGBA(const Vector4& rgba);
 
+    /**
+    @brief 立方体表面から球面へ変換
+    @param x ... [-1 1]
+    @param y ... [-1 1]
+    @param z ... [-1 1]
+    */
     void cubeToSphere(f32& x, f32& y, f32& z);
 
+    /**
+    @brief 立方体表面から球面へ変換
+    @param inout ... [-1 1]
+    */
     void cubeToSphere(lmath::Vector3& inout);
 
+    /**
+    @brief 立方体表面から球面へ変換
+    @param inout ... [-1 1]
+    */
     void cubeToSphere(lmath::Vector4& inout);
 
     void calcNormalFromSphericalCoordinate(f32& x, f32& y, f32& z, f32 theta, f32 phi);
@@ -587,6 +602,13 @@ namespace lmath
     void normalToSphericalCoordinate(f32& theta, f32& phi, f32 x, f32 y, f32 z);
     void normalToSphericalCoordinate(f32& theta, f32& phi, const lmath::Vector3& normal);
     void normalToSphericalCoordinate(f32& theta, f32& phi, const lmath::Vector4& normal);
+
+    void orthonormalBasis(lmath::Vector4& binormal0, lmath::Vector4& binormal1, const lmath::Vector4& normal);
+
+    /**
+    @brief Z軸をnormal方向へ回転する行列
+    */
+    void rotationMatrixFromOrthonormalBasis(lmath::Matrix44& mat, const lmath::Vector4& normal, const lmath::Vector4& binormal0, const lmath::Vector4& binormal1);
 }
 
 #endif //INC_LMATHCORE_H__

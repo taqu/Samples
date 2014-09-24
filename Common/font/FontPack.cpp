@@ -74,9 +74,8 @@ namespace font
         lcore::u32 size = is.tellg() - pos;
         is.seekg(pos, lcore::ios::beg);
 
-        lcore::s8* buff = (lcore::s8*)LIME_MALLOC(size);
-        is.read(buff, size);
-
+        lcore::u8* buff = (lcore::u8*)LIME_MALLOC(size);
+        lcore::io::read(is, buff, size);
         bool ret = lgraphics::io::IODDS::read(texture_, buff, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
         LIME_FREE(buff);
 

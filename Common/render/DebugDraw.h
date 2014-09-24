@@ -20,20 +20,33 @@ namespace lmath
 {
     class Vector3;
     class Vector4;
+    class Sphere;
 }
 
 namespace render
 {
+    class Object;
+
     class DebugVCVS;
     class DebugVCPS;
 
     class DebugDraw
     {
     public:
+        static Object* createPlane(f32 size, s32 resolution, u32 argb=0xFFFFFFFFU, f32 luminosity=1.0f);
+        static Object* createBox(f32 size, u32 argb = 0xFFFFFFFFU, f32 luminosity=1.0f);
+        static Object* createSphere(f32 radius, s32 resolution, u32 argb=0xFFFFFFFFU, f32 luminosity=1.0f);
+
         struct Vertex
         {
             f32 x_, y_, z_;
             u32 color_;
+        };
+
+        struct VertexPN
+        {
+            f32 x_, y_, z_;
+            u16 nx_, ny_, nz_;
         };
 
         DebugDraw();
@@ -47,6 +60,16 @@ namespace render
 
         void draw(lgraphics::GraphicsDeviceRef& device);
     private:
+        static Object* createObject(
+            lgraphics::Primitive type,
+            u32 numVertices,
+            lgraphics::VertexBufferRef& vb,
+            u32 numIndices,
+            lgraphics::IndexBufferRef& ib,
+            const lmath::Sphere& bsphere,
+            u32 argb,
+            f32 luminosity);
+
         DebugVCVS* vs_;
         DebugVCPS* ps_;
 

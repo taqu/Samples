@@ -10,6 +10,8 @@
 
 namespace lgraphics
 {
+    class ShaderResourceViewRef;
+    class SamplerStateRef;
     class Texture2DRef;
 }
 
@@ -40,6 +42,13 @@ namespace render
             f32 maxy,
             lgraphics::Texture2DRef& texture);
 
+        void draw(
+            f32 minx,
+            f32 maxx,
+            f32 miny,
+            f32 maxy,
+            lgraphics::ShaderResourceViewRef& rs,
+            lgraphics::SamplerStateRef& sampler);
     private:
         Rectangle(const Rectangle&);
         Rectangle& operator=(const Rectangle&);

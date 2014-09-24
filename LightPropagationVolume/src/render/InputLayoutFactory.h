@@ -23,7 +23,6 @@ namespace render
         Layout_PNCU,
         Layout_PNTBU,
         Layout_PNUBone,
-        Layout_Ocean,
         Layout_Num,
     };
 

@@ -35,9 +35,6 @@ namespace render
     {
         lscene::Scene& scene = fractal::System::getScene();
 
-        scene.setShadowMapSize(size);
-        scene.setNumCascades(numCascades);
-
         ShaderManager& manager = ShaderManager::getInstance();
         ShaderVSBase* vs = NULL;
         ShaderPSBase* ps = NULL;
@@ -61,9 +58,9 @@ namespace render
         ID3D11RenderTargetView* viewDepthArray = NULL;
         ID3D11DepthStencilView* viewDepth = viewDepth_.getView();
 
-        device.setRenderTargets(1, &viewDepthArray, viewDepth);
+        device.setRenderTargets(0, &viewDepthArray, viewDepth);
 
-        device.setViewport(0, 0, scene.getShadowMapSize(), scene.getShadowMapSize());
+        device.setViewport(0, 0, size_, size_);
 
         device.clearDepthStencilView(viewDepth_.getView(), lgraphics::ClearFlag_Depth, 1.0f, 0);
 
@@ -72,7 +69,7 @@ namespace render
 
         depthVS_->attach();
         depthGS_->attach();
-        depthPS_->attach();
+        device.setPixelShader(NULL);
     }
 
     void CascadedShadowMap::end(lgraphics::GraphicsDeviceRef& device)
@@ -86,6 +83,8 @@ namespace render
 
     bool CascadedShadowMap::create(u32 size, s32 numCascades)
     {
+        size_ = size;
+
         lgraphics::ResourceViewDesc desc;
 
         desc.dimension_ = lgraphics::ViewSRVDimension_Texture2DArray;

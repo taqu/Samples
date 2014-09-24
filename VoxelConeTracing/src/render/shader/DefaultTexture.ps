@@ -1,0 +1,235 @@
+#define NUM_CASCADES 2
+#define MAX_CASCADES 4
+#define NUM_SPECULAR 1
+
+static const float PI = 3.14159265f;
+static const float INV_PI = 0.31830988618379067153f;
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+    float4 cameraPos;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+    float4 specular;
+    float4 shadow;
+}
+
+cbuffer ConstantBuffer2 : register(b2)
+{
+    float voxelDiameter;
+    float invVoxelDiameter;
+    float reserved0;
+    float reserved1;
+    float4x4 worldToVoxelSpace;
+    float4 voxelScale;
+}
+
+Texture2DArray<float2> texShadow : register(t0);
+Texture2D texAlbedo : register(t1);
+
+SamplerComparisonState samShadow : register(s0);
+//SamplerState samShadow : register(s0);
+
+SamplerState samTex : register(s1);
+
+SamplerState samVoxel : register(s2);
+Texture3D srcTex[6] : register(t2);
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+    float2 uv : TEXCOORD1;
+    float4 worldPos : TEXCOORD2;
+    float3 viewNormal : TEXCOORD3;
+    float4 texS[NUM_CASCADES] : TEXCOORD4;
+};
+
+#define WEIGHT (1.0)
+static const float4 Coeff[] =
+{
+    float4(0.000000, 0.000000, 1.000000, 0.318310 * WEIGHT),
+    float4(0.500000, 0.000000, 0.866025, 0.275664 * WEIGHT),
+    float4(-0.000000, 0.500000, 0.866025, 0.275664 * WEIGHT),
+    float4(-0.500000, -0.000000, 0.866025, 0.275664 * WEIGHT),
+    float4(0.000000, -0.500000, 0.866025, 0.275664 * WEIGHT),
+    float4(0.612372, 0.612372, 0.500000, 0.159155 * WEIGHT),
+    float4(-0.612372, 0.612372, 0.500000, 0.159155 * WEIGHT),
+    float4(-0.612373, -0.612372, 0.500000, 0.159155 * WEIGHT),
+    float4(0.612372, -0.612373, 0.500000, 0.159155 * WEIGHT),
+};
+
+#define SWEIGHT (1.0)
+static const float4 SCoeff[] =
+{
+    float4(0.000000, 0.000000, 1.000000, 0.318310 * SWEIGHT),
+    float4(0.707107, 0.000000, 0.707107, 0.307464 * SWEIGHT),
+    float4(-0.353553, 0.612372, 0.707107, 0.307464 * SWEIGHT),
+    float4(-0.353553, -0.612372, 0.707107, 0.307464 * SWEIGHT),
+};
+
+float3x3 orthoNormalBasis(float3 normal)
+{
+    if(normal.z<-0.9999999){
+
+        float3x3 mat =
+        {
+            0, -1, normal.x,
+            -1, 0, normal.y,
+            0, 0, normal.z,
+        };
+        return mat;
+    }
+    float a = 1.0f/(1.0f + normal.z);
+    float b = -normal.x*normal.y*a;
+
+    float3x3 mat =
+    {
+        1.0 - normal.x*normal.x*a, b, normal.x,
+        b, 1.0 - normal.y*normal.y*a, normal.y,
+        -normal.x, -normal.y, normal.z,
+    };
+    return mat;
+}
+
+float3 worldToVoxel(float3 pos)
+{
+    pos = mul(float4(pos, 1), worldToVoxelSpace).xyz;
+    pos *= voxelScale.xyz;
+    pos += float3(0.5, 0.5, 0.5);
+    return pos;
+}
+
+float3 worldToVoxelNormal(float3 n)
+{
+    return normalize(mul(n, (float3x3)worldToVoxelSpace));
+}
+
+float4 sampleVoxel(float3 pos, float3 dir, float lod)
+{
+    float4 sampleX = (0<=dir.x)? srcTex[1].SampleLevel(samVoxel, pos, lod) : srcTex[0].SampleLevel(samVoxel, pos, lod);
+    float4 sampleY = (0<=dir.y)? srcTex[3].SampleLevel(samVoxel, pos, lod) : srcTex[2].SampleLevel(samVoxel, pos, lod);
+    float4 sampleZ = (0<=dir.z)? srcTex[5].SampleLevel(samVoxel, pos, lod) : srcTex[4].SampleLevel(samVoxel, pos, lod);
+    float3 weights = abs(dir);
+    weights *= min(1.0/(weights.x + weights.y + weights.z + 0.00001), 1);
+
+    return (sampleX * weights.x + sampleY * weights.y + sampleZ * weights.z);
+}
+
+float4 traceVoxels(float3 origin, float3 dir, float coneRatio, float maxDistance)
+{
+    float4 ret = (float4)0;
+
+    float d = voxelDiameter;
+
+    while(d<=maxDistance && ret.w<1){
+        float diameter = max(voxelDiameter, coneRatio*d);
+        float lod = log2(diameter * invVoxelDiameter);
+        float3 pos = origin + dir * d;
+        float4 value = sampleVoxel(pos, dir, lod);
+        ret += value;
+        d += diameter;
+    }
+    ret *= 2.0; //pseudo HDR
+    return ret;
+}
+
+void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
+{
+    float F1 = 1 - F0;
+    rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
+    rd = 1 - rs;
+}
+
+void lightSpaceTexcoord(inout float4 uv)
+{
+    uv.xy = uv.xy*float2(0.5,-0.5)+float2(0.5,0.5);
+}
+
+int selectCascadeByMap(out float4 tex, float depth, float4 texS[NUM_CASCADES])
+{
+#if NUM_CASCADES<=1
+    tex = texS[0];
+    return 0;
+#else
+    for(int i=0; i<NUM_CASCADES; ++i){
+        tex = texS[i];
+        if(min(tex.x, tex.y)>-0.999
+            && max(tex.x, tex.y)<0.999)
+        {
+            return i;
+        }
+    }
+    return NUM_CASCADES-1;
+#endif
+}
+
+float4 main(VSOutput input) : SV_Target0
+{
+    float3 L = dlDir.xyz;
+    float3 N = normalize(input.normal);
+    float3 E = normalize(cameraPos.xyz - input.worldPos.xyz); //視線ベクトル
+    float3 H = normalize(L+E); //ハーフベクトル
+
+    //Irradiance
+    float3 shadowInfluence = 1;
+    float4 tex;
+    int cascade = selectCascadeByMap(tex, input.worldPos.w, input.texS);
+    lightSpaceTexcoord(tex);
+    shadowInfluence = texShadow.SampleCmp(samShadow, float3(tex.xy, cascade), tex.z).r;
+
+    float cosEH = saturate(dot(E,H));
+    float cosNL = saturate(dot(N,L));
+    float cosNH = saturate(dot(N,H));
+
+    //voxel cone tracing
+    float3 voxelPos = worldToVoxel(input.worldPos.xyz);
+    float3 voxelNormal = worldToVoxelNormal(N);
+    
+    float3x3 onb = orthoNormalBasis(voxelNormal);
+    float4 indirect = (float4)0;
+    for(int i=0; i<9; ++i){
+        float3 dir = mul(onb, Coeff[i].xyz);
+        indirect += traceVoxels(voxelPos, dir, 1.0, 0.3) * Coeff[i].w;
+    }
+
+    float3 reflectedDir = reflect(-E, N);
+    reflectedDir = worldToVoxelNormal(reflectedDir);
+    onb = orthoNormalBasis(reflectedDir);
+    float4 specularLight = (float4)0;
+#if NUM_SPECULAR<=1
+    float3 dir = mul(onb, SCoeff[0].xyz);
+    specularLight += traceVoxels(voxelPos, dir, 0.25, 0.3) * SCoeff[0].w;
+#else
+    for(int j=0; j<NUM_SPECULAR; ++j){
+        float3 dir = mul(onb, SCoeff[j].xyz);
+        specularLight += traceVoxels(voxelPos, dir, 0.25, 0.3) * SCoeff[j].w;
+    }
+#endif
+
+    float3 irradiance = dlColor.xyz * cosNL * shadowInfluence + indirect.xyz;
+
+    float4 albedo = texAlbedo.Sample(samTex, input.uv) * diffuse;
+
+    //BRDF
+    float rd, rs;
+    calcFresnel(rd, rs, shadow.w, cosEH);
+
+    float3 kd = albedo.xyz * rd * INV_PI;
+    float3 ks = specular.xyz * rs * pow(cosNH, specular.w);
+
+    ks *= specular.w*0.039662 + 0.090587;
+
+    float4 color;
+    color.xyz = kd*irradiance + ks*(irradiance+specularLight.xyz);
+    //color.xyz = indirect.xyz;
+    //color.xyz = specularLight.xyz;
+    color.w = albedo.w;
+
+    return color;
+}

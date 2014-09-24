@@ -156,6 +156,50 @@
     <ClCompile Include="src\scene\DebugCamera.cpp" />
     <ClCompile Include="src\System.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\DebugVC.ps" />
+    <None Include="src\render\shader\DebugVC.vs" />
+    <None Include="src\render\shader\Default.ps" />
+    <None Include="src\render\shader\DefaultPN.vs" />
+    <None Include="src\render\shader\DefaultPNU.vs" />
+    <None Include="src\render\shader\DefaultTexture.ps" />
+    <None Include="src\render\shader\Depth.gs" />
+    <None Include="src\render\shader\Depth.vs" />
+    <None Include="src\render\shader\FullQuad.vs" />
+    <None Include="src\render\shader\FXAA.ps" />
+    <None Include="src\render\shader\FXAA.vs" />
+    <None Include="src\render\shader\Gauss.ps" />
+    <None Include="src\render\shader\Glare.ps" />
+    <None Include="src\render\shader\HDAO.ps" />
+    <None Include="src\render\shader\Layout_P.vs" />
+    <None Include="src\render\shader\Layout_PC.vs" />
+    <None Include="src\render\shader\Layout_PN.vs" />
+    <None Include="src\render\shader\Layout_PNCU.vs" />
+    <None Include="src\render\shader\Layout_PNTB.vs" />
+    <None Include="src\render\shader\Layout_PNTBU.vs" />
+    <None Include="src\render\shader\Layout_PNU.vs" />
+    <None Include="src\render\shader\Layout_PNUBone.vs" />
+    <None Include="src\render\shader\Layout_PU.vs" />
+    <None Include="src\render\shader\LPVAccumulate.ps" />
+    <None Include="src\render\shader\LPVInjection.gs" />
+    <None Include="src\render\shader\LPVInjection.ps" />
+    <None Include="src\render\shader\LPVInjection.vs" />
+    <None Include="src\render\shader\LPVOcclusionInjection.ps" />
+    <None Include="src\render\shader\LPVOcclusionInjection.vs" />
+    <None Include="src\render\shader\LPVOcclusionPropagate.ps" />
+    <None Include="src\render\shader\LPVPropagate.gs" />
+    <None Include="src\render\shader\LPVPropagate.ps" />
+    <None Include="src\render\shader\LPVPropagate.vs" />
+    <None Include="src\render\shader\LPVPropagateSeparate.ps" />
+    <None Include="src\render\shader\LPVRender.ps" />
+    <None Include="src\render\shader\LPVRender.vs" />
+    <None Include="src\render\shader\LPVRenderSkinning.vs" />
+    <None Include="src\render\shader\Rectangle.ps" />
+    <None Include="src\render\shader\Rectangle.vs" />
+    <None Include="src\render\shader\ReflectiveShadowMap.ps" />
+    <None Include="src\render\shader\ReflectiveShadowMap.vs" />
+    <None Include="src\render\shader\TonemappingStatic.ps" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

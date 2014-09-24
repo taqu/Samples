@@ -114,6 +114,12 @@ namespace lgraphics
         static const u32 MaxSOStreamCount = D3D11_SO_STREAM_COUNT;
         static const u32 SONoRasterizedStream = D3D11_SO_NO_RASTERIZED_STREAM;
 
+        static const f32 Zero[4];
+        static const f32 One[4];
+        static const u32 UIZero[4];
+
+        static const u32 MaxMultiSampleCount = D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT;
+
         u32 getRefreshRate() const{ return refreshRate_;}
         u32 getFeatureLevel() const{ return featureLevel_;}
         ID3D11Device* getD3DDevice(){ return device_;}
@@ -140,6 +146,7 @@ namespace lgraphics
         inline void clearRenderTargetView(ID3D11RenderTargetView* view, const f32* color);
         inline void clearDepthStencilView(ID3D11DepthStencilView* view, u32 flags, f32 depth, u8 stencil);
         inline void clearUnorderedAccessView(ID3D11UnorderedAccessView* view, const u32 values[4]);
+        inline void clearUnorderedAccessView(ID3D11UnorderedAccessView* view, const f32 values[4]);
 
         inline void draw(u32 numVertices, u32 start);
         inline void drawIndexed(u32 numIndices, u32 start, u32 baseVertex);
@@ -238,6 +245,11 @@ namespace lgraphics
 
         void setDepthStencilState(DepthStencilStateRef& state, u32 stencilRef);
 
+        bool checkMultisampleQualityLevels(
+            lgraphics::DataFormat format,
+            u32 sampleCount,
+            u32* qualityLevels);
+
     private:
         static const u32 MaxShaderResources = 32;
         static ID3D11ShaderResourceView* const NULLResources[MaxShaderResources];
@@ -335,6 +347,11 @@ namespace lgraphics
     inline void GraphicsDeviceRef::clearUnorderedAccessView(ID3D11UnorderedAccessView* view, const u32 values[4])
     {
         context_->ClearUnorderedAccessViewUint(view, values);
+    }
+
+    inline void GraphicsDeviceRef::clearUnorderedAccessView(ID3D11UnorderedAccessView* view, const f32 values[4])
+    {
+        context_->ClearUnorderedAccessViewFloat(view, values);
     }
 
     inline void GraphicsDeviceRef::draw(u32 numVertices, u32 start)

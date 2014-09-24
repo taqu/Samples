@@ -28,6 +28,7 @@
 #include "render/Geometry.h"
 #include "render/Material.h"
 #include "render/Node.h"
+#include "render/DebugDraw.h"
 
 #include "System.h"
 
@@ -45,8 +46,8 @@ namespace
         }
 
         u32 size = in.getSize(0);
-        const s8* buffer = LIME_NEW s8[size];
-        in.read((Char*)buffer, size);
+        u8* buffer = LIME_NEW u8[size];
+        lcore::io::read(in, buffer, size);
         lgraphics::io::IODDS::read(ret, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
         LIME_DELETE_ARRAY(buffer);
         return ret;
@@ -107,44 +108,19 @@ namespace
         scene.getLightEnv().getDirectionalLight().setDirection(lightDirection_);
         System::getRenderer().setFlag(render::Renderer::Flag_HDR, hdr_);
 
-        {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/plane.lm")){
 
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(plane_, obj);
-                }
-                LIME_DELETE(obj);
-            }
+        {
+            plane_ = render::DebugDraw::createPlane(100.0f, 2, 0xFF808080U);
         }
 
         {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/box.lm")){
-
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(box_, obj);
-
-                    box_->setPosition(lmath::Vector4(4.0f, 2.5f, 0.0f, 0.0f));
-                }
-                LIME_DELETE(obj);
-            }
+            box_ = render::DebugDraw::createBox(2.0f, 0xFFFE0000U);
+            box_->setPosition(lmath::Vector4(10.0f, 2.5f, 0.0f, 0.0f));
         }
 
         {
-            load::ModelLoader loader;
-            if(loader.open("../data/model/sphere.lm")){
-
-                render::Object* obj = LIME_NEW render::Object();
-                if(loader.load(*obj)){
-                    lcore::swap(sphere_, obj);
-
-                    sphere_->setPosition(lmath::Vector4(-4.0f, 2.5f, 0.0f, 0.0f));
-                }
-                LIME_DELETE(obj);
-            }
+            sphere_ = render::DebugDraw::createSphere(1.0f, 10, 0xFF00FF00U);
+            sphere_->setPosition(lmath::Vector4(-10.0f, 2.5f, 0.0f, 0.0f));
         }
 
     }

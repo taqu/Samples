@@ -1,13 +1,13 @@
-#ifndef INC_SCENE_SCENE_H__
-#define INC_SCENE_SCENE_H__
+#ifndef INC_VCT_VCT_H__
+#define INC_VCT_VCT_H__
 /**
-@file scene.h
+@file vct.h
 @author t-sakai
-@date 2013/07/04 create
+@date 2014/09/08 create
 */
 #include <lcore/lcore.h>
 
-namespace scene
+namespace vct
 {
     using lcore::s8;
     using lcore::s16;
@@ -18,5 +18,8 @@ namespace scene
     using lcore::u32;
 
     using lcore::f32;
+    using lcore::f64;
+
+    using lcore::Char;
 }
-#endif //INC_SCENE_SCENE_H__
+#endif //INC_VCT_VCT_H__

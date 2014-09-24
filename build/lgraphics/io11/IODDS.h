@@ -7,6 +7,7 @@
 */
 #include "../lgraphicscore.h"
 #include "../api/Enumerations.h"
+#include <lcore/liostream.h>
 
 namespace lgraphics
 {
@@ -52,8 +53,9 @@ namespace io
             u32 reserved2_;
         };
 
+        static bool checkSignature(lcore::istream& is);
 
-        static bool read(Texture2DRef& texture, const s8* data, u32 size, Usage usage, TextureFilterType filter, TextureAddress adress);
+        static bool read(Texture2DRef& texture, const u8* data, u32 size, Usage usage, TextureFilterType filter, TextureAddress adress);
 
     };
 }

@@ -11,5 +11,4 @@ pushd %SHADERDIR%
 %COMPILER% -vs Layout_PNCU.vs Layout_PNCU.byte
 %COMPILER% -vs Layout_PNTBU.vs Layout_PNTBU.byte
 %COMPILER% -vs Layout_PNUBone.vs Layout_PNUBone.byte
-%COMPILER% -vs Layout_Ocean.vs Layout_Ocean.byte
 popd

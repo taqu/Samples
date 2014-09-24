@@ -90,11 +90,16 @@ namespace lgraphics
         ResourceMisc_Shared = D3D11_RESOURCE_MISC_SHARED,
         ResourceMisc_TextureCube = D3D11_RESOURCE_MISC_TEXTURECUBE,
         ResourceMisc_DrawDirectArgs = D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS,
-        ResourceMisc_AllowRawView = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS,
-        ResourceMisc_Structured = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED,
-        ResourceMisc_Clamp = D3D11_RESOURCE_MISC_RESOURCE_CLAMP,
+        ResourceMisc_BufferAllowRawView = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS,
+        ResourceMisc_BufferStructured = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED,
+        ResourceMisc_ResourceClamp = D3D11_RESOURCE_MISC_RESOURCE_CLAMP,
         ResourceMisc_SharedKeyedMutex = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX,
-        ResourceMisc_GDICompatible = D3D11_RESOURCE_MISC_GDI_COMPATIBLE, 
+        ResourceMisc_GDICompatible = D3D11_RESOURCE_MISC_GDI_COMPATIBLE,
+        //ResourceMisc_SharedNTHandle = D3D11_RESOURCE_MISC_SHARED_NTHANDLE,
+        //ResourceMisc_RestrictedContent = D3D11_RESOURCE_MISC_RESTRICTED_CONTENT,
+        //ResourceMisc_RestrictSharedResource = D3D11_RESOURCE_MISC_RESTRICT_SHARED_RESOURCE,
+        //ResourceMisc_RestrictSharedResourceDriver = D3D11_RESOURCE_MISC_RESTRICT_SHARED_RESOURCE_DRIVER,
+        //ResourceMisc_Guarded = D3D11_RESOURCE_MISC_GUARDED,
     };
 
     //--------------------------------------------------------

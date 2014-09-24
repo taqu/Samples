@@ -998,6 +998,25 @@ namespace lgraphics
             const SubResourceData* initData,
             const SRVDesc* resourceViewDesc);
 
+        static Texture2DRef create2D(
+            u32 width,
+            u32 height,
+            u32 mipLevels,
+            u32 arraySize,
+            DataFormat format,
+            u32 samleCount, //MSAAサンプル数
+            u32 sampleQuality, //MSAA品質
+            Usage usage,
+            u32 bind,
+            CPUAccessFlag access,
+            ResourceMisc misc,
+            TextureFilterType filter,
+            TextureAddress adress,
+            CmpFunc compFunc,
+            f32 borderColor,
+            const SubResourceData* initData,
+            const SRVDesc* resourceViewDesc);
+
         static Texture3DRef create3D(
             u32 width,
             u32 height,

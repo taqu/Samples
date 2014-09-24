@@ -30,6 +30,8 @@ namespace render
 
     void Rectangle::draw()
     {
+        setFullScreenQuad();
+
         lgraphics::GraphicsDeviceRef& device = lgraphics::Graphics::getDevice();
         device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
         device.setInputLayout(NULL);
@@ -46,6 +48,8 @@ namespace render
 
     void Rectangle::draw(lgraphics::Texture2DRef& texture)
     {
+        setFullScreenQuad();
+
         lgraphics::GraphicsDeviceRef& device = lgraphics::Graphics::getDevice();
         device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
         device.setInputLayout(NULL);
@@ -62,6 +66,8 @@ namespace render
 
     void Rectangle::drawNoPS(lgraphics::Texture2DRef& texture)
     {
+        setFullScreenQuad();
+
         lgraphics::GraphicsDeviceRef& device = lgraphics::Graphics::getDevice();
         device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
         device.setInputLayout(NULL);
@@ -99,8 +105,36 @@ namespace render
 
         device.setPrimitiveTopology(lgraphics::Primitive_TriangleStrip);
         device.draw(4, 0);
+    }
 
-        setFullScreenQuad();
+    void Rectangle::draw(
+            f32 minx,
+            f32 maxx,
+            f32 miny,
+            f32 maxy,
+            lgraphics::ShaderResourceViewRef& rs,
+            lgraphics::SamplerStateRef& sampler)
+    {
+        constants_[0].set(minx, maxy, 0.0f, 0.0f);
+        constants_[1].set(maxx, maxy, 1.0f, 0.0f);
+        constants_[2].set(minx, miny, 0.0f, 1.0f);
+        constants_[3].set(maxx, miny, 1.0f, 1.0f);
+
+        lgraphics::GraphicsDeviceRef& device = lgraphics::Graphics::getDevice();
+        device.setDepthStencilState(lgraphics::GraphicsDeviceRef::DepthStencil_DDisableWDisable);
+        device.setInputLayout(NULL);
+        device.setVertexBuffers(0, 0, NULL, NULL, NULL);
+
+        vs_->attach();
+        vs_->set(constants_);
+        ps_->attach();
+
+        ID3D11ShaderResourceView* view = rs.getView();
+        device.setPSResources(0, 1, &view);
+        device.setPSSamplers(0, 1, sampler.get());
+
+        device.setPrimitiveTopology(lgraphics::Primitive_TriangleStrip);
+        device.draw(4, 0);
     }
 
     void Rectangle::setFullScreenQuad()

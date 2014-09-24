@@ -44,7 +44,29 @@ void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
     rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
     rd = 1 - rs;
 }
-  
+
+void lightSpaceTexcoord(inout float4 uv)
+{
+    uv.xy = uv.xy*float2(0.5,-0.5)+float2(0.5,0.5);
+}
+
+int selectCascadeByMap(out float4 tex, float depth, float4 texS[NUM_CASCADES])
+{
+#if NUM_CASCADES<=1
+    return 0;
+#else
+    for(int i=0; i<NUM_CASCADES; ++i){
+        tex = texS[i];
+        if(min(tex.x, tex.y)>-0.999
+            && max(tex.x, tex.y)<0.999)
+        {
+            return i;
+        }
+    }
+    return NUM_CASCADES-1;
+#endif
+}
+
 PSOutput main(VSOutput input)
 {
     float3 L = dlDir.xyz;
@@ -55,15 +77,12 @@ PSOutput main(VSOutput input)
     //Irradiance
     float d = distance(input.worldPos, cameraPos.xyz);
     float3 shadowInfluence = 1;
-    [unroll(4)]
-    for(int i=0; i<NUM_CASCADES; ++i){
-        if(d<cascadeDepth[i]){
-            float shadowDepth = texShadow.Sample(samShadow, input.texS[i].xyz);
-            shadowInfluence = (shadowDepth<input.texS[i].w)? shadow.xyz : 1;
-            //shadowInfluence[i] = 0;
-            break;
-        }
-    }
+    float4 tex;
+    int cascade = selectCascadeByMap(tex, d, input.texS);
+    lightSpaceTexcoord(tex);
+    float shadowDepth = texShadow.Sample(samShadow, float3(tex.xy, cascade));
+    shadowInfluence = (shadowDepth<input.texS[cascade].z)? shadow.xyz : 1;
+
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));

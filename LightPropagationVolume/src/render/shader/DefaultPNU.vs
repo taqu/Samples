@@ -21,7 +21,7 @@ struct VSOutput
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
     float2 uv : TEXCOORD1;
-    float3 worldPos : TEXCOORD2;
+    float4 worldPos : TEXCOORD2;
     float3 viewNormal : TEXCOORD3;
     float4 texS[NUM_CASCADES] : TEXCOORD4;
 };
@@ -42,9 +42,7 @@ VSOutput main(VSInput input)
     output.uv = input.uv;
     [unroll(4)]
     for(int i=0; i<NUM_CASCADES; ++i){
-        output.texS[i].xyw = mul(position, mlwvp[i]).xyz;
-        output.texS[i].w = saturate(output.texS[i].w);
-        output.texS[i].z = i;
+        output.texS[i] = mul(position, mlwvp[i]);
     }
 
     float4 world = mul(position, mw);

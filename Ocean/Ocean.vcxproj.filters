@@ -239,5 +239,103 @@
     <Filter Include="src\font">
       <UniqueIdentifier>{835c7959-2385-4e7c-a4c7-e6b74f525272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\render\shader">
+      <UniqueIdentifier>{3fd2a76a-42fb-400f-b595-21ad0e76b525}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\FXAA.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Default.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FXAA.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Gauss.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Glare.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\HDAO.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Ocean.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OceanWire.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SkyBox.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\TonemappingStatic.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Default.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FullQuad.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_Ocean.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_P.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNCU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTB.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTBU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNUBone.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Ocean.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SkyBox.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

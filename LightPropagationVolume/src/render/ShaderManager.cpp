@@ -65,10 +65,9 @@ namespace render
 
 
         //
-        compiler.compileShader(vs, ps, Shader_Depth);
-        LASSERT(vs.valid() && ps.valid());
+        compiler.compileShaderVS(vs, Shader_Depth);
+        LASSERT(vs.valid());
         entries_[Shader_Depth].vs_ = LIME_NEW DepthVS(vs);
-        entries_[Shader_Depth].ps_ = LIME_NEW DepthPS(ps);
 
         compiler.compileShaderGS(gs, ShaderGS_Depth);
         geometryShaders_[ShaderGS_Depth] = LIME_NEW DepthGS(gs);

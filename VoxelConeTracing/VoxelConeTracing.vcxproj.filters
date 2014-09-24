@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{47f898ae-32fc-4bd9-899d-28a14d04a2e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{8b3f4199-3f09-412b-bbda-e0f615f6afb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{be494053-18ea-47f9-bd74-b97f08c03455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\font">
+      <UniqueIdentifier>{9828b9ac-373c-4ee5-9c9c-2b6f01fdeaab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render\shader">
+      <UniqueIdentifier>{9e95e093-2055-4d4d-bfc8-c6f72f630ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\load">
+      <UniqueIdentifier>{557c9a1e-132c-4bf2-9148-374f7c644971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\vct">
+      <UniqueIdentifier>{80e26374-c233-42be-870f-cdcc1a5224c0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Application.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Input.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Timer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\DebugDraw.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\AnimObject.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Geometry.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Glare.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Material.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Mesh.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Node.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Object.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\Rectangle.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\render.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\ShaderBase.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontManager.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontPack.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontShader.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\font\FontType.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\InputLayoutFactory.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Renderer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Shader.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShaderManager.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\ShaderType.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\render\CascadedShadowMap.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_material.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_geometry.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_joint.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_mesh.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_node.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\load_texture.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\load\ModelLoader.h">
+      <Filter>src\load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\scene\scene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\scene\DebugCamera.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\scene\SkyBox.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Debug.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VCT\vct.h">
+      <Filter>src\vct</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vct\Voxel.h">
+      <Filter>src\vct</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\AnimObject.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\DebugDraw.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Geometry.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Glare.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Material.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Mesh.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Node.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Object.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\Rectangle.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontPack.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontManager.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\font\FontShader.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\InputLayoutFactory.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Renderer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Shader.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderManager.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderType.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\render\CascadedShadowMap.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\load\ModelLoader.cpp">
+      <Filter>src\load</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\scene\DebugCamera.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\scene\SkyBox.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Debug.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vct\Voxel.cpp">
+      <Filter>src\vct</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\TonemappingStatic.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Default.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FXAA.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Gauss.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Glare.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FullQuad.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FXAA.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_P.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNCU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTB.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTBU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SkyBox.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SkyBox.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Debug.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Debug.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelRender.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelRender.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Voxelize.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Voxelize.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Voxelize.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelRender.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMapTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMap.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMap.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMapTexture.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelInjection.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelInjection.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelMipmap.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelMipmap.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>

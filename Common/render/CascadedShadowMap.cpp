@@ -9,8 +9,8 @@
 
 #include <lframework/scene/Scene.h>
 
-#include "ShaderManager.h"
-#include "Shader.h"
+#include "render/ShaderManager.h"
+#include "render/Shader.h"
 #include "System.h"
 
 namespace render

@@ -16,8 +16,8 @@ namespace fractal
         }
 
         u32 size = in.getSize(0);
-        const s8* buffer = LIME_NEW s8[size];
-        in.read((Char*)buffer, size);
+        u8* buffer = LIME_NEW u8[size];
+        lcore::io::read(in, buffer, size);
         bool ret = lgraphics::io::IODDS::read(texture, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
         LIME_DELETE_ARRAY(buffer);
         return ret;

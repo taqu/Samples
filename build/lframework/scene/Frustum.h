@@ -29,22 +29,12 @@ namespace lscene
         ~Frustum()
         {}
 
-        /**
-        @brief ビュー空間の視錐台計算
-        */
         void calcInView(const Camera& camera, f32 znear, f32 zfar);
 
         /**
-        @brief ビュー空間の視錐台計算
+        @brief
         */
-        void calcInView(const Camera& camera);
-
-        /**
-        @brief ワールド空間の視錐台計算
-        */
-        void calcInWorld(const Camera& camera);
-
-        void calc(const lmath::Matrix44& mat);
+        void calcFromProjection(const lmath::Matrix44& proj, f32 znear, f32 zfar);
 
         /**
         @brief 球が視錐台内にあるか
@@ -85,9 +75,9 @@ namespace lscene
         /**
         @brief 視錐台の８頂点取得
         */
-        void getPoints(lmath::Vector4* points, f32 znear) const;
+        void getPoints(lmath::Vector4* points, f32 znear, f32 zfar) const;
 
-        static f32 calcFitZFar(const lmath::Vector4& aabbMin, const lmath::Vector4& aabbMax, const Camera& camera, f32 minz, f32 maxz);
+        static void calcFitNearFar(f32& znear, f32& zfar, const lmath::Vector4& aabbMin, const lmath::Vector4& aabbMax, const Camera& camera);
 
         inline lmath::Plane& operator[](s32 index){ return planes_[index];}
         inline const lmath::Plane& operator[](s32 index) const{ return planes_[index];}

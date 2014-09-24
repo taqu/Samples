@@ -1,0 +1,64 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    int4 voxelSize; //voxel resolution, (voxel resolution)^2, voxel resolution * num samples, num samples
+    float4 voxelInvSize; //1/(voxel resolution), 1/(voxel resolution)^2, 0.5/(voxel resolution), 1/(voxel resolution-1)
+}
+
+struct GSOutput
+{
+    float4 position : SV_Position;
+    float3 screenPos : TEXCOORD0;
+    float3 normal : TEXCOORD1;
+    int axis : TEXCOORD2;
+};
+
+uint getCoverage(float3 pos, float3 normal, int axis)
+{
+    float p = (pos[axis]) * (voxelSize.x-1);
+
+    uint n = (p-floor(p))*voxelSize.w;
+    return (0<=normal[axis])? (n+1) : (voxelSize.w-n);
+}
+
+uint getBytePos(float3 pos)
+{
+    uint3 up = (pos + voxelInvSize.zzz) * (voxelSize.x-1);
+
+    uint x = up.x;
+    uint y = up.y * voxelSize.x;
+    uint z = up.z * voxelSize.y;
+    return (x+y+z)*4;
+}
+
+
+RWByteAddressBuffer  tex0[6]  : register(u0);
+
+void main(GSOutput input)
+{
+    uint coverage = getCoverage(input.screenPos, input.normal, input.axis);
+    uint pos = getBytePos(input.screenPos);
+    //tex0.Store(pos, 1);
+    uint original;
+    uint value = (voxelSize.w<<16) | coverage;
+
+    if(0 == input.axis){
+        if(0<=input.normal[input.axis]){
+            tex0[0].InterlockedAdd(pos, value, original);
+        }else{
+            tex0[1].InterlockedAdd(pos, value, original);
+        }
+
+    }else if(1 == input.axis){
+        if(0<=input.normal[input.axis]){
+            tex0[2].InterlockedAdd(pos, value, original);
+        }else{
+            tex0[3].InterlockedAdd(pos, value, original);
+        }
+    }else{
+        if(0<=input.normal[input.axis]){
+            tex0[4].InterlockedAdd(pos, value, original);
+        }else{
+            tex0[5].InterlockedAdd(pos, value, original);
+        }
+    }
+}

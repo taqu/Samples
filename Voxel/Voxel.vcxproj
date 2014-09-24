@@ -141,6 +141,43 @@
     <ClInclude Include="src\System.h" />
     <ClInclude Include="src\Widget.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\DebugVC.ps" />
+    <None Include="src\render\shader\DebugVC.vs" />
+    <None Include="src\render\shader\Default.ps" />
+    <None Include="src\render\shader\DefaultAO.ps" />
+    <None Include="src\render\shader\DefaultAOTexture.ps" />
+    <None Include="src\render\shader\DefaultPN.vs" />
+    <None Include="src\render\shader\DefaultPNU.vs" />
+    <None Include="src\render\shader\DefaultTexture.ps" />
+    <None Include="src\render\shader\Depth.ps" />
+    <None Include="src\render\shader\Depth.vs" />
+    <None Include="src\render\shader\Layout_P.vs" />
+    <None Include="src\render\shader\Layout_PC.vs" />
+    <None Include="src\render\shader\Layout_PN.vs" />
+    <None Include="src\render\shader\Layout_PNCU.vs" />
+    <None Include="src\render\shader\Layout_PNTB.vs" />
+    <None Include="src\render\shader\Layout_PNTBU.vs" />
+    <None Include="src\render\shader\Layout_PNU.vs" />
+    <None Include="src\render\shader\Layout_PNUBone.vs" />
+    <None Include="src\render\shader\Layout_PU.vs" />
+    <None Include="src\render\shader\OctreeCreateNode.ps" />
+    <None Include="src\render\shader\OctreeInitNode.ps" />
+    <None Include="src\render\shader\OctreeMipmap.ps" />
+    <None Include="src\render\shader\OctreePropagate.ps" />
+    <None Include="src\render\shader\OctreeTag.ps" />
+    <None Include="src\render\shader\OctreeTag.vs" />
+    <None Include="src\render\shader\OctreeWriteValue.ps" />
+    <None Include="src\render\shader\Rectangle.ps" />
+    <None Include="src\render\shader\Rectangle.vs" />
+    <None Include="src\render\shader\TonemappingStatic.ps" />
+    <None Include="src\render\shader\Voxelize.ps" />
+    <None Include="src\render\shader\VoxelizePN.vs" />
+    <None Include="src\render\shader\VoxelizePNU.vs" />
+    <None Include="src\render\shader\VoxelizeTexture.ps" />
+    <None Include="src\render\shader\VoxelRender.ps" />
+    <None Include="src\render\shader\VoxelRender.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

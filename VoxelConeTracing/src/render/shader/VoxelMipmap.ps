@@ -1,0 +1,30 @@
+
+Texture3D<float4> srcTex[6] : register(t0);
+RWTexture3D<float4> dstTex[6]  : register(u0);
+
+struct VSOutput
+{
+    float4 position : SV_Position;
+    uint3 tex0 : TEXCOORD0;
+};
+
+void main(VSOutput input)
+{
+    uint3 srcPos = input.tex0 * 2U;
+
+    [unroll(6)]
+    for(int i=0; i<6; ++i){
+        float4 v = (float4)0;
+        v += srcTex[i][srcPos + uint3(0,0,0)];
+        v += srcTex[i][srcPos + uint3(1,0,0)];
+        v += srcTex[i][srcPos + uint3(0,1,0)];
+        v += srcTex[i][srcPos + uint3(1,1,0)];
+        v += srcTex[i][srcPos + uint3(0,0,1)];
+        v += srcTex[i][srcPos + uint3(1,0,1)];
+        v += srcTex[i][srcPos + uint3(0,1,1)];
+        v += srcTex[i][srcPos + uint3(1,1,1)];
+
+        dstTex[i][input.tex0] = v * (1.0/8.0);
+    }
+}
+

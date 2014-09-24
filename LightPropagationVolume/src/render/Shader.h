@@ -135,15 +135,6 @@ namespace render
         {}
     };
 
-    class DepthPS : public ShaderPSBase
-    {
-    public:
-        DepthPS(const lgraphics::PixelShaderRef& ref)
-            :ShaderPSBase(ref)
-        {}
-    private:
-    };
-
     //----------------------------------------------
     //---
     //--- Rectangle

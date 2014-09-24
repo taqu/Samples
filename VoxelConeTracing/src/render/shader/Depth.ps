@@ -1,0 +1,13 @@
+struct GSOutput
+{
+    float4 position : SV_POSITION;
+    uint rtIndex : SV_RenderTargetArrayIndex;
+};
+
+float2 main(GSOutput input) : SV_Target
+{
+    float z = input.position.z;
+    float dx = ddx(input.position.z);
+    float dy = ddy(input.position.z);
+    return float2(z, z*z + 0.25*(dx*dx+dy*dy));
+}

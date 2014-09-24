@@ -19,7 +19,7 @@ struct VSOutput
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
     float2 uv : TEXCOORD1;
-    float3 texS : TEXCOORD2;
+    float4 texS : TEXCOORD2;
     float3 worldPos : TEXCOORD3;
     float3 viewNormal : TEXCOORD4;
 };
@@ -38,8 +38,7 @@ VSOutput main(VSInput input)
 
     output.normal.xyz = normalize( mul(input.normal, (float3x3)mw) );
     output.uv = input.uv;
-    output.texS = mul(position, mlwvp).xyz;//float3(0.5f*lpos.x + 0.5f, 0.5f - 0.5f*lpos.y, lpos.z);
-    output.texS.z = saturate(output.texS.z);
+    output.texS = mul(position, mlwvp);
 
     float4 world = mul(position, mw);
     output.worldPos = world.xyz;

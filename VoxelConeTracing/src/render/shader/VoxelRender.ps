@@ -1,0 +1,10 @@
+struct GSOutput
+{
+    float4 position : SV_Position;
+    float4 coverage : TEXCOORD0;
+};
+
+float4 main(GSOutput input) : SV_Target
+{
+    return input.coverage;
+}

@@ -170,5 +170,115 @@
     <Filter Include="src\load">
       <UniqueIdentifier>{b32905da-bf43-4ddf-ac66-15b4620781fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\render\shader">
+      <UniqueIdentifier>{2981a1b4-c5f4-461d-8ca8-d3f278937aeb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\Layout_PNCU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeCreateNode.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\TonemappingStatic.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeInitNode.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Default.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeMipmap.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeTag.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Voxelize.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelizeTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreePropagate.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelRender.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeWriteValue.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultAO.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultAOTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_P.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTB.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\OctreeTag.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNUBone.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTBU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelizePN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelizePNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\VoxelRender.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

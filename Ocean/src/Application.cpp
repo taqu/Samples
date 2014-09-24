@@ -33,24 +33,6 @@ namespace fractal
 {
 namespace
 {
-    lgraphics::Texture2DRef loadDDS(const Char* filepath)
-    {
-        lgraphics::Texture2DRef ret;
-
-        lcore::ifstream in(filepath, lcore::ios::binary);
-        if(!in.is_open()){
-            return ret;
-        }
-
-        u32 size = in.getSize(0);
-        const s8* buffer = LIME_NEW s8[size];
-        in.read((Char*)buffer, size);
-        lgraphics::io::IODDS::read(ret, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
-        LIME_DELETE_ARRAY(buffer);
-        return ret;
-    }
-
-
     f32 RGB2Gray(u8 r, u8 g, u8 b)
     {
         const f32 inv = 1.0f/255.0f;
@@ -113,26 +95,6 @@ namespace
                 render::Object* obj = LIME_NEW render::Object();
                 if(loader.load(*obj)){
                     lcore::swap(object_, obj);
-
-                    lgraphics::Texture2DRef color0 = loadDDS("../data/model/miku_xx_head.dds");
-                    lgraphics::Texture2DRef color1 = loadDDS("../data/model/miku_xx_body.dds");
-
-                    object_->getTexture(0) = color0;
-                    object_->getTexture(1) = color1;
-                    //object_->setT
-                    for(u32 i=0; i<object_->getNumMaterials(); ++i){
-                        render::Material& material = object_->getMaterial(i);
-                        switch(material.textureIDs_[0])
-                        {
-                        case 0:
-                            material.textures_[0] = &object_->getTexture(0);
-                            break;
-
-                        case 1:
-                            material.textures_[0] = &object_->getTexture(1);
-                            break;
-                        }
-                    }
                 }
                 LIME_DELETE(obj);
             }

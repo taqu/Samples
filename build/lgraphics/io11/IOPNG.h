@@ -11,7 +11,7 @@
 
 namespace lgraphics
 {
-    class TextureRef;
+    class Texture2DRef;
 
 namespace io
 {
@@ -24,10 +24,25 @@ namespace io
             Swap_BGR,
         };
 
+        static bool checkSignature(lcore::istream& is);
+
         /**
         @brief bufferにロード。bufferがNULLの場合、width、height、format、rowBytesを設定して返る
         */
         static bool read(lcore::istream& is, u8* buffer, u32& width, u32& height, u32& rowBytes, DataFormat& format, SwapRGB swap);
+
+        static bool read(
+            Texture2DRef& texture,
+            lcore::istream& is,
+            Usage usage,
+            BindFlag bindFlag,
+            CPUAccessFlag access,
+            ResourceMisc misc,
+            TextureFilterType filter,
+            TextureAddress adress,
+            CmpFunc compFunc,
+            f32 borderColor,
+            SwapRGB swap);
     };
 }
 }

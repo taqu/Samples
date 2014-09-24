@@ -92,6 +92,7 @@
     <ClCompile Include="..\Common\Input.cpp" />
     <ClCompile Include="..\Common\load\ModelLoader.cpp" />
     <ClCompile Include="..\Common\render\AnimObject.cpp" />
+    <ClCompile Include="..\Common\render\CascadedShadowMap.cpp" />
     <ClCompile Include="..\Common\render\DebugDraw.cpp" />
     <ClCompile Include="..\Common\render\Geometry.cpp" />
     <ClCompile Include="..\Common\render\Glare.cpp" />
@@ -100,18 +101,17 @@
     <ClCompile Include="..\Common\render\Node.cpp" />
     <ClCompile Include="..\Common\render\Object.cpp" />
     <ClCompile Include="..\Common\render\Rectangle.cpp" />
+    <ClCompile Include="..\Common\scene\DebugCamera.cpp" />
+    <ClCompile Include="..\Common\scene\SkyBox.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Noise.cpp" />
-    <ClCompile Include="src\render\CascadedShadowMap.cpp" />
     <ClCompile Include="src\render\InputLayoutFactory.cpp" />
     <ClCompile Include="src\render\Renderer.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\ShaderManager.cpp" />
     <ClCompile Include="src\render\ShaderType.cpp" />
-    <ClCompile Include="src\scene\DebugCamera.cpp" />
-    <ClCompile Include="src\scene\SkyBox.cpp" />
     <ClCompile Include="src\System.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +128,7 @@
     <ClInclude Include="..\Common\load\load_texture.h" />
     <ClInclude Include="..\Common\load\ModelLoader.h" />
     <ClInclude Include="..\Common\render\AnimObject.h" />
+    <ClInclude Include="..\Common\render\CascadedShadowMap.h" />
     <ClInclude Include="..\Common\render\DebugDraw.h" />
     <ClInclude Include="..\Common\render\Geometry.h" />
     <ClInclude Include="..\Common\render\Glare.h" />
@@ -138,19 +139,18 @@
     <ClInclude Include="..\Common\render\Rectangle.h" />
     <ClInclude Include="..\Common\render\render.h" />
     <ClInclude Include="..\Common\render\ShaderBase.h" />
+    <ClInclude Include="..\Common\scene\DebugCamera.h" />
+    <ClInclude Include="..\Common\scene\scene.h" />
+    <ClInclude Include="..\Common\scene\SkyBox.h" />
     <ClInclude Include="..\Common\stdafx.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Noise.h" />
-    <ClInclude Include="src\render\CascadedShadowMap.h" />
     <ClInclude Include="src\render\InputLayoutFactory.h" />
     <ClInclude Include="src\render\Renderer.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\ShaderManager.h" />
     <ClInclude Include="src\render\ShaderType.h" />
-    <ClInclude Include="src\scene\DebugCamera.h" />
-    <ClInclude Include="src\scene\scene.h" />
-    <ClInclude Include="src\scene\SkyBox.h" />
     <ClInclude Include="src\System.h" />
   </ItemGroup>
   <ItemGroup>

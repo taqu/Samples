@@ -58,13 +58,6 @@ namespace
     };
     const u32 DepthGSSourceSize = sizeof(DepthGSSource);
 
-    const u8 DepthPSSource[] =
-    {
-#include "shader/DepthPS.byte"
-    };
-    const u32 DepthPSSourceSize = sizeof(DepthPSSource);
-
-
     //テクスチャでフィル
     //------------------------------------
     const u8 RectangleVSSource[] =
@@ -266,7 +259,7 @@ namespace
     {
         { DefaultPNVSSource, DefaultPNVSSourceSize, DefaultPSSource, DefaultPSSourceSize },
         { DefaultPNUVSSource, DefaultPNUVSSourceSize, DefaultTexturePSSource, DefaultTexturePSSourceSize },
-        { DepthVSSource, DepthVSSourceSize, DepthPSSource, DepthPSSourceSize },
+        { DepthVSSource, DepthVSSourceSize, NULL, 0 },
         { RectangleVSSource, RectangleVSSourceSize, RectanglePSSource, RectanglePSSourceSize },
         { DebugVCVSSource, DebugVCVSSourceSize, DebugVCPSSource, DebugVCPSSourceSize },
         { FullQuadVSSource, FullQuadVSSourceSize, NULL, 0 },

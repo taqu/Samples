@@ -1,0 +1,50 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float depthBias;
+    int reserved0;
+    int reserved1;
+    int reserved2;
+}
+
+struct VSOutput
+{
+    float4 position : SV_Position;
+    uint4 tex0 : TEXCOORD0;
+    float4 texS : TEXCOORD1;
+};
+
+void lightSpaceTexcoord(inout float4 uv)
+{
+    uv.xy = uv.xy*float2(0.5,-0.5)+float2(0.5,0.5);
+}
+
+Texture2D texDiffuse : register(t0);
+Texture2D texDepth : register(t1);
+Buffer<uint> buffer0[6] : register(t2);
+
+SamplerState samTex : register(s0);
+SamplerState samDepth : register(s1);
+
+RWTexture3D<float4> tex0[6]  : register(u0);
+
+void main(VSOutput input)
+{
+    float4 texS = input.texS;
+    lightSpaceTexcoord(texS);
+    float depthSample = texDepth.Sample(samDepth, texS.xy).r;
+    float depthSelect = (depthSample<(input.texS.z-depthBias))? 0 : 1;
+
+    float3 diffuse = texDiffuse.Sample(samTex, texS.xy).xyz * depthSelect;
+
+    [unroll(6)]
+    for(int i=0; i<6; ++i){
+        uint v = buffer0[i].Load(input.tex0.w);
+        float fv = (v<=0)? 0 : (v&0xFFFFU)/((float)(v>>16));
+        fv *= depthSelect;
+
+        RWTexture3D<float4> dst = tex0[i];
+
+        dst[input.tex0.xyz] = float4(diffuse*fv, fv);
+    }
+
+}

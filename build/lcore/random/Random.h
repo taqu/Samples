@@ -106,19 +106,37 @@ namespace lcore
 namespace random
 {
     /**
+    @brief [vmin, vmax)
+    */
+    template<class T, class U>
+    U range_ropen(T& random, U vmin, U vmax)
+    {
+        return static_cast<U>(random.frand2()*(vmax-vmin)) + vmin;
+    }
+
+    /**
+    @brief [vmin, vmax)
+    */
+    template<class T>
+    f32 range_ropen(T& random, f32 vmin, f32 vmax)
+    {
+        return (vmax-vmin)*random.frand2() + vmin;
+    }
+
+    /**
     @brief [vmin, vmax]
     */
     template<class T, class U>
     U range(T& random, U vmin, U vmax)
     {
         LASSERT(vmin<=vmax);
-
-        //return static_cast<U>(random.frand2()*(vmax-vmin)) + vmin;
-
         u32 i = random.rand() % (vmax - vmin + 1);
         return vmin + static_cast<U>(i);
     }
 
+    /**
+    @brief [vmin, vmax]
+    */
     template<class T>
     f32 range(T& random, f32 vmin, f32 vmax)
     {

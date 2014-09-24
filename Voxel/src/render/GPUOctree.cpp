@@ -36,7 +36,7 @@ namespace render
             lgraphics::Usage_Default,
             lgraphics::BindFlag_UnorderedAccess,
             lgraphics::CPUAccessFlag_None,
-            lgraphics::ResourceMisc_AllowRawView,
+            lgraphics::ResourceMisc_BufferAllowRawView,
             sizeof(u32),
             NULL,
             NULL);
@@ -125,7 +125,7 @@ namespace render
                 lgraphics::Usage_Default,
                 lgraphics::BindFlag_ShaderResource|lgraphics::BindFlag_UnorderedAccess,
                 lgraphics::CPUAccessFlag_None,
-                lgraphics::ResourceMisc_Structured,
+                lgraphics::ResourceMisc_BufferStructured,
                 sizeof(GPUOctreeVoxel),
                 NULL,
                 &desc);
@@ -223,7 +223,7 @@ namespace render
                 lgraphics::Usage_Default,
                 lgraphics::BindFlag_ShaderResource|lgraphics::BindFlag_UnorderedAccess,
                 lgraphics::CPUAccessFlag_None,
-                lgraphics::ResourceMisc_Structured,
+                lgraphics::ResourceMisc_BufferStructured,
                 sizeof(GPUOctreeNode0),
                 NULL,
                 &desc);

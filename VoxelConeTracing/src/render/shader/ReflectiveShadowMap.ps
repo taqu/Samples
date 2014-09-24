@@ -1,0 +1,34 @@
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 dlDir;
+    float4 dlColor;
+}
+
+cbuffer ConstantBuffer1 : register(b1)
+{
+    float4 diffuse;
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float3 normal : TEXCOORD0;
+};
+
+float4 main(VSOutput input) : SV_Target0
+{
+    float3 L = dlDir.xyz;
+    float3 N = normalize(input.normal);
+
+    //Irradiance
+    float cosNL = saturate(dot(N,L));
+
+    float3 irradiance = dlColor.xyz * cosNL * 0.5; //pseudo HDR
+
+    float4 color;
+    color.xyz = diffuse.xyz*irradiance;
+    color.w = diffuse.w;
+
+    return color;
+}

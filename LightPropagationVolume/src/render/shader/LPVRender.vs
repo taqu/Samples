@@ -49,9 +49,7 @@ VSOutput main(VSInput input)
 
     [unroll(4)]
     for(int i=0; i<NUM_CASCADES; ++i){
-        output.texS[i].xyw = mul(position, mlwvp[i]).xyz;
-        output.texS[i].w = saturate(output.texS[i].w);
-        output.texS[i].z = i;
+        output.texS[i] = mul(position, mlwvp[i]);
     }
 
     float4 world = mul(position, mw);

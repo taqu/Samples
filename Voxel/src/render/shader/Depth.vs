@@ -20,7 +20,6 @@ VSOutput main(VSInput input)
     VSOutput output= (VSOutput)0;
 
     float4 outPos = mul(float4(input.position, 1.0f), mwvp);
-    //outPos.z *= outPos.w;
 
     output.position = outPos;
 

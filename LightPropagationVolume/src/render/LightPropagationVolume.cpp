@@ -384,7 +384,7 @@ namespace render
         lmath::Vector4 frustumPoints[8];
         lscene::Frustum frustum;
         frustum.calcInView(scene.getCamera(), scene.getCamera().getZNear(), zfar_);
-        frustum.getPoints(frustumPoints, -LPVCellSize_*1.7320508f * 3.0f);
+        frustum.getPoints(frustumPoints, scene.getCamera().getZNear(), -LPVCellSize_*1.7320508f * 3.0f);
 
         lmath::Vector4 lightCameraOrthoMin(FLT_MAX, FLT_MAX, FLT_MAX, 1.0f);
         lmath::Vector4 lightCameraOrthoMax(-FLT_MAX, -FLT_MAX, -FLT_MAX, -1.0f);

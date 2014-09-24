@@ -26,7 +26,7 @@ struct VSOutput
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
     float2 uv : TEXCOORD1;
-    float3 texS : TEXCOORD2;
+    float4 texS : TEXCOORD2;
     float3 worldPos : TEXCOORD3;
     float3 viewNormal : TEXCOORD4;
 };
@@ -44,7 +44,12 @@ void calcFresnel(out float rd, out float rs, float F0, float cosEyeHalf)
     rs = min(F0 + F1*pow(1-cosEyeHalf, 5), 1);
     rd = 1 - rs;
 }
-  
+
+void lightSpaceTexcoord(inout float4 uv)
+{
+    uv.xy = uv.xy*float2(0.5,-0.5)+float2(0.5,0.5);
+}
+
 PSOutput main(VSOutput input)
 {
     float3 L = dlDir.xyz;
@@ -53,8 +58,10 @@ PSOutput main(VSOutput input)
     float3 H = normalize(L+E); //ハーフベクトル
 
     //Irradiance
-    float shadowDepth = texShadow.Sample(samShadow, input.texS.xy).r;
-    float3 shadowInfluence = (shadowDepth<input.texS.z)? shadow.xyz : 1;
+    float4 tex = input.texS;
+    lightSpaceTexcoord(tex);
+    float shadowDepth = texShadow.Sample(samShadow, tex.xy).r;
+    float3 shadowInfluence = (shadowDepth<tex.z)? shadow.xyz : 1;
 
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));

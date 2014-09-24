@@ -30,6 +30,7 @@ namespace lgraphics
             ,backBufferHeight_(1)
             ,format_(Data_R8G8B8A8_UNorm_SRGB)
             ,depthStencilFormat_(Data_D24_UNorm_S8_UInt)
+            ,shadowMapFormat_(Data_D16_UNorm)
             ,refreshRate_(60)
             ,windowHandle_(NULL)
             ,windowed_(1)
@@ -46,6 +47,7 @@ namespace lgraphics
         u32 backBufferHeight_;
         u32 format_;
         u32 depthStencilFormat_;
+        u32 shadowMapFormat_;
         u32 refreshRate_;
         HWND__ *windowHandle_;
         s16 windowed_;

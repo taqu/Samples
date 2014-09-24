@@ -16,6 +16,9 @@
     <Filter Include="src\scene">
       <UniqueIdentifier>{5084c34c-4b8b-439c-a65d-667a79097011}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\render\shader">
+      <UniqueIdentifier>{04d53ace-9009-4f68-9105-ee8c9345432b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -221,5 +224,133 @@
     <ClCompile Include="..\Common\render\Rectangle.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\render\shader\LPVRenderSkinning.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DebugVC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Default.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultPNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\DefaultTexture.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Depth.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FullQuad.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FXAA.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\FXAA.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Gauss.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Glare.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\HDAO.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_P.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PC.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PN.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNCU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTB.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNTBU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PNUBone.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Layout_PU.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVAccumulate.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVInjection.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVInjection.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVInjection.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVOcclusionInjection.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVOcclusionInjection.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVOcclusionPropagate.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVPropagate.gs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVPropagate.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVPropagate.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVPropagateSeparate.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVRender.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\LPVRender.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Rectangle.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMap.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReflectiveShadowMap.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\TonemappingStatic.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

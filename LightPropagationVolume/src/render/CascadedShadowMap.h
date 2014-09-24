@@ -35,6 +35,7 @@ namespace render
     private:
         bool create(u32 size, s32 numCascades);
 
+        u32 size_;
         lgraphics::Texture2DRef texDepth_;
         lgraphics::DepthStencilViewRef viewDepth_;
 

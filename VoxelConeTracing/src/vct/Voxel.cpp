@@ -342,6 +342,15 @@ namespace vct
         viewProj.mul(projection_, view_);
     }
 
+    void Voxel::clearVoxels(lgraphics::GraphicsDeviceRef& device)
+    {
+        for(s32 i=0; i<6; ++i){
+            for(s32 j=0; j<mipmapLevels_; ++j){
+                device.clearUnorderedAccessView(voxelUAVViews_[i][j].getView(), lgraphics::GraphicsDeviceRef::UIZero);
+            }
+        }
+    }
+
     void Voxel::begin(lgraphics::GraphicsDeviceRef& device)
     {
         ID3D11UnorderedAccessView* const uavViews[] =

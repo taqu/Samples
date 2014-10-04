@@ -55,7 +55,7 @@ namespace fractal
             // カメラ設定
             lscene::Camera& camera = scene.getCamera();
 
-            camera.perspectiveFov(45.0f/180.0f*PI, static_cast<lcore::f32>(width)/height, 0.001f, 10000.0f);
+            camera.perspectiveFov(45.0f/180.0f*PI, static_cast<lcore::f32>(width)/height, 0.1f, 1000.0f);
 
             lmath::Matrix44 mat;
             mat.lookAt(lmath::Vector4(0.0f, 0.0f, -3.0f, 0.0f), lmath::Vector4(0.0f, 0.0f, 0.0f, 0.0f), lmath::Vector4(0.0f, 1.0f, 0.0f, 0.0f));

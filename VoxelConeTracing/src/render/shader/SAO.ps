@@ -1,0 +1,124 @@
+#define NumSamples (11)
+#define LogMaxOffset (3)
+#define MaxMipLevel (5)
+#define FarPlaneZ (300.0)
+#define NumSpiralTurns (7)
+#define Epsilon (0.01)
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    int2 size : packoffset(c0.x); //width, height
+    float radius : packoffset(c0.z);
+    float radius2 : packoffset(c0.w);
+    float4 proj : packoffset(c1.x);
+    float scale : packoffset(c2.x);
+    float bias : packoffset(c2.y);
+    float intensity : packoffset(c2.z);
+    float padding0 : packoffset(c2.w);
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+Texture2D tex : register(t0);
+
+// Pack z into GB channels
+float2 packZ(float z)
+{
+    float t = floor(z * 256.0);
+    return float2(t*(1/256.0), z*256.0-t);
+}
+
+float3 reconstructCameraSpace(float2 screenSpace, float z)
+{
+    return float3((screenSpace.xy * proj.xy + proj.zw) * z, z);
+}
+
+float3 reconstructCameraSpaceNormal(float3 cameraSpace)
+{
+    return normalize(cross(ddy(cameraSpace), ddx(cameraSpace)));
+}
+
+float3 sampleCameraSpace(int2 screenSpace)
+{
+    float z = tex.Load(int3(screenSpace, 0)).r;
+    return reconstructCameraSpace(float2(screenSpace) + float2(0.5, 0.5), z);
+}
+
+float cameraSpaceTo01(float z)
+{
+    return saturate(z*(1/FarPlaneZ));
+}
+
+float2 tapLocation(int sampleNumber, float spinAngle, out float ssR)
+{
+    float alpha = float(sampleNumber + 0.5) * (1.0/NumSamples);
+    float angle = alpha * (NumSpiralTurns * 6.28) + spinAngle;
+    ssR = alpha;
+
+    float cs, sn;
+    sincos(angle, sn, cs);
+    return float2(cs, sn);
+}
+
+float3 sampleOffset(int2 screenSpace, float2 offset, float ssR)
+{
+    int mipLevel = clamp((int)floor(log2(ssR)) - LogMaxOffset, 0, MaxMipLevel);
+    int2 ssP = int2(ssR*offset) + screenSpace;
+
+    float z = tex.Load(int3(ssP>>mipLevel, mipLevel)).r;
+    return reconstructCameraSpace(float2(ssP) + float2(0.5, 0.5), z);
+}
+
+float sampleAO(in int2 screenSpace, in float3 cameraSpace, in float3 cameraSpaceN, in float discRadius, in int tapIndex, in float randomPatternRotationAngle)
+{
+    float ssR;
+    float2 offset = tapLocation(tapIndex, randomPatternRotationAngle, ssR);
+    ssR *= discRadius;
+
+    float3 Q = sampleOffset(screenSpace, offset, ssR);
+    float3 v = Q - cameraSpace;
+    float vv = dot(v,v);
+    float vn = dot(v, cameraSpaceN);
+    float f = max(radius2 - vv, 0.0);
+    return f*f*f * max((vn-bias)/(Epsilon+vv), 0.0);
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    float4 color = float4(1,1,1,1);
+
+    int2 screenSpace = input.tex.xy * size.xy;
+    //return tex.Load(int3(screenSpace, 0)).r;
+
+    float randomPatternRotationAngle = (3 * screenSpace.x ^ screenSpace.y + screenSpace.x * screenSpace.y) * 10;
+
+    float3 cameraSpace = sampleCameraSpace(screenSpace);
+
+    color.gb = packZ( cameraSpaceTo01(cameraSpace.z) ); //bilateral key
+
+    float3 cameraSpaceN = -reconstructCameraSpaceNormal(cameraSpace);
+
+    float screenSpaceDiscRadius = scale * radius / cameraSpace.z;
+
+    float sum = 0;
+    for(int i=0; i<NumSamples; ++i){
+        sum += sampleAO(screenSpace, cameraSpace, cameraSpaceN, screenSpaceDiscRadius, i, randomPatternRotationAngle);
+    }
+    float visibility = max(0.0, 1.0-sum * intensity * (5.0/NumSamples));
+
+#if 1
+    if(abs(ddx(cameraSpace.z))<0.02){
+        visibility -= ddx(visibility) * ((screenSpace.x & 1) - 0.5);
+    }
+    if(abs(ddy(cameraSpace.z))<0.02){
+        visibility -= ddy(visibility) * ((screenSpace.y & 1) - 0.5);
+    }
+#endif
+
+    color.r = visibility;
+    return color;
+}

@@ -32,6 +32,8 @@ namespace render
         {
             Flag_HDR = (0x01U<<0),
             Flag_DrawVoxel = (0x01U<<1),
+            Flag_GI = (0x01U<<2),
+            Flag_SAO = (0x01U<<3),
         };
 
         Renderer();

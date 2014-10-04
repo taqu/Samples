@@ -30,6 +30,7 @@ namespace render
         Shader_FullQuad,
         Shader_FXAA,
         Shader_TonemappingStatic,
+        Shader_TonemappingStaticAO,
         Shader_Glare,
         Shader_GaussianFilter,
         Shader_SkyBox,
@@ -40,6 +41,11 @@ namespace render
         Shader_ReflectiveShadowMapTexture,
         Shader_VoxelInjection,
         Shader_VoxelMipmap,
+        Shader_ReconstructZ,
+        Shader_Downsample2x2,
+        Shader_Copy,
+        Shader_SAO,
+        Shader_SAOBlur,
         Shader_Num,
     };
 

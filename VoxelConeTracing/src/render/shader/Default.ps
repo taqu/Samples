@@ -1,15 +1,17 @@
-#define NUM_CASCADES 2
+#define NUM_CASCADES 3
 #define MAX_CASCADES 4
-#define NUM_SPECULAR 1
+#define NUM_SPECULAR 4
 
 static const float PI = 3.14159265f;
 static const float INV_PI = 0.31830988618379067153f;
 
+
 cbuffer ConstantBuffer0 : register(b0)
 {
-    float4 dlDir;
-    float4 dlColor;
-    float4 cameraPos;
+    float3 dlDir  : packoffset(c0.x);
+    float shadowBias : packoffset(c0.w);
+    float4 dlColor : packoffset(c1.x);
+    float4 cameraPos : packoffset(c2.x);
 }
 
 cbuffer ConstantBuffer1 : register(b1)
@@ -30,7 +32,7 @@ cbuffer ConstantBuffer2 : register(b2)
 }
 
 //Texture2D texAlbedo;
-Texture2DArray<float2> texShadow : register(t0);
+Texture2DArray texShadow : register(t0);
 
 SamplerComparisonState samShadow : register(s0);
 //SamplerState samShadow : register(s0);
@@ -43,11 +45,10 @@ struct VSOutput
     float4 position : SV_POSITION;
     float3 normal : TEXCOORD0;
     float4 worldPos : TEXCOORD1;
-    float3 viewNormal : TEXCOORD2;
-    float4 texS[NUM_CASCADES] : TEXCOORD3;
+    float4 texS[NUM_CASCADES] : TEXCOORD2;
 };
 
-#define WEIGHT (1.0)
+#define WEIGHT (1.1)
 
 static const float4 Coeff[] =
 {
@@ -179,11 +180,12 @@ float4 main(VSOutput input) : SV_Target0
     float4 tex;
     int cascade = selectCascadeByMap(tex, input.worldPos.w, input.texS);
     lightSpaceTexcoord(tex);
-    shadowInfluence = texShadow.SampleCmp(samShadow, float3(tex.xy, cascade), tex.z).r;
+    shadowInfluence = texShadow.SampleCmp(samShadow, float3(tex.xy, cascade), tex.z+shadowBias).r;
 
     float cosEH = saturate(dot(E,H));
     float cosNL = saturate(dot(N,L));
     float cosNH = saturate(dot(N,H));
+    float cosNE = saturate(dot(N,E));
 
     //voxel cone tracing
     float3 voxelPos = worldToVoxel(input.worldPos.xyz);
@@ -210,7 +212,7 @@ float4 main(VSOutput input) : SV_Target0
     }
 #endif
 
-    float3 irradiance = dlColor.xyz * cosNL * shadowInfluence + indirect.xyz;
+    float3 irradiance = dlColor.xyz * cosNL * shadowInfluence;
 
     //BRDF
     float rd, rs;
@@ -222,10 +224,7 @@ float4 main(VSOutput input) : SV_Target0
     ks *= specular.w*0.039662 + 0.090587;
 
     float4 color;
-    color.xyz = kd*irradiance + ks*(irradiance+specularLight.xyz);
-    //color.xyz = kd*irradiance + ks*(irradiance+specularLight.xyz) + specularLight.xyz;
-    //color.xyz = indirect.xyz;
-    //color.xyz = specularLight.xyz;
+    color.xyz = kd*irradiance + ks*(irradiance+specularLight.xyz) + indirect.xyz * albedo.xyz * cosNE;
     color.w = diffuse.w;
 
     return color;

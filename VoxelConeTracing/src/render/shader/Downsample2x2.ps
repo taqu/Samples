@@ -1,0 +1,24 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    int4 level; //level, width, height
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+Texture2D tex : register(t0);
+
+float4 main(VSOutput input) : SV_Target
+{
+    int3 location;
+    location.xy = input.tex.xy * level.yz;
+    location.z = 0;
+
+    int2 offset = int2((location.y & 1) ^ 1, (location.x & 1) ^ 1);
+    location.xy *= 2;
+    location.xy += offset;
+    return tex.Load(location);
+}

@@ -36,7 +36,6 @@ namespace render
         {
             lmath::Matrix44 mwvp_;
             lmath::Matrix44 mw_;
-            lmath::Matrix44 mv_;
             lmath::Vector4 cameraPos_;
             lmath::Matrix44 mlwvp_[4];
         };
@@ -282,6 +281,19 @@ namespace render
     {
     public:
         TonemappingStaticPS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- TonemappingStaticAO
+    //---
+    //----------------------------------------------
+    class TonemappingStaticAOPS : public ShaderPSBase
+    {
+    public:
+        TonemappingStaticAOPS(const lgraphics::PixelShaderRef& ref)
             :ShaderPSBase(ref)
         {}
     };
@@ -620,6 +632,71 @@ namespace render
         {}
 
         virtual void initialize()
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- ReconstructZ
+    //---
+    //----------------------------------------------
+    class ReconstructZPS : public ShaderPSBase
+    {
+    public:
+        ReconstructZPS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- Downsample2x2
+    //---
+    //----------------------------------------------
+    class Downsample2x2PS : public ShaderPSBase
+    {
+    public:
+        Downsample2x2PS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- Copy
+    //---
+    //----------------------------------------------
+    class CopyPS : public ShaderPSBase
+    {
+    public:
+        CopyPS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- SAO
+    //---
+    //----------------------------------------------
+    class SAOPS : public ShaderPSBase
+    {
+    public:
+        SAOPS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
+        {}
+    };
+
+    //----------------------------------------------
+    //---
+    //--- SAOBlur
+    //---
+    //----------------------------------------------
+    class SAOBlurPS : public ShaderPSBase
+    {
+    public:
+        SAOBlurPS(const lgraphics::PixelShaderRef& ref)
+            :ShaderPSBase(ref)
         {}
     };
 }

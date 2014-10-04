@@ -23,6 +23,7 @@ pushd %SHADERDIR%
 %COMPILER% -ps -p5 FXAA.ps FXAAPS.byte
 
 %COMPILER% -ps -p5 TonemappingStatic.ps TonemappingStaticPS.byte
+%COMPILER% -ps -p5 TonemappingStaticAO.ps TonemappingStaticAOPS.byte
 
 %COMPILER% -ps -p5 Glare.ps GlarePS.byte
 
@@ -33,6 +34,12 @@ pushd %SHADERDIR%
 
 %COMPILER% -vs -p5 Debug.vs DebugVS.byte
 %COMPILER% -ps -p5 Debug.ps DebugPS.byte
+
+%COMPILER% -ps -p5 Downsample2x2.ps Downsample2x2PS.byte
+%COMPILER% -ps -p5 Copy.ps CopyPS.byte
+%COMPILER% -ps -p5 ReconstructZ.ps ReconstructZPS.byte
+%COMPILER% -ps -p5 SAO.ps SAOPS.byte
+%COMPILER% -ps -p5 SAOBlur.ps SAOBlurPS.byte
 
 
 %COMPILER% -vs -p5 Voxelize.vs VoxelizeVS.byte

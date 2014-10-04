@@ -44,12 +44,20 @@ namespace fractal
         s32 cameraType_;
         DebugCamera camera_;
 
+        f32 count_;
+
         render::Object* object_;
         render::Object* plane_;
-        render::Object* box_;
-        render::Object* sphere_;
+        render::Object* box0_;
+        render::Object* sphere0_;
 
+        render::Object* box1_;
+        render::Object* box2_;
+
+        render::Object* sponza_;
         lmath::Vector4 lightDirection_;
+
+        bool drawSponza_;
     };
 
     LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

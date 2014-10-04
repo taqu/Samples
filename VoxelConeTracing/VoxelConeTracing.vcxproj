@@ -120,6 +120,7 @@
     <ClInclude Include="src\render\Debug.h" />
     <ClInclude Include="src\render\InputLayoutFactory.h" />
     <ClInclude Include="src\render\Renderer.h" />
+    <ClInclude Include="src\render\SAO.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\ShaderManager.h" />
     <ClInclude Include="src\render\ShaderType.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\render\Debug.cpp" />
     <ClCompile Include="src\render\InputLayoutFactory.cpp" />
     <ClCompile Include="src\render\Renderer.cpp" />
+    <ClCompile Include="src\render\SAO.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\ShaderManager.cpp" />
     <ClCompile Include="src\render\ShaderType.cpp" />
@@ -159,6 +161,7 @@
     <ClCompile Include="src\vct\Voxel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\render\shader\Copy.ps" />
     <None Include="src\render\shader\Debug.ps" />
     <None Include="src\render\shader\Debug.vs" />
     <None Include="src\render\shader\DebugVC.ps" />
@@ -170,6 +173,7 @@
     <None Include="src\render\shader\Depth.gs" />
     <None Include="src\render\shader\Depth.ps" />
     <None Include="src\render\shader\Depth.vs" />
+    <None Include="src\render\shader\Downsample2x2.ps" />
     <None Include="src\render\shader\FullQuad.vs" />
     <None Include="src\render\shader\FXAA.ps" />
     <None Include="src\render\shader\FXAA.vs" />
@@ -183,15 +187,19 @@
     <None Include="src\render\shader\Layout_PNTBU.vs" />
     <None Include="src\render\shader\Layout_PNU.vs" />
     <None Include="src\render\shader\Layout_PU.vs" />
+    <None Include="src\render\shader\ReconstructZ.ps" />
     <None Include="src\render\shader\Rectangle.ps" />
     <None Include="src\render\shader\Rectangle.vs" />
     <None Include="src\render\shader\ReflectiveShadowMap.ps" />
     <None Include="src\render\shader\ReflectiveShadowMap.vs" />
     <None Include="src\render\shader\ReflectiveShadowMapTexture.ps" />
     <None Include="src\render\shader\ReflectiveShadowMapTexture.vs" />
+    <None Include="src\render\shader\SAO.ps" />
+    <None Include="src\render\shader\SAOBlur.ps" />
     <None Include="src\render\shader\SkyBox.ps" />
     <None Include="src\render\shader\SkyBox.vs" />
     <None Include="src\render\shader\TonemappingStatic.ps" />
+    <None Include="src\render\shader\TonemappingStaticAO.ps" />
     <None Include="src\render\shader\VoxelInjection.ps" />
     <None Include="src\render\shader\VoxelInjection.vs" />
     <None Include="src\render\shader\Voxelize.gs" />

@@ -1,0 +1,22 @@
+cbuffer ConstantBuffer0 : register(b0)
+{
+    float4 clipInfo;
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+Texture2D tex : register(t0);
+SamplerState samDot : register(s0);
+
+float4 main(VSOutput input) : SV_Target
+{
+    float d = tex.Sample(samDot, input.tex).x;
+
+    d = clipInfo[0]/(clipInfo[1]*d + clipInfo[2]);
+
+    return float4(d,d,d,d);
+}

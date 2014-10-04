@@ -43,7 +43,7 @@ namespace vct
     class Voxel
     {
     public:
-        static const s32 MaxMipLevels = 5;
+        static const s32 MaxMipLevels = 7;
 
         Voxel();
         ~Voxel();
@@ -59,9 +59,9 @@ namespace vct
         void setView(const lmath::Vector4& center, const lmath::Vector4& direction, const lmath::Vector4& size, s32 reflectiveResolution);
         void getViewProjection(lmath::Matrix44& viewProj);
 
+        void clearVoxels(lgraphics::GraphicsDeviceRef& device);
         void begin(lgraphics::GraphicsDeviceRef& device);
         void end(lgraphics::GraphicsDeviceRef& device);
-
 
         render::ReflectiveShadowMapVS* getReflectiveShadowMapVS() { return reflectiveShadowMapVS_;}
         render::ReflectiveShadowMapPS* getReflectiveShadowMapPS() { return reflectiveShadowMapPS_;}

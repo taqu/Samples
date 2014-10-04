@@ -144,6 +144,9 @@
     <ClInclude Include="src\vct\Voxel.h">
       <Filter>src\vct</Filter>
     </ClInclude>
+    <ClInclude Include="src\render\SAO.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="src\vct\Voxel.cpp">
       <Filter>src\vct</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\SAO.cpp">
+      <Filter>src\render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +368,24 @@
       <Filter>src\render\shader</Filter>
     </None>
     <None Include="src\render\shader\VoxelMipmap.vs">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SAO.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\SAOBlur.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Downsample2x2.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\Copy.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\ReconstructZ.ps">
+      <Filter>src\render\shader</Filter>
+    </None>
+    <None Include="src\render\shader\TonemappingStaticAO.ps">
       <Filter>src\render\shader</Filter>
     </None>
   </ItemGroup>

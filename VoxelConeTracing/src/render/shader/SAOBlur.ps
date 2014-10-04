@@ -1,0 +1,67 @@
+#define EdgeSharpness (0.9)
+#define Scale (2)
+#define R (4)
+#define Epsilon (0.0001)
+
+static const float gaussian[R+1] = {0.111220, 0.107798, 0.098151, 0.083953, 0.067458, 0.050920, 0.036108,};
+//static const float gaussian[R+1] = {0.153170, 0.144893, 0.122649, 0.092902, 0.062970,};
+//const float gaussian[R+1] = {0.153439, 0.142500, 0.114143, 0.078856, 0.046987,};
+
+cbuffer ConstantBuffer0 : register(b0)
+{
+    int2 size : packoffset(c0.x); //width, height
+    float2 axis : packoffset(c0.z);
+}
+
+struct VSOutput
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+Texture2D tex : register(t0);
+
+
+float unpackZ(float2 v)
+{
+    return dot(v,float2(256.0/257.0, 1.0/257.0));
+}
+
+float4 main(VSOutput input) : SV_Target
+{
+    int2 screenSpace = input.tex.xy * size.xy;
+    
+    float4 c = tex.Load(int3(screenSpace, 0));
+
+    float4 color;
+    color.gb = c.gb;
+    color.a = 1;
+
+    float key = unpackZ(c.gb);
+    float sum = c.r;
+    if(key == 1.0){
+        color.r = sum;
+        return color;
+    }
+
+    float base = gaussian[0];
+    float totalWeight = base;
+    sum *= totalWeight;
+
+    [unroll]
+    for(int r=-R; r<=R; ++r){
+        if(0 != r){
+            c = tex.Load(int3(screenSpace + axis * (r*Scale), 0));
+            float tapKey = unpackZ(c.gb);
+            float value = c.r;
+
+            float weight = 0.3 + gaussian[abs(r)];
+            weight *= max(0.0, 1.0 - (2000.0*EdgeSharpness) * abs(tapKey - key));
+            sum += value * weight;
+            totalWeight += weight;
+        }
+    }
+
+    color.r = sum/(totalWeight + Epsilon);
+    return color;
+}

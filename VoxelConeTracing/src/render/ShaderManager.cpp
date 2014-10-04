@@ -101,6 +101,11 @@ namespace render
         entries_[Shader_TonemappingStatic].ps_ = LIME_NEW TonemappingStaticPS(ps);
 
         //
+        compiler.compileShaderPS(ps, Shader_TonemappingStaticAO);
+        LASSERT(ps.valid());
+        entries_[Shader_TonemappingStaticAO].ps_ = LIME_NEW TonemappingStaticAOPS(ps);
+
+        //
         compiler.compileShaderPS(ps, Shader_Glare);
         LASSERT(ps.valid());
         entries_[Shader_Glare].ps_ = LIME_NEW GlarePS(ps);
@@ -164,6 +169,31 @@ namespace render
         LASSERT(vs.valid() && ps.valid());
         entries_[Shader_VoxelMipmap].vs_ = LIME_NEW VoxelMipmapVS(vs);
         entries_[Shader_VoxelMipmap].ps_ = LIME_NEW VoxelMipmapPS(ps);
+
+        //
+        compiler.compileShaderPS(ps, Shader_ReconstructZ);
+        LASSERT(ps.valid());
+        entries_[Shader_ReconstructZ].ps_ = LIME_NEW ReconstructZPS(ps);
+
+        //
+        compiler.compileShaderPS(ps, Shader_Downsample2x2);
+        LASSERT(ps.valid());
+        entries_[Shader_Downsample2x2].ps_ = LIME_NEW Downsample2x2PS(ps);
+
+        //
+        compiler.compileShaderPS(ps, Shader_Copy);
+        LASSERT(ps.valid());
+        entries_[Shader_Copy].ps_ = LIME_NEW CopyPS(ps);
+
+        //
+        compiler.compileShaderPS(ps, Shader_SAO);
+        LASSERT(ps.valid());
+        entries_[Shader_SAO].ps_ = LIME_NEW SAOPS(ps);
+
+        //
+        compiler.compileShaderPS(ps, Shader_SAOBlur);
+        LASSERT(ps.valid());
+        entries_[Shader_SAOBlur].ps_ = LIME_NEW SAOBlurPS(ps);
 
 
         for(u32 i=0; i<Shader_Num; ++i){

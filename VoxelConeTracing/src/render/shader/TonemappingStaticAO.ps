@@ -43,7 +43,7 @@ float RGBToLum(float4 rgb)
 
 float4 tonemapSimple(float4 c)
 {
-#if 0
+#if 1
     c *= 1.6;
     return c/(1+c);
     //return pow(c/(1+c), 1/2.2);
@@ -79,5 +79,6 @@ float4 main(VSOutput input) : SV_Target
 #endif
 
     c.rgb *= ao;
+    c.rgb = texSAO.Sample(samLinear, input.tex0).r;
     return c;
 }

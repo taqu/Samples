@@ -124,6 +124,14 @@ namespace
     };
     const u32 TonemappingStaticPSSourceSize = sizeof(TonemappingStaticPSSource);
 
+    //TonemappingStaticAO
+    //------------------------------------
+    const u8 TonemappingStaticAOPSSource[] =
+    {
+#include "shader/TonemappingStaticAOPS.byte"
+    };
+    const u32 TonemappingStaticAOPSSourceSize = sizeof(TonemappingStaticAOPSSource);
+
     //Glare
     //------------------------------------
     const u8 GlarePSSource[] =
@@ -267,6 +275,47 @@ namespace
     };
     const u32 VoxelMipmapPSSourceSize = sizeof(VoxelMipmapPSSource);
 
+    //ReconstructZ
+    //------------------------------------
+    const u8 ReconstructZSource[] =
+    {
+#include "shader/ReconstructZPS.byte"
+    };
+    const u32 ReconstructZSourceSize = sizeof(ReconstructZSource);
+
+    //Downsample2x2
+    //------------------------------------
+    const u8 Downsample2x2PSSource[] =
+    {
+#include "shader/Downsample2x2PS.byte"
+    };
+    const u32 Downsample2x2PSSourceSize = sizeof(Downsample2x2PSSource);
+
+    //Copy
+    //------------------------------------
+    const u8 CopyPSSource[] =
+    {
+#include "shader/CopyPS.byte"
+    };
+    const u32 CopyPSSourceSize = sizeof(CopyPSSource);
+
+    //SAO
+    //------------------------------------
+    const u8 SAOPSSource[] =
+    {
+#include "shader/SAOPS.byte"
+    };
+    const u32 SAOPSSourceSize = sizeof(SAOPSSource);
+
+    //SAOBlur
+    //------------------------------------
+    const u8 SAOBlurPSSource[] =
+    {
+#include "shader/SAOBlurPS.byte"
+    };
+    const u32 SAOBlurPSSourceSize = sizeof(SAOBlurPSSource);
+
+
     //-----------------------------------------------------------------------------
     struct Entry
     {
@@ -286,6 +335,7 @@ namespace
         { FullQuadVSSource, FullQuadVSSourceSize, NULL, 0 },
         { FXAAVSSource, FXAAVSSourceSize, FXAAPSSource, FXAAPSSourceSize },
         { NULL, 0, TonemappingStaticPSSource, TonemappingStaticPSSourceSize },
+        { NULL, 0, TonemappingStaticAOPSSource, TonemappingStaticAOPSSourceSize },
         { NULL, 0, GlarePSSource, GlarePSSourceSize },
         { NULL, 0, GaussPSSource, GaussPSSourceSize },
         { SkyBoxVSSource, SkyBoxVSSourceSize, SkyBoxPSSource, SkyBoxPSSourceSize },
@@ -297,6 +347,12 @@ namespace
         { ReflectiveShadowMapTextureVSSource, ReflectiveShadowMapTextureVSSourceSize, ReflectiveShadowMapTexturePSSource, ReflectiveShadowMapTexturePSSourceSize },
         { VoxelInjectionVSSource, VoxelInjectionVSSourceSize, VoxelInjectionPSSource, VoxelInjectionPSSourceSize },
         { VoxelMipmapVSSource, VoxelMipmapVSSourceSize, VoxelMipmapPSSource, VoxelMipmapPSSourceSize },
+
+        { NULL, 0, ReconstructZSource, ReconstructZSourceSize },
+        { NULL, 0, Downsample2x2PSSource, Downsample2x2PSSourceSize },
+        { NULL, 0, CopyPSSource, CopyPSSourceSize },
+        { NULL, 0, SAOPSSource, SAOPSSourceSize },
+        { NULL, 0, SAOBlurPSSource, SAOBlurPSSourceSize },
     };
 
 

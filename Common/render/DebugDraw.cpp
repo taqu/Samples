@@ -424,7 +424,7 @@ namespace
             (1.0f/255.0f)*lcore::getAFromARGB(argb));
         material.specular_.set(1.0f, 1.0f, 1.0f, 18.0f);
         f32 refractive = lcore::getRefractiveIndex(lcore::RefractiveIndex_Silicon);
-        material.shadow_.set(0.0f, 0.0f, 0.0f, refractive);
+        material.shadow_.set(0.0f, 0.0f, 0.0f, lcore::calcFresnelTerm(refractive));
 
         Node& node = object->getNode(0);
         node.numMeshes_ = 1;

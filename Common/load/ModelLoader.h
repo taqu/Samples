@@ -34,6 +34,8 @@ namespace load
     public:
         ModelLoader()
             :directoryPathLength_(0)
+            ,textureAddress_(lgraphics::TexAddress_Clamp)
+            ,convertRefractiveIndex_(true)
         {
             directoryPath_[0] = '\0';
         }
@@ -67,6 +69,17 @@ namespace load
         lanim::Skeleton::pointer getSkeleton(){ return skeleton_;}
 
         void getTextureNameTable(u32 numTextures, load::Texture* textures);
+
+        void setTextureAddress(lgraphics::TextureAddress texAddress)
+        {
+            textureAddress_ = texAddress;
+        }
+
+        void setConvertRefractiveIndex(bool enable)
+        {
+            convertRefractiveIndex_ = enable;
+        }
+
         static bool save(render::Object& obj, load::Texture* textures, lanim::Skeleton::pointer& skeleton, const Char* filepath);
     private:
         ModelLoader(const ModelLoader&);
@@ -137,9 +150,13 @@ namespace load
 
         Header header_; /// ƒwƒbƒ_
         u32 directoryPathLength_;
-        Char directoryPath_[MaxPathSize+MaxNameLength];
+        Char directoryPath_[MaxPathSize+MaxFileNameSize];
 
         lanim::Skeleton::pointer skeleton_;
+
+        lgraphics::TextureAddress textureAddress_;
+
+        bool convertRefractiveIndex_;
     };
 }
 #endif //INC_RENDER_MODELLOADER_H__

@@ -16,11 +16,12 @@ namespace load
         {
             Flag_CastShadow = 0x01U << 0,
             Flag_RecieveShadow = 0x01U << 1,
+            Flag_RefractiveIndex = 0x01U << 2, //shadow_.w_ ‚ªrefractive index‚©
         };
 
         lmath::Vector4 diffuse_; //rgba
         lmath::Vector4 specular_; //rgb shininess
-        lmath::Vector4 shadow_; //shadow rate, 0, 0 refractive index
+        lmath::Vector4 shadow_; //shadow, shadow, shadow, refractive index or fresnel
 
         u32 flags_;
 

@@ -24,6 +24,7 @@ namespace render
         {
             Flag_CastShadow = 0x01U << 0,
             Flag_RecieveShadow = 0x01U << 1,
+            Flag_RefractiveIndex = 0x01U << 2, //shadow_.w_ ‚ªrefractive index‚©
         };
 
         enum Texture
@@ -45,9 +46,7 @@ namespace render
         u32 flags_;
         lmath::Vector4 diffuse_; //rgba
         lmath::Vector4 specular_; //rgb shininess
-        //lmath::Vector4 ambient_; //rgb
-        //lmath::Vector4 emissive_; //rgb
-        lmath::Vector4 shadow_; //rgb fresnel
+        lmath::Vector4 shadow_; //shadow, shadow, shadow, refractive index or fresnel
 
         s16 textureIDs_[Tex_Num];
         lgraphics::Texture2DRef* textures_[Tex_Num];

@@ -25,14 +25,16 @@ namespace fractal
             Key_S,
             Key_A,
             Key_D,
-
-            Key_Tab,
-
             Key_R,
-            Key_C,
-            Key_Return,
 
             Key_V,
+            Key_H,
+            Key_G,
+            Key_O,
+
+            Key_M,
+
+            Key_C,
         };
 
         enum MouseAxis

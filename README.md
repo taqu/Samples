@@ -1,19 +1,19 @@
 Samples
 =======
-#ƒrƒ‹ƒhEÀsŠÂ‹«
-##Windows7ˆÈã, DirectX 11 SDK
+* ãƒ“ãƒ«ãƒ‰ãƒ»å®Ÿè¡Œç’°å¢ƒ
+ * Windows7ä»¥ä¸Š, DirectX 11 SDK, Visual Studio 2012
 
-#ƒeƒXƒgŠÂ‹«
-##OS: Windows7 64bit Service Pack 1
-##CPU: Intel Core i5 2500T
-##Memory: 8GB
-##GPU: AMD Radeon R7 260X
-##Compiler: Visual Studio 2012
+* ãƒ†ã‚¹ãƒˆç’°å¢ƒ
+ * OS: Windows7 64bit Service Pack 1
+ * CPU: Intel Core i5 2500T
+ * Memory: 8GB
+ * GPU: AMD Radeon R7 260X
+ * Compiler: Visual Studio 2012
 
-#ƒrƒ‹ƒh‚É‚Â‚¢‚Ä
-##ƒRƒ“ƒpƒCƒ‹‚·‚é‘O‚ÉAŠeƒfƒBƒŒƒNƒgƒŠ“à‚Ìconvert.bat, convertLayout.bat‚ğÀs‚µ, ƒVƒF[ƒ_‚ğƒRƒ“ƒpƒCƒ‹‚µ‚Ü‚·B
-##ƒVƒF[ƒ_ƒRƒ“ƒpƒCƒ‰‚ÍSamples/ShaderCompiler.exe‚Å‚·B
-@‚¤‚Ü‚­“®‚©‚È‚¢ê‡‚ÍASamples/ShaderCompiler/ˆÈ‰º‚ğƒRƒ“ƒpƒCƒ‹‚µAÀsƒoƒCƒiƒŠ‚ğ’u‚«Š·‚¦‚é‚Æ“®‚­‚©‚à‚µ‚ê‚Ü‚¹‚ñB
+* ãƒ“ãƒ«ãƒ‰ã«ã¤ã„ã¦
+ * ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹å‰ã«ã€å„ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå†…ã®convert.bat, convertLayout.batã‚’å®Ÿè¡Œã—, ã‚·ã‚§ãƒ¼ãƒ€ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã—ã¾ã™ã€‚
+ * ã‚·ã‚§ãƒ¼ãƒ€ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã¯Samples/ShaderCompiler.exeã§ã™ã€‚
+ã€€ã†ã¾ãå‹•ã‹ãªã„å ´åˆã¯ã€Samples/ShaderCompiler/ä»¥ä¸‹ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã—ã€å®Ÿè¡Œãƒã‚¤ãƒŠãƒªã‚’ç½®ãæ›ãˆã‚‹ã¨å‹•ãã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ã€‚
 
-#ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒR[ƒh
-##https://code.google.com/p/lime/
+* ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚³ãƒ¼ãƒ‰
+ * https://code.google.com/p/lime/

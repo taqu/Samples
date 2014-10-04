@@ -156,7 +156,7 @@ namespace
             scene.getLightEnv().getDirectionalLight().setDirection(lightDirection_);
         }
 
-        if(keyboard.isClick(fractal::Input::Key_Tab)){
+        if(keyboard.isClick(fractal::Input::Key_H)){
             hdr_ = !hdr_;
             System::getRenderer().setFlag(render::Renderer::Flag_HDR, hdr_);
         }

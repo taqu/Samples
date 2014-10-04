@@ -17,7 +17,7 @@ cbuffer ConstantBuffer1 : register(b1)
     float4 shadow;
 }
 
-Texture2DArray<float> texShadow : register(t0);
+Texture2DArray texShadow : register(t0);
 Texture2D texAlbedo : register(t1);
 
 SamplerState samShadow : register(s0);

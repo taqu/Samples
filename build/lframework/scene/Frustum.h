@@ -30,6 +30,7 @@ namespace lscene
         {}
 
         void calcInView(const Camera& camera, f32 znear, f32 zfar);
+        void calcInWorld(const Camera& camera);
 
         /**
         @brief

@@ -20,7 +20,6 @@
 #endif //defined(ANDROID)
 
 
-#if defined(LMATH_USE_SSE)
 //#include <mmintrin.h>  //MMX命令セット
 #include <xmmintrin.h> //SSE命令セット
 #include <emmintrin.h> //SSE2命令セット
@@ -32,7 +31,6 @@ namespace lmath
     typedef __m64 lm64;
 }
 
-#endif
 
 namespace lmath
 {

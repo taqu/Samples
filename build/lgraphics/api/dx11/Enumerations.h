@@ -64,6 +64,7 @@ namespace lgraphics
     //--------------------------------------------------------
     enum BindFlag
     {
+        BindFlag_None = 0,
         BindFlag_VertexBuffer = D3D11_BIND_VERTEX_BUFFER,
         BindFlag_IndexBuffer = D3D11_BIND_INDEX_BUFFER,
         BindFlag_ConstantBuffer = D3D11_BIND_CONSTANT_BUFFER,

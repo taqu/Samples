@@ -1,4 +1,4 @@
-#ifndef INC_LGRAPHICS_IOPNG_H__
+ï»¿#ifndef INC_LGRAPHICS_IOPNG_H__
 #define INC_LGRAPHICS_IOPNG_H__
 /**
 @file IOPNG.h
@@ -27,7 +27,7 @@ namespace io
         static bool checkSignature(lcore::istream& is);
 
         /**
-        @brief buffer‚Éƒ[ƒhBbuffer‚ªNULL‚Ìê‡AwidthAheightAformatArowBytes‚ğİ’è‚µ‚Ä•Ô‚é
+        @brief bufferã«ãƒ­ãƒ¼ãƒ‰ã€‚bufferãŒNULLã®å ´åˆã€widthã€heightã€formatã€rowBytesã‚’è¨­å®šã—ã¦è¿”ã‚‹
         */
         static bool read(lcore::istream& is, u8* buffer, u32& width, u32& height, u32& rowBytes, DataFormat& format, SwapRGB swap);
 

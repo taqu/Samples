@@ -168,7 +168,6 @@ namespace load
                 if(false == load(texture, loadTexture)){
                     continue;
                 }
-
                 obj.getTexture(i) = texture;
 
             }
@@ -239,13 +238,6 @@ namespace load
             0,
             vertices);
 
-        //f32* vertices = reinterpret_cast<f32*>(data);
-        //for(u32 i=0; i<tmp.numVertices_; ++i){
-        //    lcore::Log("(%f, %f, %f), (%f, %f, %f)", vertices[0], vertices[1], vertices[2], vertices[3], vertices[4], vertices[5]);
-        //    vertices += 6;
-        //}
-
-
         //インデックスバッファ作成
         size = sizeof(u16) * tmp.numIndices_;
         u16* indices = reinterpret_cast<u16*>( LIME_MALLOC(size) );
@@ -283,6 +275,7 @@ namespace load
         if( LOAD_TRUE != lcore::io::read(is_, tmp) ){
             return false;
         }
+        render::Material* material = &obj.getMaterial(tmp.material_);
 
         mesh.create(
             lgraphics::Primitive_TriangleList,
@@ -307,10 +300,13 @@ namespace load
         material.flags_ = tmp.flags_;
         material.diffuse_ = tmp.diffuse_;
         material.specular_ = tmp.specular_;
-        material.shadow_ = tmp.shadow_; //編集するために屈折をフレネル反射率に変換しない
+        material.shadow_ = tmp.shadow_;
         material.textureIDs_[0] = tmp.texColor_;
         material.textureIDs_[1] = tmp.texNormal_;
 
+        if((material.flags_ & Material::Flag_RefractiveIndex) && convertRefractiveIndex_){
+            material.shadow_.w_ = lcore::calcFresnelTerm(material.shadow_.w_);
+        }
         return true;
     }
 
@@ -352,6 +348,10 @@ namespace load
     //---------------------------------------------
     lanim::Skeleton* ModelLoader::loadSkeleton(u32 numJoints)
     {
+        if(numJoints<=0){
+            return NULL;
+        }
+
         lanim::Skeleton* skeleton = LIME_NEW lanim::Skeleton(numJoints);
         load::Joint tjoint;
         lanim::Name name;
@@ -375,7 +375,8 @@ namespace load
     // テクスチャロード
     bool ModelLoader::load(lgraphics::Texture2DRef& texture, const load::Texture& loadTexture)
     {
-        const Char* ext = lcore::rFindChr(loadTexture.name_, '.', MaxNameLength);
+        u32 len = lcore::strlen(loadTexture.name_);
+        const Char* ext = lcore::rFindChr(loadTexture.name_, '.', len);
         if(NULL == ext){
             return false;
         }
@@ -389,7 +390,7 @@ namespace load
             type = 2;
         }
 
-        lcore::strncpy(directoryPath_+directoryPathLength_, MaxNameSize, loadTexture.name_, MaxNameLength);
+        lcore::strncpy(directoryPath_+directoryPathLength_, MaxFileNameSize, loadTexture.name_, len);
 
         lcore::ifstream texfile(directoryPath_, lcore::ios::binary);
         if(!texfile.is_open()){
@@ -408,14 +409,14 @@ namespace load
                 u32 size = texfile.getSize(0);
                 u8* buffer = LIME_NEW u8[size];
                 lcore::io::read(texfile, buffer, size);
-                bool ret = lgraphics::io::IODDS::read(texture, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, lgraphics::TexAddress_Clamp);
+                bool ret = lgraphics::io::IODDS::read(texture, buffer, size, lgraphics::Usage_Immutable, lgraphics::TexFilter_MinMagMipLinear, textureAddress_);
                 LIME_DELETE_ARRAY(buffer);
                 return ret;
             }
             break;
 
         case 1:
-            if(false == lgraphics::io::IOPNG::read(texfile, NULL, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_BGR)){
+            if(false == lgraphics::io::IOPNG::read(texfile, NULL, width, height, rowBytes, format, lgraphics::io::IOPNG::Swap_RGB)){
                 return false;
             }
             break;
@@ -465,7 +466,7 @@ namespace load
                 lgraphics::CPUAccessFlag_None,
                 lgraphics::ResourceMisc_None,
                 lgraphics::TexFilter_MinMagLinearMipPoint,
-                lgraphics::TexAddress_Clamp,
+                textureAddress_,
                 lgraphics::Cmp_Never,
                 0.0f,
                 &initData,
@@ -582,8 +583,8 @@ namespace load
             loadMaterials[i].diffuse_ = material.diffuse_;
             loadMaterials[i].specular_ = material.specular_;
             loadMaterials[i].shadow_ = material.shadow_;
-            loadMaterials[i].texColor_ = 0;
-            loadMaterials[i].texNormal_ = 0;
+            loadMaterials[i].texColor_ = material.textureIDs_[0];
+            loadMaterials[i].texNormal_ = material.textureIDs_[1];
 
             offset += sizeof(load::Material);
         }

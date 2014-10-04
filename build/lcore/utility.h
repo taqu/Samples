@@ -189,10 +189,20 @@ namespace lcore
             return (0 == count_)? 0.0 : totalTime_/count_;
         }
 
+        void reset();
+
         ClockType time_;
         s32 count_;
         f64 totalTime_;
     };
+
+    template<bool enable>
+    void Timer<enable>::reset()
+    {
+        time_ = 0;
+        count_ = 0;
+        totalTime_ = 0.0f;
+    }
 
     template<>
     struct Timer<false>
@@ -200,6 +210,7 @@ namespace lcore
         void begin(){}
         void end(){}
         f64 getAverage() const{return 0.0;}
+        void reset(){}
     };
 
     //---------------------------------------------------------
@@ -264,5 +275,26 @@ namespace lcore
         }
         return first;
     }
+
+    //---------------------------------------------------------
+    //---
+    //--- Character Code
+    //---
+    //---------------------------------------------------------
+    /**
+    @brief UTF8 to UTF16
+    @return 変換したUTF8のバイト数
+    @param utf16 ... 出力。UTF16コード
+    @param utf8 ... UTF8文字
+    */
+    s32 UTF8toUTF16(u16& utf16, const Char* utf8);
+
+    /**
+    @brief UTF16 to UTF8
+    @return 変換されたUTF8のバイト数
+    @param utf8 ... 出力。UTF8コード
+    @param utf16 ... UTF16文字
+    */
+    s32 UTF16toUTF8(Char* utf8, u16 utf16);
 }
 #endif //INC_LCORE_UTILITY_H__

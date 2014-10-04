@@ -207,7 +207,7 @@ namespace lmath
         }
     private:
         bool innerTest(HitRecord& hitRecord, const lmath::Ray& ray, f32 tmin, f32 tmax);
-        bool innerTest(HitRecord& hitRecord, lmath::lm128 bbox[2][3]);
+        bool innerTest(HitRecord& hitRecord, const lmath::Vector3& bmin, const lmath::Vector3& bmax);
 
         lmath::Vector3 position_;
         s32 raySign_[3];

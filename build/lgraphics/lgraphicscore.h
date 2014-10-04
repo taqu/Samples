@@ -76,6 +76,13 @@ namespace lgraphics
         u32 back_;
     };
 
+    struct MappedSubresource
+    {
+        void* data_;
+        u32 rowPitch_;
+        u32 depthPitch_;
+    };
+
     template<class T>
     class ScopedCOMPtr
     {

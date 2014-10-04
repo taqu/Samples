@@ -30,15 +30,17 @@ namespace lcore
         f32 operator()(f32 x, f32 y, f32 z) const;
         f32 operator()(f32 x, f32 y, f32 z, f32 w) const;
 
+        f32 cpu_get(f32 x, f32 y, f32 z) const;
+
         static f32 getMin(){ return -1.0f;}
         static f32 getMax(){ return 1.0f;}
-
     private:
         static s8 grad3_[NumGrad3][3];
         static s8 grad4_[NumGrad4][4];
         static u8 simplex_[64][4];
 
         inline static s32 fastFloor(f32 x);
+        inline static void fastFloor2(s32* ret, f32 x, f32 y, f32 z);
         inline static f32 dot2(const s8 grad[2], f32 x, f32 y);
         inline static f32 dot3(const s8 grad[3], f32 x, f32 y, f32 z);
         inline static f32 dot4(const s8 grad[4], f32 x, f32 y, f32 z, f32 w);

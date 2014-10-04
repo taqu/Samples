@@ -44,6 +44,7 @@ namespace lgraphics
         void setVS(u32 start);
         void setGS(u32 start);
         void setPS(u32 start);
+        void setCS(u32 start);
 
         void update(
             u32 dstSubresource,

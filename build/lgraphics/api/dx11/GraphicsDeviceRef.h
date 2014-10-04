@@ -106,6 +106,7 @@ namespace lgraphics
         static const Char* GSModel;
         static const Char* VSModel;
         static const Char* PSModel;
+        static const Char* CSModel;
 
         static const u32 MinRefreshRate = 15;
         static const u32 MaxRefreshRate = 120;
@@ -156,6 +157,9 @@ namespace lgraphics
 
         inline void drawAuto();
 
+        inline void dispatch(u32 xthreads, u32 ythreads, u32 zthreads);
+        inline void dispatchIndirect(ID3D11Buffer* buffers, u32 alignedOffset);
+
         void setViewport(u32 x, u32 y, u32 width, u32 height);
         void setDefaultViewport(u32 x, u32 y, u32 width, u32 height);
         void restoreDefaultViewport();
@@ -176,18 +180,22 @@ namespace lgraphics
         inline void setVSConstantBuffers(u32 start, u32 num, ID3D11Buffer* const* buffers);
         inline void setGSConstantBuffers(u32 start, u32 num, ID3D11Buffer* const* buffers);
         inline void setPSConstantBuffers(u32 start, u32 num, ID3D11Buffer* const* buffers);
+        inline void setCSConstantBuffers(u32 start, u32 num, ID3D11Buffer* const* buffers);
 
         inline void setVSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views);
         inline void setGSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views);
         inline void setPSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views);
+        inline void setCSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views);
 
         inline void setVSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states);
         inline void setGSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states);
         inline void setPSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states);
+        inline void setCSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states);
 
         inline void setGeometryShader(ID3D11GeometryShader* shader);
         inline void setVertexShader(ID3D11VertexShader* shader);
         inline void setPixelShader(ID3D11PixelShader* shader);
+        inline void setComputeShader(ID3D11ComputeShader* shader);
 
         inline void setRenderTargets(
             u32 numViews,
@@ -208,6 +216,12 @@ namespace lgraphics
             ID3D11UnorderedAccessView* const* uavs,
             const u32* UAVInitCounts);
 
+        inline void setCSUnorderedAccessViews(
+            u32 UAVStart,
+            u32 numUAVs,
+            ID3D11UnorderedAccessView* const* uavs,
+            const u32* UAVInitCounts);
+
         inline void setStreamOutTargets(u32 num, ID3D11Buffer* const* buffers, const u32* offsetInBytes);
         inline void clearStreamOutTargets(u32 num);
 
@@ -222,7 +236,9 @@ namespace lgraphics
         inline void clearVSResources(u32 numResources);
         inline void clearGSResources(u32 numResources);
         inline void clearPSResources(u32 numResources);
+        inline void clearCSResources(u32 numResources);
         inline void clearRenderTargets(u32 numResources);
+        inline void clearCSUnorderedAccessView(u32 numResources);
 
         void restoreDefaultRenderTargets();
 
@@ -230,8 +246,8 @@ namespace lgraphics
         inline void copyResource(ID3D11Resource* dst, ID3D11Resource* src);
         inline void copyStructureCount(ID3D11Buffer* dst, u32 dstOffset, ID3D11UnorderedAccessView* view);
 
-        inline bool map(void*& data, u32& rowPitch, u32& depthPitch, ID3D11Resource* resource, s32 type);
-        inline void unmap(ID3D11Resource* resource);
+        inline bool map(void*& data, u32& rowPitch, u32& depthPitch, ID3D11Resource* resource, u32 subresource, s32 type);
+        inline void unmap(ID3D11Resource* resource, u32 subresource);
 
         DepthStencilStateRef createDepthStencilState(
             bool depthEnable,
@@ -379,6 +395,16 @@ namespace lgraphics
         context_->DrawAuto();
     }
 
+    inline void GraphicsDeviceRef::dispatch(u32 xthreads, u32 ythreads, u32 zthreads)
+    {
+        context_->Dispatch(xthreads, ythreads, zthreads);
+    }
+
+    inline void GraphicsDeviceRef::dispatchIndirect(ID3D11Buffer* buffers, u32 alignedOffset)
+    {
+        context_->DispatchIndirect(buffers, alignedOffset);
+    }
+
     inline void GraphicsDeviceRef::setRasterizerState(RasterizerState state)
     {
         context_->RSSetState(rasterizerStates_[state]);
@@ -438,6 +464,11 @@ namespace lgraphics
         context_->PSSetConstantBuffers(start, num, buffers);
     }
 
+    inline void GraphicsDeviceRef::setCSConstantBuffers(u32 start, u32 num, ID3D11Buffer* const* buffers)
+    {
+        context_->CSSetConstantBuffers(start, num, buffers);
+    }
+
     inline void GraphicsDeviceRef::setVSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views)
     {
         context_->VSSetShaderResources(start, num, views);
@@ -451,6 +482,11 @@ namespace lgraphics
     inline void GraphicsDeviceRef::setPSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views)
     {
         context_->PSSetShaderResources(start, num, views);
+    }
+
+    inline void GraphicsDeviceRef::setCSResources(u32 start, u32 num, ID3D11ShaderResourceView* const* views)
+    {
+        context_->CSSetShaderResources(start, num, views);
     }
 
     inline void GraphicsDeviceRef::setVSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states)
@@ -468,6 +504,11 @@ namespace lgraphics
         context_->PSSetSamplers(start, num, states);
     }
 
+    inline void GraphicsDeviceRef::setCSSamplers(u32 start, u32 num, ID3D11SamplerState* const* states)
+    {
+        context_->CSSetSamplers(start, num, states);
+    }
+
     inline void GraphicsDeviceRef::setGeometryShader(ID3D11GeometryShader* shader)
     {
         context_->GSSetShader(shader, NULL, 0);
@@ -481,6 +522,11 @@ namespace lgraphics
     inline void GraphicsDeviceRef::setPixelShader(ID3D11PixelShader* shader)
     {
         context_->PSSetShader(shader, NULL, 0);
+    }
+
+    inline void GraphicsDeviceRef::setComputeShader(ID3D11ComputeShader* shader)
+    {
+        context_->CSSetShader(shader, NULL, 0);
     }
 
     inline void GraphicsDeviceRef::setRenderTargets(
@@ -509,6 +555,15 @@ namespace lgraphics
         const u32* UAVInitCounts)
     {
         context_->OMSetRenderTargetsAndUnorderedAccessViews(numViews, views, depthStencilView, UAVStart, numUAVs, uavs, UAVInitCounts);
+    }
+
+    inline void GraphicsDeviceRef::setCSUnorderedAccessViews(
+        u32 UAVStart,
+        u32 numUAVs,
+        ID3D11UnorderedAccessView* const* uavs,
+        const u32* UAVInitCounts)
+    {
+        context_->CSSetUnorderedAccessViews(UAVStart, numUAVs, uavs, UAVInitCounts);
     }
 
     inline void GraphicsDeviceRef::setStreamOutTargets(u32 num, ID3D11Buffer* const* buffers, const u32* offsetInBytes)
@@ -559,10 +614,22 @@ namespace lgraphics
         context_->PSSetShaderResources(0, numResources, NULLResources);
     }
 
+    inline void GraphicsDeviceRef::clearCSResources(u32 numResources)
+    {
+        LASSERT(numResources<MaxShaderResources);
+        context_->CSSetShaderResources(0, numResources, NULLResources);
+    }
+
     inline void GraphicsDeviceRef::clearRenderTargets(u32 numTargets)
     {
         LASSERT(numTargets<MaxRenderTargets);
         context_->OMSetRenderTargets(numTargets, NullTargets, NULL);
+    }
+
+    inline void GraphicsDeviceRef::clearCSUnorderedAccessView(u32 numResources)
+    {
+        LASSERT(numResources<MaxRenderTargets);
+        context_->CSSetUnorderedAccessViews(0, numResources, (ID3D11UnorderedAccessView* const *)NullTargets, NULL);
     }
 
     inline void GraphicsDeviceRef::copyResource(ID3D11Resource* dst, u32 dstSubResource, u32 dstX, u32 dstY, u32 dstZ, ID3D11Resource* src, u32 srcSubResource, const Box* box)
@@ -580,19 +647,19 @@ namespace lgraphics
         context_->CopyStructureCount(dst, dstOffset, view);
     }
 
-    inline bool GraphicsDeviceRef::map(void*& data, u32& rowPitch, u32& depthPitch, ID3D11Resource* resource, s32 type)
+    inline bool GraphicsDeviceRef::map(void*& data, u32& rowPitch, u32& depthPitch, ID3D11Resource* resource, u32 subresource, s32 type)
     {
         D3D11_MAPPED_SUBRESOURCE mappedResource;
-        HRESULT hr = context_->Map(resource, 0, (D3D11_MAP)type, 0, &mappedResource);
+        HRESULT hr = context_->Map(resource, subresource, (D3D11_MAP)type, 0, &mappedResource);
         data = mappedResource.pData;
         rowPitch = mappedResource.RowPitch;
         depthPitch = mappedResource.DepthPitch;
         return SUCCEEDED(hr);
     }
 
-    inline void GraphicsDeviceRef::unmap(ID3D11Resource* resource)
+    inline void GraphicsDeviceRef::unmap(ID3D11Resource* resource, u32 subresource)
     {
-        context_->Unmap(resource, 0);
+        context_->Unmap(resource, subresource);
     }
 }
 #endif //INC_LGRAPHICS_DX11_GRAPHICSDEVICEREF_H__

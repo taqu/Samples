@@ -16,17 +16,17 @@ namespace lscene
     {
     public:
         static const s32 MaxCascades = 4;
-        static const s8 FitType_ToCascades = 0;
-        static const s8 FitType_ToScene = 1;
+        static const u8 FitType_ToCascades = 0;
+        static const u8 FitType_ToScene = 1;
 
         static const u8 FitNearFar_None = 0;
-        static const s8 FitNearFar_AABB = 1;
-        static const s8 FitNearFar_SceneAABB = 2;
+        static const u8 FitNearFar_AABB = 1;
+        static const u8 FitNearFar_SceneAABB = 2;
 
         ShadowMap();
         ~ShadowMap();
 
-        void initialize(s32 cascadeLevels, s32 resolution, f32 znear, f32 zfar);
+        void initialize(s32 cascadeLevels, s32 resolution, f32 znear, f32 zfar, f32 logRatio=0.5f);
         void update(const Scene& scene);
 
         s32 getCascadeLevels() const
@@ -49,22 +49,22 @@ namespace lscene
             pcfBlurSize_ = size;
         }
 
-        s8 getFitType() const
+        u8 getFitType() const
         {
             return fitType_;
         }
 
-        void setFitType(s8 type)
+        void setFitType(u8 type)
         {
             fitType_ = type;
         }
 
-        s8 getMoveLightTexelSize() const
+        u8 getMoveLightTexelSize() const
         {
             return moveLightTexelSize_;
         }
 
-        void setMoveLightTexelSize(s32 flag)
+        void setMoveLightTexelSize(u8 flag)
         {
             moveLightTexelSize_ = flag;
         }
@@ -74,9 +74,9 @@ namespace lscene
             return fitNearFar_;
         }
 
-        void setFitNearFar(s32 flag)
+        void setFitNearFar(u8 type)
         {
-            fitNearFar_ = flag;
+            fitNearFar_ = type;
         }
 
         void setSceneAABB(const lmath::Vector4& aabbMin, const lmath::Vector4& aabbMax)
@@ -96,21 +96,22 @@ namespace lscene
             LASSERT(0<=cascade && cascade<cascadeLevels_);
             return cascadePartitionsFrustum_[cascade];
         }
+
+        void calcCascadePartitions(f32 logRatio);
     private:
         s32 cascadeLevels_;
         s32 resolution_;
         f32 znear_;
         f32 zfar_;
         s32 pcfBlurSize_;
-        s8 fitType_;
-        s8 moveLightTexelSize_;
-        s8 fitNearFar_;
-        s8 reserved3_;
+        u8 fitType_;
+        u8 moveLightTexelSize_;
+        u8 fitNearFar_;
+        u8 reserved3_;
 
         lmath::Vector4 sceneAABBMin_;
         lmath::Vector4 sceneAABBMax_;
 
-        void calcCascadePartitions();
         void createSceneAABBPoints(lmath::Vector4 dst[8]);
         void getNearFar(f32& nearPlane, f32& farPlane, lmath::Vector4& lightViewOrthoMin, lmath::Vector4& lightViewOrthoMax, lmath::Vector4* viewPoints);
 

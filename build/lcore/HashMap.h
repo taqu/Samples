@@ -217,12 +217,11 @@ namespace lcore
                 size_type n = pos;
 
                 do{
-                    if(key == keys_[n]){
-                        return n;
-                    }
-
                     if(isEmpty(n)){
                         return end();
+                    }
+                    if(key == keys_[n]){
+                        return n;
                     }
                     ++n;
                     if(n>=bucketCount_){

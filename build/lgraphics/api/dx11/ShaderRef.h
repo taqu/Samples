@@ -10,6 +10,7 @@
 struct ID3D11PixelShader;
 struct ID3D11VertexShader;
 struct ID3D11GeometryShader;
+struct ID3D11ComputeShader;
 
 namespace lgraphics
 {
@@ -179,6 +180,56 @@ namespace lgraphics
         ID3D11GeometryShader* shader_;
     };
 
+    //------------------------------------------------------------
+    //---
+    //--- ComputeShaderRef
+    //---
+    //------------------------------------------------------------
+    class ComputeShaderRef : public ShaderRefBase
+    {
+    public:
+         ComputeShaderRef()
+            :shader_(NULL)
+        {
+        }
+
+        ComputeShaderRef(const ComputeShaderRef& rhs);
+
+        ~ComputeShaderRef()
+        {
+            destroy();
+        }
+
+        ComputeShaderRef& operator=(const ComputeShaderRef& rhs)
+        {
+            ComputeShaderRef tmp(rhs);
+            tmp.swap(*this);
+            return *this;
+        }
+
+        bool valid() const{ return (shader_!=NULL);}
+
+        void attach() const;
+
+        void swap(ComputeShaderRef& rhs)
+        {
+            lcore::swap(shader_, rhs.shader_);
+        }
+
+    private:
+        friend class Shader;
+        template<int T> friend class ShaderCompiler;
+
+        void destroy();
+
+        ComputeShaderRef(ID3D11ComputeShader *shader)
+            :shader_(shader)
+        {
+        }
+
+        ID3D11ComputeShader* shader_;
+    };
+
     struct StreamOutputDeclarationEntry
     {
         u32 stream_;
@@ -232,6 +283,12 @@ namespace lgraphics
         */
         static GeometryShaderRef createGeometryShaderFromBinary(const u8* memory, u32 size);
 
+        /**
+        @brief メモリからコンピュートシェーダ作成
+        @param memory ... 
+        @param size ... 
+        */
+        static ComputeShaderRef createComputeShaderFromBinary(const u8* memory, u32 size);
     };
 
 

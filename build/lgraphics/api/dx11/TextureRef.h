@@ -8,423 +8,14 @@
 #include "../../lgraphics.h"
 #include "Enumerations.h"
 #include "SamplerStateRef.h"
+#include "ViewRef.h"
 
-struct ID3D11ShaderResourceView;
-struct ID3D11DepthStencilView;
 struct ID3D11Texture1D;
 struct ID3D11Texture2D;
 struct ID3D11Texture3D;
 
 namespace lgraphics
 {
-    struct Texture1DRTV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture1DArrayRTV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture2DRTV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture2DArrayRTV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture3DRTV
-    {
-        u32 mipSlice_;
-        u32 firstWSlice_;
-        u32 wSize_;
-    };
-
-    struct RTVDesc
-    {
-        DataFormat format_;
-        ViewRTVDimension dimension_;
-        union
-        {
-            Texture1DRTV tex1D_;
-            Texture1DArrayRTV tex1DArray_;
-
-            Texture2DRTV tex2D_;
-            Texture2DArrayRTV tex2DArray_;
-
-            Texture3DRTV tex3D_;
-        };
-    };
-
-
-    struct Texture1DDSV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture1DArrayDSV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture2DDSV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture2DArrayDSV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-
-    struct DSVDesc
-    {
-        DataFormat format_;
-        ViewDSVDimension dimension_;
-        union
-        {
-            Texture1DDSV tex1D_;
-            Texture1DArrayDSV tex1DArray_;
-
-            Texture2DDSV tex2D_;
-            Texture2DArrayDSV tex2DArray_;
-        };
-    };
-
-    struct BufferSRV
-    {
-        u32 firstElement_;
-        u32 numElements_;
-    };
-
-    struct Texture1DSRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-    };
-
-    struct Texture1DArraySRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture2DSRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-    };
-
-    struct Texture2DArraySRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture3DSRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-    };
-
-    struct TextureCubeSRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-    };
-
-    struct TextureCubeArraySRV
-    {
-        u32 mostDetailedMip_;
-        u32 mipLevels_;
-        u32 first2DArraySlice_;
-        u32 numCubes_;
-    };
-
-    struct SRVDesc
-    {
-        DataFormat format_;
-        ViewSRVDimension dimension_;
-        union
-        {
-            BufferSRV buffer_;
-            Texture1DSRV tex1D_;
-            Texture1DArraySRV tex1DArray_;
-
-            Texture2DSRV tex2D_;
-            Texture2DArraySRV tex2DArray_;
-
-            Texture3DSRV tex3D_;
-
-            TextureCubeSRV texCube_;
-            TextureCubeArraySRV texCubeArray_;
-        };
-
-        static bool copy(D3D11_SHADER_RESOURCE_VIEW_DESC& viewDesc, const SRVDesc& desc);
-    };
-
-    typedef SRVDesc ResourceViewDesc;
-
-    struct BufferUAV
-    {
-        u32 firstElement_;
-        u32 numElements_;
-        u32 flags_;
-    };
-
-    struct Texture1DUAV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture1DArrayUAV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture2DUAV
-    {
-        u32 mipSlice_;
-    };
-
-    struct Texture2DArrayUAV
-    {
-        u32 mipSlice_;
-        u32 firstArraySlice_;
-        u32 arraySize_;
-    };
-
-    struct Texture3DUAV
-    {
-        u32 mipSlice_;
-        u32 firstWSlice_;
-        u32 wsize_;
-    };
-
-    struct UAVDesc
-    {
-        DataFormat format_;
-        UAVDimension dimension_;
-        union
-        {
-            BufferUAV buffer_;
-            Texture1DUAV tex1D_;
-            Texture1DArrayUAV tex1DArray_;
-
-            Texture2DUAV tex2D_;
-            Texture2DArrayUAV tex2DArray_;
-
-            Texture3DUAV tex3D_;
-        };
-    };
-
-    struct SubResourceData
-    {
-        const void* mem_;
-        u32 pitch_;
-        u32 slicePitch_;
-    };
-
-    //--------------------------------------------------------
-    //---
-    //--- ShaderResourceViewRef
-    //---
-    //--------------------------------------------------------
-    class ShaderResourceViewRef
-    {
-    public:
-        ShaderResourceViewRef()
-            :view_(NULL)
-        {}
-
-        ShaderResourceViewRef(const ShaderResourceViewRef& rhs);
-
-        explicit ShaderResourceViewRef(ID3D11ShaderResourceView* view)
-            :view_(view)
-        {}
-
-        ~ShaderResourceViewRef()
-        {
-            destroy();
-        }
-
-        ShaderResourceViewRef& operator=(const ShaderResourceViewRef& rhs)
-        {
-            ShaderResourceViewRef tmp(rhs);
-            tmp.swap(*this);
-            return *this;
-        }
-
-        void destroy();
-
-        bool valid() const{ return (NULL != view_);}
-
-        void swap(ShaderResourceViewRef& rhs)
-        {
-            lcore::swap(view_, rhs.view_);
-        }
-
-        ID3D11ShaderResourceView* getView(){ return view_;}
-        ID3D11ShaderResourceView* const* get(){ return &view_;}
-    private:
-        ID3D11ShaderResourceView* view_;
-    };
-
-    //--------------------------------------------------------
-    //---
-    //--- RenderTargetViewRef
-    //---
-    //--------------------------------------------------------
-    class RenderTargetViewRef
-    {
-    public:
-        RenderTargetViewRef()
-            :view_(NULL)
-        {}
-
-        RenderTargetViewRef(const RenderTargetViewRef& rhs);
-
-        explicit RenderTargetViewRef(ID3D11RenderTargetView* view)
-            :view_(view)
-        {}
-
-        ~RenderTargetViewRef()
-        {
-            destroy();
-        }
-
-        RenderTargetViewRef& operator=(const RenderTargetViewRef& rhs)
-        {
-            RenderTargetViewRef tmp(rhs);
-            tmp.swap(*this);
-            return *this;
-        }
-
-        void destroy();
-
-        bool valid() const{ return (NULL != view_);}
-
-        void swap(RenderTargetViewRef& rhs)
-        {
-            lcore::swap(view_, rhs.view_);
-        }
-
-        ID3D11RenderTargetView* getView(){ return view_;}
-        ID3D11RenderTargetView* const* get(){ return &view_;}
-
-        ShaderResourceViewRef createSRView(const SRVDesc& desc);
-    private:
-        ID3D11RenderTargetView* view_;
-    };
-
-    //--------------------------------------------------------
-    //---
-    //--- DepthStencilViewRef
-    //---
-    //--------------------------------------------------------
-    class DepthStencilViewRef
-    {
-    public:
-        DepthStencilViewRef()
-            :view_(NULL)
-        {}
-
-        DepthStencilViewRef(const DepthStencilViewRef& rhs);
-
-        explicit DepthStencilViewRef(ID3D11DepthStencilView* view)
-            :view_(view)
-        {}
-
-        ~DepthStencilViewRef()
-        {
-            destroy();
-        }
-
-        DepthStencilViewRef& operator=(const DepthStencilViewRef& rhs)
-        {
-            DepthStencilViewRef tmp(rhs);
-            tmp.swap(*this);
-            return *this;
-        }
-
-        void destroy();
-
-        bool valid() const{ return (NULL != view_);}
-
-        void swap(DepthStencilViewRef& rhs)
-        {
-            lcore::swap(view_, rhs.view_);
-        }
-
-        ID3D11DepthStencilView* getView(){ return view_;}
-        ID3D11DepthStencilView* const* get(){ return &view_;}
-    private:
-        ID3D11DepthStencilView* view_;
-    };
-
-    //--------------------------------------------------------
-    //---
-    //--- UnorderedAccessViewRef
-    //---
-    //--------------------------------------------------------
-    class UnorderedAccessViewRef
-    {
-    public:
-        UnorderedAccessViewRef()
-            :view_(NULL)
-        {}
-
-        UnorderedAccessViewRef(const UnorderedAccessViewRef& rhs);
-
-        explicit UnorderedAccessViewRef(ID3D11UnorderedAccessView* view)
-            :view_(view)
-        {}
-
-        ~UnorderedAccessViewRef()
-        {
-            destroy();
-        }
-
-        UnorderedAccessViewRef& operator=(const UnorderedAccessViewRef& rhs)
-        {
-            UnorderedAccessViewRef tmp(rhs);
-            tmp.swap(*this);
-            return *this;
-        }
-
-        void destroy();
-
-        bool valid() const{ return (NULL != view_);}
-
-        void swap(UnorderedAccessViewRef& rhs)
-        {
-            lcore::swap(view_, rhs.view_);
-        }
-
-        ID3D11UnorderedAccessView* getView(){ return view_;}
-    private:
-        ID3D11UnorderedAccessView* view_;
-    };
-
     //--------------------------------------------------------
     //---
     //--- TextureRefBase
@@ -462,7 +53,7 @@ namespace lgraphics
 
         UnorderedAccessViewRef createUAView(const UAVDesc& desc)
         {
-            return createUAView(desc, texture_);
+            return View::createUAView(desc, texture_);
         }
 
         void setSamplerState(TextureFilterType filter, TextureAddress adress)
@@ -473,16 +64,19 @@ namespace lgraphics
         inline void attachVS(u32 viewIndex, u32 samplerIndex);
         inline void attachGS(u32 viewIndex, u32 samplerIndex);
         inline void attachPS(u32 viewIndex, u32 samplerIndex);
+        inline void attachCS(u32 viewIndex, u32 samplerIndex);
 
         inline void attachVS(u32 viewIndex);
         inline void attachGS(u32 viewIndex);
         inline void attachPS(u32 viewIndex);
+        inline void attachCS(u32 viewIndex);
 
         inline void copy(this_type& src);
         inline void updateSubresource(u32 index, const Box* box, const void* data, u32 rowPitch, u32 depthPitch);
 
-        inline bool map(void*& data, u32& rowPitch, u32& depthPitch, s32 type);
-        inline void unmap();
+        inline bool map(u32 subresource, MapType type, MappedSubresource& mapped);
+        inline bool map(void*& data, u32& rowPitch, u32& depthPitch, u32 subresource, s32 type);
+        inline void unmap(u32 subresource);
 
         inline bool operator==(const TextureRefBase& rhs) const
         {
@@ -654,63 +248,6 @@ namespace lgraphics
     }
 
     template<class T>
-    UnorderedAccessViewRef TextureRefBase<T>::createUAView(const UAVDesc& desc, ID3D11Resource* resource)
-    {
-        D3D11_UNORDERED_ACCESS_VIEW_DESC viewDesc;
-        viewDesc.Format = static_cast<DXGI_FORMAT>(desc.format_);
-        viewDesc.ViewDimension = static_cast<D3D11_UAV_DIMENSION>(desc.dimension_);
-
-        switch(desc.dimension_)
-        {
-        case UAVDimension_Unknown:
-            break;
-
-        case UAVDimension_Buffer:
-            viewDesc.Buffer.FirstElement = desc.buffer_.firstElement_;
-            viewDesc.Buffer.NumElements = desc.buffer_.numElements_;
-            viewDesc.Buffer.Flags = desc.buffer_.flags_;
-            break;
-
-        case UAVDimension_Texture1D:
-            viewDesc.Texture1D.MipSlice = desc.tex1D_.mipSlice_;
-            break;
-
-        case UAVDimension_Texture1DArray:
-            viewDesc.Texture1DArray.MipSlice        = desc.tex1DArray_.mipSlice_;
-            viewDesc.Texture1DArray.FirstArraySlice = desc.tex1DArray_.firstArraySlice_;
-            viewDesc.Texture1DArray.ArraySize       = desc.tex1DArray_.arraySize_;
-            break;
-
-        case UAVDimension_Texture2D:
-            viewDesc.Texture2D.MipSlice = desc.tex2D_.mipSlice_;
-            break;
-
-        case UAVDimension_Texture2DArray:
-            viewDesc.Texture2DArray.MipSlice        = desc.tex2DArray_.mipSlice_;
-            viewDesc.Texture2DArray.FirstArraySlice = desc.tex2DArray_.firstArraySlice_;
-            viewDesc.Texture2DArray.ArraySize       = desc.tex2DArray_.arraySize_;
-            break;
-
-        case UAVDimension_Texture3D:
-            viewDesc.Texture3D.MipSlice        = desc.tex3D_.mipSlice_;
-            viewDesc.Texture3D.FirstWSlice = desc.tex3D_.firstWSlice_;
-            viewDesc.Texture3D.WSize       = desc.tex3D_.wsize_;
-            break;
-        };
-
-        ID3D11Device* device = Graphics::getDevice().getD3DDevice();
-
-        ID3D11UnorderedAccessView* view = NULL;
-        HRESULT hr = device->CreateUnorderedAccessView(
-            resource,
-            &viewDesc,
-            &view);
-
-        return (SUCCEEDED(hr))? UnorderedAccessViewRef(view) : UnorderedAccessViewRef();
-    }
-
-
-    template<class T>
     inline void TextureRefBase<T>::attachVS(u32 viewIndex, u32 samplerIndex)
     {
         lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
@@ -737,6 +274,14 @@ namespace lgraphics
         device.setPSSamplers(samplerIndex, 1, sampler_.get());
     }
 
+    template<class T>
+    inline void TextureRefBase<T>::attachCS(u32 viewIndex, u32 samplerIndex)
+    {
+        lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
+        ID3D11ShaderResourceView* view = shaderResourceView_.getView();
+        device.setCSResources(viewIndex, 1, &view);
+        device.setCSSamplers(samplerIndex, 1, sampler_.get());
+    }
 
     template<class T>
     inline void TextureRefBase<T>::attachVS(u32 viewIndex)
@@ -763,6 +308,14 @@ namespace lgraphics
     }
 
     template<class T>
+    inline void TextureRefBase<T>::attachCS(u32 viewIndex)
+    {
+        lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
+        ID3D11ShaderResourceView* view = shaderResourceView_.getView();
+        device.setCSResources(viewIndex, 1, &view);
+    }
+
+    template<class T>
     inline void TextureRefBase<T>::copy(this_type& src)
     {
         lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
@@ -777,17 +330,29 @@ namespace lgraphics
     }
 
     template<class T>
-    inline bool TextureRefBase<T>::map(void*& data, u32& rowPitch, u32& depthPitch, s32 type)
+    inline bool TextureRefBase<T>::map(u32 subresource, MapType type, MappedSubresource& mapped)
     {
-        lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
-        return device.map(data, rowPitch, depthPitch, texture_, type);
+        HRESULT hr = lgraphics::Graphics::getDevice().getContext()->Map(
+            texture_,
+            subresource,
+            (D3D11_MAP)type,
+            0,
+            reinterpret_cast<D3D11_MAPPED_SUBRESOURCE*>(&mapped));
+        return SUCCEEDED(hr);
     }
 
     template<class T>
-    inline void TextureRefBase<T>::unmap()
+    inline bool TextureRefBase<T>::map(void*& data, u32& rowPitch, u32& depthPitch, u32 subresource, s32 type)
     {
         lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
-        device.unmap(texture_);
+        return device.map(data, rowPitch, depthPitch, texture_, subresource, type);
+    }
+
+    template<class T>
+    inline void TextureRefBase<T>::unmap(u32 subresource)
+    {
+        lgraphics::GraphicsDeviceRef& device = Graphics::getDevice();
+        device.unmap(texture_, subresource);
     }
 
     //--------------------------------------------------------
@@ -1044,5 +609,21 @@ namespace lgraphics
             const SubResourceData* initData,
             const SRVDesc* resourceViewDesc);
     };
+
+
+    void setRenderTargetsAndUAV(
+        u32 numViews,
+        RenderTargetViewRef* views,
+        DepthStencilViewRef* depthStencilView,
+        u32 UAVStart,
+        u32 numUAVs,
+        UnorderedAccessViewRef* uavs,
+        const u32* UAVInitCounts);
+
+    void setCSUnorderedAccessViews(
+        u32 UAVStart,
+        u32 numUAVs,
+        UnorderedAccessViewRef* uavs,
+        const u32* UAVInitCounts);
 }
 #endif //INC_LGRAPHICS_DX11_TEXTUREREF_H__

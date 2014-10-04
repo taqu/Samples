@@ -7,21 +7,13 @@
 */
 #include "../../lgraphicscore.h"
 #include "Enumerations.h"
+#include "ViewRef.h"
 
 struct ID3D11Buffer;
 
 namespace lgraphics
 {
     struct Box;
-
-    struct MappedSubresource
-    {
-        void* data_;
-        u32 rowPitch_;
-        u32 depthPitch_;
-    };
-
-
     //------------------------------------------------------------
     //---
     //--- BufferRefBase
@@ -33,10 +25,18 @@ namespace lgraphics
         void destroy();
 
         bool map(u32 subresource, MapType type, MappedSubresource& mapped);
+        bool map(void*& data, u32& rowPitch, u32& depthPitch, u32 subresource, s32 type);
         void unmap(u32 subresource);
         void updateSubresource(u32 index, const Box* box, const void* data, u32 rowPitch, u32 depthPitch);
 
+        UnorderedAccessViewRef createUAView(const UAVDesc& desc)
+        {
+            return View::createUAView(desc, buffer_);
+        }
+
         bool valid() const{ return buffer_ != NULL;}
+
+        void copy(BufferRefBase& src);
     protected:
         BufferRefBase()
             :buffer_(NULL)

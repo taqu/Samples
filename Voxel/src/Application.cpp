@@ -28,7 +28,8 @@
 namespace fractal
 {
     Application::Application()
-        :object_(NULL)
+        :count_(0.0f)
+        ,object_(NULL)
         ,plane_(NULL)
         ,box_(NULL)
         ,sphere_(NULL)
@@ -90,13 +91,13 @@ namespace fractal
         }
 
         {
-            box_ = render::DebugDraw::createBox(2.0f, 0xFFFE0000U);
-            box_->setPosition(lmath::Vector4(10.0f, 2.5f, 0.0f, 0.0f));
+            box_ = render::DebugDraw::createBox(4.0f, 0xFFFE0000U);
+            box_->setPosition(lmath::Vector4(12.0f, 4.5f, 0.0f, 0.0f));
         }
 
         {
-            sphere_ = render::DebugDraw::createSphere(1.0f, 10, 0xFF00FF00U);
-            sphere_->setPosition(lmath::Vector4(-10.0f, 2.5f, 0.0f, 0.0f));
+            sphere_ = render::DebugDraw::createSphere(2.0f, 10, 0xFF00FF00U);
+            sphere_->setPosition(lmath::Vector4(-12.0f, 4.5f, 0.0f, 0.0f));
         }
     }
 
@@ -134,11 +135,21 @@ namespace fractal
         }
 
         if(NULL != box_){
+            lmath::Quaternion rot;
+            rot.setRotateX(count_*DEG_TO_RAD);
+            box_->setRotation(rot);
             system.getRenderer().add(box_);
         }
 
         if(NULL != sphere_){
+            f32 sn = lmath::sinf(count_*DEG_TO_RAD);
+            sphere_->setPosition(lmath::Vector4(-12.0f, 2.0f*sn+4.0f, 0.0f, 0.0f));
             system.getRenderer().add(sphere_);
+        }
+
+        count_ += 60.0f * System::getTimer().getDeltaTime();
+        if(360.0f<count_){
+            count_ -= 360.0f;
         }
     }
 

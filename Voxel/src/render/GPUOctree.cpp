@@ -86,9 +86,9 @@ namespace render
         u32 counter = 0;
         void* data = NULL;
         u32 rowPitch, depthPitch;
-        if(readback_.map(data, rowPitch, depthPitch, lgraphics::GraphicsDeviceRef::MapType_Read)){
+        if(readback_.map(data, rowPitch, depthPitch, 0, lgraphics::GraphicsDeviceRef::MapType_Read)){
             counter = *((u32*)data);
-            readback_.unmap();
+            readback_.unmap(0);
         }
         return counter;
     }
@@ -175,9 +175,9 @@ namespace render
 
         void* data = NULL;
         u32 rowPitch, depthPitch;
-        if(readBackBuffer_.map(data, rowPitch, depthPitch, lgraphics::GraphicsDeviceRef::MapType_Read)){
+        if(readBackBuffer_.map(data, rowPitch, depthPitch, 0, lgraphics::GraphicsDeviceRef::MapType_Read)){
             lcore::memcpy(voxelsReadBack_, data, sizeof(GPUOctreeVoxel)*num);
-            readBackBuffer_.unmap();
+            readBackBuffer_.unmap(0);
 
             for(u32 i=0; i<num; ++i){
                 voxelPosReadBack_[i].x_ = (voxelsReadBack_[i].index_ >> 20) & 0x1FFU;
@@ -353,9 +353,9 @@ namespace render
 
         void* data = NULL;
         u32 rowPitch, depthPitch;
-        if(readBack0Buffer_.map(data, rowPitch, depthPitch, lgraphics::GraphicsDeviceRef::MapType_Read)){
+        if(readBack0Buffer_.map(data, rowPitch, depthPitch, 0, lgraphics::GraphicsDeviceRef::MapType_Read)){
             lcore::memcpy(node0ReadBack_, data, sizeof(GPUOctreeNode0)*NumReadBack);
-            readBack0Buffer_.unmap();
+            readBack0Buffer_.unmap(0);
         }
 
 
@@ -477,9 +477,9 @@ namespace render
 
         void* data = NULL;
         u32 rowPitch, depthPitch;
-        if(readBackBuffer_.map(data, rowPitch, depthPitch, lgraphics::GraphicsDeviceRef::MapType_Read)){
+        if(readBackBuffer_.map(data, rowPitch, depthPitch, 0, lgraphics::GraphicsDeviceRef::MapType_Read)){
             lcore::memcpy(readBack_, data, sizeof(f32)*NumReadBack*3*3*3);
-            readBackBuffer_.unmap();
+            readBackBuffer_.unmap(0);
         }
     }
 

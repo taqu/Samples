@@ -30,7 +30,7 @@ namespace fractal
         void terminate();
 
     private:
-
+        f32 count_;
         DebugCamera camera_;
 
         render::Object* object_;
